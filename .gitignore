@@ -1,0 +1,7 @@
+.playwright-mcp/
+Playwright/
+*.log
+*.png
+*.yml
+*.json
+
