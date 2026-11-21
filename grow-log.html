@@ -75,6 +75,12 @@
     h1 { font-size: clamp(2.7rem, 7vw, 5rem); line-height: .98; letter-spacing: -.055em; margin: 12px 0 14px; max-width: 680px; }
     h1 em { color: var(--moss); font-weight: 400; }
     .hero-copy { max-width: 600px; color: var(--muted); margin: 0; }
+    .sample-cta { display: grid; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--ink); }
+    .sample-cta[hidden], .sample-banner[hidden] { display: none; }
+    .sample-banner { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 0 0 22px; padding: 12px 16px; border: 1px solid rgba(226,189,120,.45); border-radius: 14px; background: rgba(226,189,120,.08); color: var(--muted); font-size: .8rem; }
+    .sample-banner strong { color: var(--gold); }
+    .map-empty .button { margin-top: 14px; }
+    @media (max-width: 560px) { .sample-banner { flex-direction: column; align-items: stretch; } }
     .hero-aside {
       padding: 17px 19px; border: 1px solid var(--line); border-radius: var(--radius);
       color: var(--muted); background: linear-gradient(140deg, rgba(169, 185, 134, .1), rgba(32, 31, 25, .6));
@@ -425,6 +431,10 @@
   </header>
 
   <main class="shell" id="main">
+    <div class="sample-banner" id="sample-banner" role="status" hidden>
+      <span><strong>You're exploring a sample journal.</strong> Tap around, replay the map, open the quests. Clear it when you're ready to start your own.</span>
+      <button class="button small secondary" type="button" id="clear-sample">Clear sample and start fresh</button>
+    </div>
     <section class="hero" aria-labelledby="page-title">
       <div>
         <span class="eyebrow">Your personal grow journal</span>
@@ -434,6 +444,10 @@
       <aside class="hero-aside">
         <strong>A small note, every day.</strong>
         Check-ins and progress are saved only in this browser. Export a backup whenever you like.
+        <div class="sample-cta" id="sample-cta" hidden>
+          <span>New here? See a month of growing in action.</span>
+          <button class="button small" type="button" data-load-sample>Try a sample journal</button>
+        </div>
       </aside>
     </section>
 
@@ -522,7 +536,7 @@
       </div>
       <article class="panel map-panel">
         <div class="map-top"><div><h3>Your growing network</h3><div class="map-key" id="map-key" aria-label="Map stage colors"></div></div></div>
-        <div class="map-wrap" id="map-wrap"><svg id="mycelial-map" viewBox="0 0 800 480" role="group" aria-label="Mycelial map of your grows and check-ins"></svg><div class="map-empty" id="map-empty" hidden>Your first check-in will become the first node in your map.</div></div>
+        <div class="map-wrap" id="map-wrap"><svg id="mycelial-map" viewBox="0 0 800 480" role="group" aria-label="Mycelial map of your grows and check-ins"></svg><div class="map-empty" id="map-empty" hidden>Your first check-in will become the first node in your map.<br><button class="button small secondary" type="button" data-load-sample>Preview with a sample journal</button></div></div>
         <div class="map-timeline"><button class="button small secondary" id="map-replay" type="button" aria-pressed="false" disabled>▶ Replay growth</button><label for="map-timeline-slider">Timeline</label><input id="map-timeline-slider" type="range" min="0" max="0" value="0" step="1" disabled><output id="map-timeline-date">No check-ins yet</output></div>
         <p class="map-detail" id="map-detail" aria-live="polite">Select a check-in node to read its note.</p>
       </article>
@@ -2243,7 +2257,7 @@
         if (anyTimer) ensureTimerTick();
       }
       function renderAll() {
-        updateTrophyUnlocks(); renderAcademy(); renderStats(); renderGrowList(); renderMapKey(); renderMap(); renderStories(); renderFeed(); renderTrophies(); renderComparison();
+        updateTrophyUnlocks(); renderSampleControls(); renderAcademy(); renderStats(); renderGrowList(); renderMapKey(); renderMap(); renderStories(); renderFeed(); renderTrophies(); renderComparison();
       }
       function findGrow(name, species, grows = state.grows) {
         return grows.find((grow) => norm(grow.name) === norm(name) && norm(grow.species) === norm(species));
@@ -2605,6 +2619,98 @@
             : error.message || "The selected file could not be imported.";
         }
       }
+      // ---------- Sample journal (demo) ----------
+      // Only offered while the journal is empty, so it can never overwrite real data.
+      function journalIsEmpty() {
+        return !state.grows.length && !state.entries.length && academyXp() === 0;
+      }
+      function buildSampleJournal() {
+        const day = (ago) => dateDaysBefore(todayKey(), ago);
+        const stamp = (ago, hour = 9) => { const date = new Date(`${day(ago)}T${String(hour).padStart(2, "0")}:15:00`); return date.toISOString(); };
+        const grows = [
+          { id: uid("grow"), name: "BRF cakes · batch 1", species: "Blue oyster", startDate: day(27), archived: false, createdAt: stamp(27, 8) },
+          { id: uid("grow"), name: "Popcorn spawn · jar 3", species: "Lion's mane", startDate: day(19), archived: false, createdAt: stamp(19, 8) },
+          { id: uid("grow"), name: "Pink oyster tub", species: "Pink oyster", startDate: day(34), archived: true, completedAt: stamp(4, 18), createdAt: stamp(34, 8) }
+        ];
+        const plan = [
+          [grows[2], [[34, "Inoculation", "Spawned to a pasteurized straw tub.", 24, null], [30, "Colonization", "White patches knitting across the straw.", 25, null],
+            [25, "Colonization", "Fully colonized, clean smell.", 25, 70], [21, "Fruiting", "Moved to the chamber, first pink pins.", 22, 92],
+            [18, "Harvest", "Gorgeous pink clusters, picked before caps flattened.", 22, 93, { flushNumber: 1, freshYieldG: 286, drySubstrateG: 520 }],
+            [10, "Harvest", "Smaller second flush, still tasty.", 22, 91, { flushNumber: 2, freshYieldG: 142, drySubstrateG: 520 }],
+            [4, "Complete", "Tub retired to the compost. Great first run.", 21, null]]],
+          [grows[0], [[27, "Inoculation", "Injected 1 cc per jar in the still air box.", 25, null], [25, "Inoculation", "No visible growth yet, jars look clean.", 25, null],
+            [22, "Colonization", "First white fuzz at the injection points.", 26, null], [19, "Colonization", "About half colonized.", 26, null],
+            [16, "Colonization", "Solid white, letting them consolidate.", 25, null], [11, "Fruiting", "Birthed, dunked, and rolled. In the chamber.", 22, 90],
+            [8, "Fruiting", "Pins everywhere. Fanning three times a day.", 22, 94], [6, "Fruiting", "Clusters doubling in size each day.", 23, 93],
+            [3, "Harvest", "First flush picked.", 22, 92, { flushNumber: 1, freshYieldG: 164, drySubstrateG: 360 }],
+            [1, "Fruiting", "Second dunk done; new pins forming.", 22, 94]]],
+          [grows[1], [[19, "Inoculation", "Inoculated 2 cc of liquid culture.", 24, null], [15, "Colonization", "Mycelium wrapping the first kernels.", 24, null],
+            [12, "Colonization", "Broke and shook at about 30%.", 24, null], [7, "Colonization", "Slimy spot on one side, keeping an eye on it.", 25, null, { appearance: "Possible contamination" }],
+            [2, "Colonization", "False alarm, it was condensation. Almost fully white.", 24, null]]]
+        ];
+        const entries = [];
+        let first = true;
+        plan.forEach(([grow, rows]) => {
+          const seen = new Set();
+          rows.forEach(([ago, stage, observation, temperature, humidity, extra = {}]) => {
+            const newStage = !seen.has(stage); seen.add(stage);
+            const firstGrowXp = first ? 250 : 0; first = false;
+            const stageXp = newStage ? 100 : 0, dailyXp = 10, streakXp = 5;
+            entries.push({
+              id: uid("checkin"), growId: grow.id, growName: grow.name, species: grow.species, date: day(ago), stage, stageHistory: [stage],
+              appearance: "Looking good", observation, temperature, humidity,
+              flushNumber: null, freshYieldG: null, dryYieldG: null, drySubstrateG: null, photoName: "", photoDataUrl: "",
+              firstGrowXp, stageXp, dailyXp, streakXp, flushXp: 0, legacyXp: 0,
+              xpAwarded: firstGrowXp + stageXp + dailyXp + streakXp,
+              createdAt: stamp(ago, 9 + entries.length % 8), updatedAt: stamp(ago, 9 + entries.length % 8), ...extra
+            });
+          });
+        });
+        const award = (ago, quest, steps) => Object.fromEntries(steps.map((id, i) => {
+          const step = QUESTS.find((item) => item.id === quest).steps.find((item) => item.id === id);
+          return [id, { at: stamp(Math.max(0, ago - i * 2), 12), xp: step.xp }];
+        }));
+        const allChecks = (quest, steps) => Object.fromEntries(steps.map((id) => {
+          const step = QUESTS.find((item) => item.id === quest).steps.find((item) => item.id === id);
+          return [id, step.checklist.map((_, i) => i)];
+        }));
+        const brfSteps = ["kit", "mix", "fill", "sterilize", "inoculate", "incubate", "colonize", "full"];
+        const fruitSteps = ["link", "chamber", "birth", "conditions", "pins", "harvest"];
+        const popSteps = ["kit", "soak", "simmer", "dry", "fill", "sterilize", "inoculate", "incubate", "colonize", "shake"];
+        return {
+          version: 3, sample: true, grows, entries,
+          academy: {
+            active: "fruiting", jars: 6,
+            quests: {
+              brf: { done: award(28, "brf", brfSteps), checks: allChecks("brf", brfSteps), timers: {}, growId: grows[0].id, growName: grows[0].name, growSpecies: grows[0].species },
+              fruiting: { done: award(12, "fruiting", fruitSteps), checks: allChecks("fruiting", fruitSteps), timers: {}, growId: grows[0].id, growName: grows[0].name, growSpecies: grows[0].species },
+              popcorn: { done: award(20, "popcorn", popSteps), checks: allChecks("popcorn", popSteps), timers: {}, growId: grows[1].id, growName: grows[1].name, growSpecies: grows[1].species }
+            }
+          }
+        };
+      }
+      function loadSampleJournal() {
+        if (!journalIsEmpty()) { showToast("The sample is only available while your journal is empty."); return; }
+        state = buildSampleJournal();
+        saveState(); renderAll();
+        const map = $("#map");
+        map.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth" });
+        window.setTimeout(() => startReplay(), prefersReducedMotion() ? 0 : 1600);
+      }
+      function clearSampleJournal() {
+        if (!state.sample) return;
+        if (!window.confirm("Clear the sample journal and start your own? Anything added while the sample was open will be removed too.")) return;
+        state = emptyState();
+        trophyUi.justUnlocked.clear();
+        saveState(); renderAll();
+        window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+        showToast("Sample cleared. Your journal is ready for your first grow.");
+      }
+      function renderSampleControls() {
+        $("#sample-banner").hidden = !state.sample;
+        $("#sample-cta").hidden = !journalIsEmpty();
+        document.querySelectorAll("[data-load-sample]").forEach((button) => { button.hidden = !journalIsEmpty(); });
+      }
       function resetApp() {
         if (!window.confirm("Reset this grow log in this browser? Export a backup first if you want to keep your journal.")) return;
         state = emptyState();
@@ -2665,6 +2771,8 @@
       $("#import-grow-file").addEventListener("change", handleImport);
       $("#import-site-file").addEventListener("change", handleImport);
       $("#reset-button").addEventListener("click", resetApp);
+      document.querySelectorAll("[data-load-sample]").forEach((button) => button.addEventListener("click", loadSampleJournal));
+      $("#clear-sample").addEventListener("click", clearSampleJournal);
       $("#grow-start-date").value = todayKey();
       renderAll();
       loadPhotos();

@@ -22,6 +22,9 @@ Single-file app (grow-log.html), plain HTML/CSS/JS, localStorage only.
 - Mycelial map: seeded organic hyphae per grow, density of background filaments grows with
   check-ins, nutrient pulses (SVG animateMotion), "Replay growth", spore bursts on tap,
   auto-fit viewBox. All motion is disabled under prefers-reduced-motion.
+- Sample journal: `buildSampleJournal()` (3 grows, 22 check-ins, academy progress) is offered
+  only while the journal is empty (`journalIsEmpty()`), flagged with `state.sample`, and cleared
+  with the banner button. It can never overwrite real data.
 
 ## Next up
 - [x] Move `const $` above `let state = load()` (crash on bad saved data)
