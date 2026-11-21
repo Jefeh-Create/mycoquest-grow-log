@@ -231,21 +231,49 @@
     }
     @media (max-width: 560px) {
       .shell { width: min(100% - 24px, 1120px); }
-      .topbar-inner { min-height: 60px; }
-      .nav { display: none; }
+      /* Header: brand + level on one line, section links scroll on a second row */
+      .topbar-inner { min-height: 0; flex-wrap: wrap; gap: 6px 12px; padding-top: 10px; }
+      .brand { gap: 9px; font-size: .82rem; white-space: nowrap; }
+      .brand-mark { width: 30px; height: 30px; font-size: 16px; border-radius: 10px; }
+      .nav { order: 3; display: flex; width: 100%; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -4px; padding-bottom: 6px; }
+      .nav::-webkit-scrollbar { display: none; }
+      .nav a { flex: none; min-height: 36px; display: inline-flex; align-items: center; padding: 0 10px; border-radius: 99px; white-space: nowrap; }
+      .nav a:active { background: rgba(169, 185, 134, .14); color: var(--ink); }
+      .section { scroll-margin-top: 112px; }
       .level-pill .mini-track { width: 58px; }
-      main { padding-top: 32px; }
-      .stats { gap: 8px; }
-      .stat-card { min-height: 106px; padding: 13px; }
+      /* Compact hero so your grows are close to the top */
+      main { padding-top: 20px; }
+      .hero { gap: 12px; margin-bottom: 16px; }
+      h1 { font-size: 2.3rem; margin: 8px 0 0; }
+      .hero-copy { display: none; }
+      .hero-aside { padding: 12px 14px; font-size: .78rem; }
+      .stats { grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+      .stat-card { min-height: 0; padding: 12px; }
+      .stat-card .stat-detail { display: none; }
       .level-card { grid-column: 1 / -1; }
+      .level-card .stat-detail { display: block; }
+      .section { margin-top: 24px; }
+      /* Show existing grows before the "Start a new grow" form */
+      .grows-panel { display: flex; flex-direction: column; }
+      .grows-panel #grow-list { order: -2; margin: 0 0 6px; }
+      .grows-panel #archived-section { order: -1; margin: 0 0 18px; }
+      /* 16px text stops iPhone Safari zooming in on focus; bigger tap targets */
+      input, select, textarea { font-size: 16px; min-height: 46px; }
+      .button { min-height: 46px; }
+      .button.small { min-height: 42px; padding: 8px 12px; font-size: .8rem; }
       .section-heading { display: block; }
       .section-heading p { margin-top: 7px; }
       .panel { padding: 15px; }
       .field-grid { grid-template-columns: 1fr; }
       .field.full { grid-column: auto; }
       .harvest-fields, .compare-chart, .compare-controls { grid-template-columns: 1fr; }
-      .grow-row { align-items: start; }
-      .grow-row-actions { flex-direction: column-reverse; align-items: end; }
+      /* Grow card: name on top, buttons in a full-width row with check-in first */
+      .grow-row { flex-direction: column; align-items: stretch; }
+      .grow-row-actions { flex-wrap: wrap; }
+      .grow-row-actions .stage-tag { display: none; }
+      .grow-row-actions .button { flex: 1 1 140px; }
+      .stat-card .stat-value { font-size: 1.1rem; }
+      .level-card .level-head .stat-value { font-size: 1.5rem; }
       .trophy-grid { grid-template-columns: repeat(2, 1fr); }
       .privacy { display: block; }
       .privacy span { display: block; margin-top: 4px; }
@@ -301,7 +329,7 @@
         <p>A stage earns 100 demo XP the first time each grow reaches it. Your first grow earns 250 demo XP; a daily check-in adds 10 demo XP per grow. Check-ins within 48 hours continue your streak.</p>
       </div>
       <div class="workspace">
-        <article class="panel">
+        <article class="panel grows-panel">
           <h3>Start a new grow</h3>
           <p class="panel-intro">Name your grow and record when you inoculated it. Your first check-in starts at Inoculation.</p>
           <form id="new-grow-form">
