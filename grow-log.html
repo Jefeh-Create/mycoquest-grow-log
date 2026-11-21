@@ -150,7 +150,38 @@
     .checkin-dialog-grow { color: var(--muted); font-size: .78rem; }
     .harvest-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .harvest-fields[hidden] { display: none; }
-    .map-timeline { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; margin-top: 10px; }
+    .map-timeline { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; align-items: center; gap: 10px; margin-top: 10px; }
+    .map-filament { fill: none; stroke: rgba(169,185,134,.13); stroke-width: .9; stroke-linecap: round; transition: opacity .6s ease; }
+    .map-filament.is-future { opacity: 0; }
+    .map-hypha { fill: none; stroke: rgba(176,194,140,.62); stroke-width: 2.3; stroke-linecap: round; transition: stroke-dashoffset 1.5s cubic-bezier(.22,.7,.2,1), stroke .25s; }
+    .map-hypha-glow { fill: none; stroke: rgba(169,185,134,.09); stroke-width: 9; stroke-linecap: round; transition: stroke-dashoffset 1.5s cubic-bezier(.22,.7,.2,1); }
+    .map-side { fill: none; stroke: rgba(169,185,134,.32); stroke-width: 1; stroke-linecap: round; }
+    .map-side-gold { stroke: rgba(197,163,109,.6); }
+    .map-label { fill: var(--muted); font: 11px system-ui, sans-serif; transition: fill .2s; }
+    .map-flush { fill: #d8c99e; font: 600 8px system-ui, sans-serif; }
+    .map-caption { fill: rgba(170,169,150,.7); font: 10px system-ui, sans-serif; letter-spacing: .04em; }
+    .map-grow { transition: opacity .3s ease; }
+    .map-grow.is-dormant .map-label { opacity: 0; }
+    #mycelial-map.has-focus .map-grow:not(.is-focus) { opacity: .22; }
+    .map-grow.is-focus .map-hypha { stroke: var(--moss); }
+    .map-grow.is-focus .map-label { fill: var(--ink); }
+    .map-node-g { transition: opacity .45s ease; }
+    .map-node-g.is-future { opacity: 0; pointer-events: none; }
+    .is-growing .map-node-g { animation: node-in .55s cubic-bezier(.2,1.5,.4,1) backwards; }
+    @keyframes node-in { from { opacity: 0; transform: scale(.2); } to { opacity: 1; transform: scale(1); } }
+    .map-node-g { transform-box: fill-box; transform-origin: center; }
+    .map-node-g.is-selected .map-node { stroke: var(--ink); stroke-width: 2.5; }
+    .map-pulse { fill: #eef3dc; filter: drop-shadow(0 0 3px rgba(214,232,170,.9)); }
+    #mycelial-map.is-replaying .map-pulses { opacity: 0; }
+    .map-pulses { transition: opacity .4s; }
+    .map-hub-glow { fill: rgba(169,185,134,.16); transform-box: fill-box; transform-origin: center; animation: hub-breathe 4.5s ease-in-out infinite; }
+    @keyframes hub-breathe { 0%, 100% { transform: scale(.78); opacity: .45; } 50% { transform: scale(1.22); opacity: 1; } }
+    .map-alert-ring { fill: none; stroke: #d98b6f; stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: ring-out 1.8s ease-out infinite; }
+    @keyframes ring-out { from { transform: scale(.7); opacity: .95; } to { transform: scale(2); opacity: 0; } }
+    .map-ripple { fill: none; stroke-width: 1.5; transform-box: fill-box; transform-origin: center; animation: ring-out .8s ease-out forwards; }
+    .map-spore { fill: #f0ecdf; transform-box: fill-box; transform-origin: center; animation: spore-drift 1s ease-out forwards; }
+    @keyframes spore-drift { from { transform: translate(0, 0); opacity: .95; } to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
+    .map-mushroom { pointer-events: none; }
     .map-timeline label { color: var(--muted); font-size: .7rem; }
     .map-timeline input { min-height: 24px; padding: 0; accent-color: var(--moss); }
     .map-alert { filter: drop-shadow(0 0 5px rgba(217,139,111,.75)); }
@@ -165,6 +196,16 @@
     .compare-summary th, .compare-summary td { padding: 8px; border-bottom: 1px solid var(--line); text-align: left; }
     .compare-summary th { color: var(--muted); font-weight: 500; }
     .trophy { position: relative; overflow: hidden; }
+    .trophy.unlocked { opacity: 1; border-color: rgba(226,189,120,.5); background: linear-gradient(170deg, rgba(226,189,120,.1), rgba(23,24,18,.5) 70%); }
+    .trophy.unlocked .trophy-icon { color: var(--gold); }
+    .trophy:not(.unlocked) .trophy-icon { filter: grayscale(1); }
+    .trophy-track { display: block; height: 4px; margin: 8px 6px 0; border-radius: 99px; background: #3a392f; overflow: hidden; }
+    .trophy-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--moss-dark), var(--moss)); }
+    .trophy.unlocked .trophy-track span { background: linear-gradient(90deg, #a5824a, var(--gold)); }
+    .trophy .trophy-meta { margin-top: 5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .trophy.unlocked .trophy-meta { color: var(--gold); }
+    .trophy.just-unlocked { animation: trophy-pop .7s cubic-bezier(.2,1.4,.4,1); }
+    @keyframes trophy-pop { 0% { transform: scale(.85); } 100% { transform: scale(1); } }
     .trophy.just-unlocked::after { position: absolute; inset: -50%; border-radius: 50%; background: radial-gradient(circle, rgba(226,189,120,.5), transparent 55%); animation: trophy-flare .8s ease-out forwards; content: ""; pointer-events: none; }
     @keyframes trophy-flare { from { opacity: 1; transform: scale(.2); } to { opacity: 0; transform: scale(1.3); } }
     .photo-preview { display: none; max-width: 100%; max-height: 220px; border-radius: 10px; object-fit: contain; }
@@ -231,7 +272,7 @@
     .rank-copy small { color: var(--muted); font-size: .74rem; }
     .rank-copy .progress-track { margin-top: 8px; height: 6px; }
     .rank-xp { color: var(--gold); font-weight: 760; font-size: .9rem; white-space: nowrap; }
-    .quest-picker { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .quest-picker { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
     .quest-card { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: center; width: 100%; padding: 16px; text-align: left; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); cursor: pointer; transition: border-color .2s, transform .2s; }
     .quest-card:hover { border-color: rgba(169,185,134,.5); }
     .quest-card[aria-selected="true"] { border-color: var(--moss); background: linear-gradient(160deg, rgba(100,115,74,.25), var(--surface) 70%); }
@@ -246,8 +287,7 @@
     .quest-head { display: flex; justify-content: space-between; align-items: start; gap: 14px; flex-wrap: wrap; }
     .quest-head h3 { margin: 0; }
     .quest-head p { margin: 4px 0 0; color: var(--muted); font-size: .8rem; max-width: 560px; }
-    .lesson-link { display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); font-size: .78rem; text-decoration: none; white-space: nowrap; }
-    .lesson-link:hover { border-color: var(--moss); }
+    .quest-icon { width: 46px; height: 46px; display: grid; place-items: center; border: 1px solid rgba(169,185,134,.4); border-radius: 14px; color: var(--moss); font-size: 1.4rem; }
     .quest-progress-copy { display: flex; justify-content: space-between; gap: 10px; margin-top: 12px; color: var(--muted); font-size: .74rem; }
     .quest-alert { margin-top: 14px; padding: 12px 14px; border: 1px solid rgba(217,139,111,.55); border-radius: 12px; background: rgba(217,139,111,.1); font-size: .8rem; }
     .quest-alert strong { color: var(--coral); }
@@ -358,11 +398,15 @@
       .trophy-grid { grid-template-columns: repeat(2, 1fr); }
       .privacy { display: block; }
       .privacy span { display: block; margin-top: 4px; }
-      #mycelial-map { min-height: 230px; }
+      #mycelial-map { min-height: 0; }
+      .map-timeline { grid-template-columns: auto minmax(0, 1fr) auto; }
+      .map-timeline #map-replay { grid-column: 1 / -1; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
-      .trophy.just-unlocked::after { animation: none !important; }
+      .trophy.just-unlocked::after, .trophy.just-unlocked { animation: none !important; }
+      .map-hub-glow, .map-alert-ring, .is-growing .map-node-g { animation: none !important; }
+      .map-hypha, .map-hypha-glow { transition: none !important; }
     }
   </style>
 </head>
@@ -474,12 +518,12 @@
     <section class="section" id="map" aria-labelledby="map-title">
       <div class="section-heading">
         <div><span class="eyebrow">Every note leaves a trace</span><h2 id="map-title">Mycelial map</h2></div>
-        <p>Each grow branches from the hub. Stage-colored nodes show check-in history; contamination flags, conditions, and harvest flushes appear on the selected day.</p>
+        <p>Your journal as a living network. Every grow is a hypha, every check-in a node, and every harvest a fruiting body. Tap a node to release its spores, or replay the whole grow from day one.</p>
       </div>
       <article class="panel map-panel">
         <div class="map-top"><div><h3>Your growing network</h3><div class="map-key" id="map-key" aria-label="Map stage colors"></div></div></div>
         <div class="map-wrap" id="map-wrap"><svg id="mycelial-map" viewBox="0 0 800 480" role="group" aria-label="Mycelial map of your grows and check-ins"></svg><div class="map-empty" id="map-empty" hidden>Your first check-in will become the first node in your map.</div></div>
-        <div class="map-timeline"><label for="map-timeline-slider">Timeline</label><input id="map-timeline-slider" type="range" min="0" max="0" value="0" step="1" disabled><output id="map-timeline-date">No check-ins yet</output></div>
+        <div class="map-timeline"><button class="button small secondary" id="map-replay" type="button" aria-pressed="false" disabled>▶ Replay growth</button><label for="map-timeline-slider">Timeline</label><input id="map-timeline-slider" type="range" min="0" max="0" value="0" step="1" disabled><output id="map-timeline-date">No check-ins yet</output></div>
         <p class="map-detail" id="map-detail" aria-live="polite">Select a check-in node to read its note.</p>
       </article>
     </section>
@@ -508,7 +552,7 @@
     </section>
 
     <section class="section" id="trophies" aria-labelledby="trophies-title">
-      <div class="section-heading"><div><span class="eyebrow">Milestones from the mycelium</span><h2 id="trophies-title">Trophies</h2></div><p>Trophies stay locked until you define and approve their unlock rules.</p></div>
+      <div class="section-heading"><div><span class="eyebrow">Milestones from the mycelium</span><h2 id="trophies-title">Trophies</h2></div><p><span id="trophy-count">0 of 8 unlocked</span>. Each one is earned from your real grow log and adds XP to your level.</p></div>
       <div class="trophy-grid" id="trophy-grid"></div>
     </section>
 
@@ -544,14 +588,14 @@
       const STAGES = ["Planning", "Inoculation", "Colonization", "Fruiting", "Harvest", "Complete"];
       const STAGE_COLORS = ["#9da98b", "#9eb58a", "#81a789", "#d4aa70", "#ce876b", "#b6a1cb"];
       const TROPHIES = [
-        ["first-root", "First Grow", "✦"],
-        ["stage-seeker", "Stage Seeker", "⌁"],
-        ["pin-party", "Pin Party", "✿"],
-        ["week-warrior", "Week Warrior", "◷"],
-        ["full-cycle", "Full Cycle", "◉"],
-        ["network", "Mycelial Network", "⌘"],
-        ["steady-keeper", "Steady Keeper", "✧"],
-        ["condition-keeper", "Condition Keeper", "◌"]
+        ["first-root", "First Grow", "✦", 50, "Log your first check-in"],
+        ["stage-seeker", "Stage Seeker", "⌁", 100, "Take one grow through 3 different stages"],
+        ["pin-party", "Pin Party", "✿", 150, "Log a check-in at the Fruiting stage"],
+        ["week-warrior", "Week Warrior", "◷", 200, "Keep a 7-check-in streak"],
+        ["full-cycle", "Full Cycle", "◉", 300, "Harvest a grow and mark it complete"],
+        ["network", "Mycelial Network", "⌘", 150, "Have 3 grows with check-ins"],
+        ["steady-keeper", "Steady Keeper", "✧", 250, "Log 30 check-ins in total"],
+        ["condition-keeper", "Condition Keeper", "◌", 100, "Log 10 check-ins with both temperature and humidity"]
       ];
       const $ = (selector) => document.querySelector(selector);
       const uid = (prefix = "id") => `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
@@ -727,7 +771,7 @@
         for (let current = 1; current < level; current += 1) total += levelUpCost(current);
         return total;
       }
-      function totalXp() { return state.entries.reduce((sum, entry) => sum + (entry.xpAwarded || 0), 0) + academyXp(); }
+      function totalXp() { return state.entries.reduce((sum, entry) => sum + (entry.xpAwarded || 0), 0) + academyXp() + trophyXp(); }
       function dateDaysBefore(date, amount) {
         const day = new Date(`${date}T12:00:00`);
         day.setDate(day.getDate() - amount);
@@ -1040,70 +1084,314 @@
           $("#map-timeline-date").textContent = `${timelineIndex + 1}/${orderedEntries().length} · ${dateLabel(entry.date)}`;
         }
       }
+      // ---------- Living mycelium map ----------
+      // Each grow is an organic hypha from the hub; each check-in is a node on it.
+      // The background network gets denser as you log more. Nutrient pulses flow
+      // outward, "Replay growth" regrows the whole history, and tapping a node
+      // releases spores.
+      const mapUi = { branches: [], filaments: [], nodes: [], replayTimer: null, signature: "", selected: null };
+      const MAP_HUB = { x: 400, y: 240 };
+      const MAP_REACH = { x: 305, y: 196 };
+      function prefersReducedMotion() {
+        return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+      }
+      function seededRandom(seed) {
+        let h = 2166136261;
+        for (const char of String(seed)) { h ^= char.charCodeAt(0); h = Math.imul(h, 16777619); }
+        return () => {
+          h += 0x6D2B79F5;
+          let t = h;
+          t = Math.imul(t ^ (t >>> 15), t | 1);
+          t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+      function smoothPath(points) {
+        if (points.length < 2) return "";
+        let d = `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`;
+        for (let i = 0; i < points.length - 1; i += 1) {
+          const p0 = points[i - 1] || points[i], p1 = points[i], p2 = points[i + 1], p3 = points[i + 2] || p2;
+          const c1x = p1.x + (p2.x - p0.x) / 6, c1y = p1.y + (p2.y - p0.y) / 6;
+          const c2x = p2.x - (p3.x - p1.x) / 6, c2y = p2.y - (p3.y - p1.y) / 6;
+          d += ` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+        }
+        return d;
+      }
+      // A smoothly curving hypha from the hub toward the map edge. Curvature drifts slowly
+      // (like real hyphal growth) with a gentle pull back toward the grow's heading.
+      function hyphaWalk(rand, angle, steps, wander, from = 0, to = 1) {
+        const edge = 1 / Math.sqrt((Math.cos(angle) / MAP_REACH.x) ** 2 + (Math.sin(angle) / MAP_REACH.y) ** 2);
+        const stepLength = edge * (to - from) / steps;
+        let x = MAP_HUB.x + Math.cos(angle) * edge * from, y = MAP_HUB.y + Math.sin(angle) * edge * from;
+        let heading = angle, curve = (rand() - .5) * .06;
+        const points = [{ x, y }];
+        for (let i = 1; i <= steps; i += 1) {
+          curve += (rand() - .5) * .05 * wander;
+          curve *= .86;
+          heading += curve;
+          heading += (angle - heading) * .07;
+          x += Math.cos(heading) * stepLength; y += Math.sin(heading) * stepLength;
+          points.push({ x, y });
+        }
+        return points;
+      }
+      // A short free-form twig in pixel space (side hyphae, background filaments).
+      function twigWalk(rand, x, y, angle, length, segments = 6) {
+        const points = [{ x, y }];
+        let a = angle;
+        for (let i = 0; i < segments; i += 1) {
+          a += (rand() - .5) * .9;
+          x += Math.cos(a) * length / segments; y += Math.sin(a) * length / segments;
+          points.push({ x, y });
+        }
+        return points;
+      }
+      function mushroomGlyph(x, y, scale, capColor) {
+        const group = svgEl("g", { transform: `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale})`, class: "map-mushroom" });
+        group.append(
+          svgEl("path", { d: "M -1.7 0 L -1.2 -6.5 L 1.2 -6.5 L 1.7 0 Z", fill: "#e8dcc0" }),
+          svgEl("path", { d: "M -7 -5.6 Q 0 -15 7 -5.6 Q 0 -7.8 -7 -5.6 Z", fill: capColor })
+        );
+        return group;
+      }
+      function sporeBurst(x, y, color, count = 10) {
+        if (prefersReducedMotion()) return;
+        const svg = $("#mycelial-map");
+        const ripple = svgEl("circle", { cx: x, cy: y, r: 9, class: "map-ripple", stroke: color });
+        svg.append(ripple);
+        const spores = [];
+        for (let i = 0; i < count; i += 1) {
+          const angle = Math.PI * 2 * i / count + Math.random() * .5;
+          const distance = 16 + Math.random() * 22;
+          const spore = svgEl("circle", { cx: x, cy: y, r: (1 + Math.random() * 1.4).toFixed(2), class: "map-spore" });
+          spore.style.setProperty("--dx", `${(Math.cos(angle) * distance).toFixed(1)}px`);
+          spore.style.setProperty("--dy", `${(Math.sin(angle) * distance - 6).toFixed(1)}px`);
+          spore.style.animationDelay = `${Math.round(Math.random() * 90)}ms`;
+          spores.push(spore);
+        }
+        svg.append(...spores);
+        window.setTimeout(() => { ripple.remove(); spores.forEach((spore) => spore.remove()); }, 1200);
+      }
+      function focusGrow(group) {
+        const svg = $("#mycelial-map");
+        svg.classList.toggle("has-focus", !!group);
+        mapUi.branches.forEach((branch) => branch.group.classList.toggle("is-focus", branch.group === group));
+      }
+      function selectMapNode(node, burst = true) {
+        if (mapUi.selected) mapUi.selected.g.classList.remove("is-selected");
+        mapUi.selected = node;
+        node.g.classList.add("is-selected");
+        showMapDetail(node.entry, node.index);
+        if (burst) sporeBurst(node.x, node.y, node.color);
+      }
+      function applyMapReveal(index, animate = false) {
+        const total = mapUi.nodes.length;
+        const last = total - 1;
+        const full = index >= last;
+        mapUi.branches.forEach((branch) => {
+          const visible = branch.nodes.filter((node) => node.index <= index);
+          const reach = full ? 1 : visible.length ? Math.min(1, Math.max(...visible.map((node) => node.s)) + .04) : 0;
+          branch.path.style.transition = animate ? "" : "none";
+          branch.glow.style.transition = animate ? "" : "none";
+          const offset = branch.length * (1 - reach);
+          branch.path.style.strokeDashoffset = `${offset}px`;
+          branch.glow.style.strokeDashoffset = `${offset}px`;
+          branch.group.classList.toggle("is-dormant", !visible.length);
+          branch.nodes.forEach((node) => node.g.classList.toggle("is-future", node.index > index));
+        });
+        const shown = total ? Math.round(mapUi.filaments.length * Math.min(1, (index + 1) / total)) : 0;
+        mapUi.filaments.forEach((filament, i) => filament.classList.toggle("is-future", i >= shown));
+      }
+      function stopReplay() {
+        if (mapUi.replayTimer) window.clearInterval(mapUi.replayTimer);
+        mapUi.replayTimer = null;
+        const svg = $("#mycelial-map");
+        svg.classList.remove("is-replaying");
+        const button = $("#map-replay");
+        button.textContent = "▶ Replay growth";
+        button.setAttribute("aria-pressed", "false");
+      }
+      function startReplay() {
+        const nodes = mapUi.nodes;
+        if (!nodes.length) return;
+        stopReplay();
+        const svg = $("#mycelial-map");
+        svg.classList.add("is-replaying");
+        const button = $("#map-replay");
+        button.textContent = "❚❚ Pause";
+        button.setAttribute("aria-pressed", "true");
+        let index = 0;
+        applyMapReveal(0, false);
+        selectMapNode(nodes[0]);
+        const delay = Math.max(260, Math.min(900, Math.round(6000 / nodes.length)));
+        mapUi.replayTimer = window.setInterval(() => {
+          index += 1;
+          if (index >= nodes.length) { stopReplay(); applyMapReveal(nodes.length - 1, true); return; }
+          applyMapReveal(index, true);
+          selectMapNode(nodes[index], !prefersReducedMotion());
+        }, delay);
+      }
       function renderMap() {
+        stopReplay();
         const svg = $("#mycelial-map"); svg.replaceChildren();
-        const hub = { x: 400, y: 240 };
         const days = orderedEntries();
         const slider = $("#map-timeline-slider");
         slider.min = "0"; slider.max = String(Math.max(0, days.length - 1)); slider.disabled = !days.length;
+        $("#map-replay").disabled = days.length < 2;
+        mapUi.branches = []; mapUi.filaments = []; mapUi.nodes = []; mapUi.selected = null;
         if (!days.length) {
           svg.hidden = true;
           $("#map-empty").hidden = false;
           $("#map-timeline-date").textContent = "No check-ins yet";
           $("#map-detail").textContent = "Select a check-in node to read its note.";
+          mapUi.signature = "";
           return;
         }
         svg.hidden = false;
+        svg.setAttribute("viewBox", "0 0 800 480");
         $("#map-empty").hidden = true;
-        const branches = new Map();
-        state.grows.forEach((grow) => branches.set(grow.id, growEntries(grow.id)));
-        state.grows.forEach((grow) => {
-          const entries = branches.get(grow.id) || [];
-          if (!entries.length) return;
-          const angle = hashAngle(grow.id);
-          const ux = Math.cos(angle), uy = Math.sin(angle), px = -uy, py = ux;
-          const endX = hub.x + ux * 255, endY = hub.y + uy * 170;
-          const controlX = hub.x + ux * 148 + px * 22, controlY = hub.y + uy * 105 + py * 22;
-          svg.append(svgEl("path", { d: `M ${hub.x} ${hub.y} Q ${controlX} ${controlY} ${endX} ${endY}`, class: "map-branch" }));
-          const label = svgEl("text", { x: endX + px * 8, y: endY + py * 8, fill: "#aaa996", "font-size": 11, "text-anchor": ux < -.25 ? "end" : "start" });
+        const reduced = prefersReducedMotion();
+        const timelineIndex = new Map(days.map((item, index) => [item.entry.id, index]));
+        const signature = `${days.length}|${state.grows.length}|${days[days.length - 1].entry.id}`;
+        const animate = !reduced && signature !== mapUi.signature;
+        mapUi.signature = signature;
+
+        // Background network: denser as the journal grows.
+        const filamentLayer = svgEl("g", { class: "map-filaments", "aria-hidden": "true" });
+        const filamentRand = seededRandom("mycelium-bed");
+        const filamentCount = Math.min(90, 14 + days.length * 3);
+        for (let i = 0; i < filamentCount; i += 1) {
+          const angle = filamentRand() * Math.PI * 2;
+          const radius = .12 + filamentRand() * .86;
+          const x = MAP_HUB.x + Math.cos(angle) * MAP_REACH.x * radius;
+          const y = MAP_HUB.y + Math.sin(angle) * MAP_REACH.y * radius;
+          const path = svgEl("path", { d: smoothPath(twigWalk(filamentRand, x, y, angle + (filamentRand() - .5) * 2, 18 + filamentRand() * 42)), class: "map-filament" });
+          filamentLayer.append(path); mapUi.filaments.push(path);
+        }
+        svg.append(filamentLayer);
+
+        // One hypha per grow, spaced around the hub.
+        const growsWithEntries = state.grows.map((grow) => ({ grow, entries: growEntries(grow.id) })).filter((item) => item.entries.length)
+          .sort((a, b) => String(a.grow.createdAt || a.grow.startDate).localeCompare(String(b.grow.createdAt || b.grow.startDate)));
+        const baseAngle = hashAngle(growsWithEntries[0].grow.id);
+        const branchLayer = svgEl("g", {});
+        const pulseLayer = svgEl("g", { class: "map-pulses", "aria-hidden": "true" });
+        growsWithEntries.forEach(({ grow, entries }, branchIndex) => {
+          const rand = seededRandom(grow.id);
+          const angle = baseAngle + branchIndex * Math.PI * 2 / growsWithEntries.length + (rand() - .5) * .35;
+          const steps = 48;
+          const walk = hyphaWalk(rand, angle, steps, 4.2, .07, 1);
+          const d = smoothPath(walk);
+          const group = svgEl("g", { class: "map-grow" });
+          const glow = svgEl("path", { d, class: "map-hypha-glow" });
+          const path = svgEl("path", { d, class: "map-hypha", id: `hypha-${branchIndex}` });
+          group.append(glow, path);
+          const tip = walk[walk.length - 1];
+          const cos = Math.cos(angle);
+          const label = svgEl("text", { x: (tip.x + cos * 10).toFixed(1), y: (tip.y + Math.sin(angle) * 14 + 4).toFixed(1), class: "map-label", "text-anchor": cos < -.3 ? "end" : cos > .3 ? "start" : "middle" });
           label.textContent = grow.name.length > 18 ? `${grow.name.slice(0, 17)}…` : grow.name;
-          svg.append(label);
-          entries.forEach((entry, index) => {
-            const t = entries.length === 1 ? .58 : .2 + index / (entries.length - 1) * .68;
-            const bend = Math.sin(t * Math.PI) * 16;
-            const x = hub.x + ux * 255 * t + px * (22 * t + bend);
-            const y = hub.y + uy * 170 * t + py * (22 * t + bend);
-            const twigDirection = (index % 2 ? 1 : -1);
-            svg.append(svgEl("path", { d: `M ${x} ${y} l ${px * 12 * twigDirection + ux * 5} ${py * 12 * twigDirection + uy * 5}`, class: "map-twig" }));
-            if (hasHarvestRecord(entry) && Number.isInteger(entry.flushNumber) && entry.flushNumber > 0) {
-              const branchX = x + px * 22 + ux * 10, branchY = y + py * 22 + uy * 10;
-              svg.append(svgEl("path", { d: `M ${x} ${y} l ${px * 22 + ux * 10} ${py * 22 + uy * 10}`, class: "map-twig", stroke: entry.appearance === "Possible contamination" ? "#d98b6f" : "#c5a36d" }));
-              svg.append(svgEl("circle", { cx: branchX, cy: branchY, r: 4, fill: "#c5a36d", class: "map-node" }));
-              const flushLabel = svgEl("text", { x: branchX + 6, y: branchY + 3, fill: "#d8c99e", "font-size": 8 });
-              flushLabel.textContent = `F${entry.flushNumber}`; svg.append(flushLabel);
-            }
-            const timelineIndex = days.findIndex((item) => item.entry.id === entry.id);
+          group.append(label);
+          const branch = { grow, group, path, glow, length: 0, nodes: [] };
+          entries.forEach((entry, entryIndex) => {
+            const s = entries.length === 1 ? .5 : .2 + entryIndex / (entries.length - 1) * .62;
+            const point = walk[Math.min(steps, Math.max(0, Math.round((s - .06) / .94 * steps)))];
+            const stage = Math.max(0, STAGES.indexOf(entry.stage));
             const contaminated = entry.appearance === "Possible contamination";
+            const color = stageColor(entry.stage);
+            const nodeGroup = svgEl("g", { class: "map-node-g" });
+            if (animate) nodeGroup.style.animationDelay = `${(.25 + s * 1.1).toFixed(2)}s`;
+            const twigRand = seededRandom(`${entry.id}-twig`);
+            const twigCount = 1 + Math.floor(stage / 2) + (entry.photoDataUrl ? 1 : 0);
+            for (let t = 0; t < twigCount; t += 1) {
+              const side = (t % 2 ? 1 : -1) * (.7 + twigRand() * .8);
+              nodeGroup.append(svgEl("path", { d: smoothPath(twigWalk(twigRand, point.x, point.y, angle + side, 12 + twigRand() * 16 + stage * 3, 5)), class: "map-side" }));
+            }
+            if (stage >= STAGES.indexOf("Fruiting") && !hasHarvestRecord(entry)) {
+              [-1, 1].forEach((dir, pinIndex) => nodeGroup.append(mushroomGlyph(point.x + Math.cos(angle + dir * 1.3) * 13, point.y + Math.sin(angle + dir * 1.3) * 13 + 2, .42 + pinIndex * .08, "#d4aa70")));
+            }
+            if (hasHarvestRecord(entry) && Number.isInteger(entry.flushNumber) && entry.flushNumber > 0) {
+              const fx = point.x + Math.cos(angle - 1.2) * 24, fy = point.y + Math.sin(angle - 1.2) * 24;
+              nodeGroup.append(svgEl("path", { d: `M ${point.x.toFixed(1)} ${point.y.toFixed(1)} L ${fx.toFixed(1)} ${fy.toFixed(1)}`, class: "map-side map-side-gold" }));
+              nodeGroup.append(mushroomGlyph(fx, fy + 4, .95, "#c5a36d"));
+              const flushLabel = svgEl("text", { x: (fx + 8).toFixed(1), y: (fy + 2).toFixed(1), class: "map-flush" });
+              flushLabel.textContent = `F${entry.flushNumber}`; nodeGroup.append(flushLabel);
+            }
+            if (contaminated) nodeGroup.append(svgEl("circle", { cx: point.x, cy: point.y, r: 9, class: "map-alert-ring" }));
+            const index = timelineIndex.get(entry.id);
             const circle = svgEl("circle", {
-              cx: x, cy: y, r: contaminated ? 9 : 7.5, fill: stageColor(entry.stage),
-              stroke: contaminated ? "#d98b6f" : "none", "stroke-width": contaminated ? 3 : 0,
-              class: `map-node${contaminated ? " map-alert" : ""}`,
-              tabindex: 0, role: "button",
+              cx: point.x.toFixed(1), cy: point.y.toFixed(1), r: contaminated ? 8 : 6.5, fill: color,
+              class: `map-node${contaminated ? " map-alert" : ""}`, tabindex: 0, role: "button",
               "aria-label": `${grow.name}, ${dateLabel(entry.date)}, ${entry.stage} check-in${contaminated ? ", possible contamination flagged" : ""}${entry.flushNumber ? `, flush ${entry.flushNumber}` : ""}`
             });
-            circle.addEventListener("click", () => showMapDetail(entry, timelineIndex));
+            nodeGroup.append(circle);
+            const node = { g: nodeGroup, entry, index, s, x: point.x, y: point.y, color, branch };
+            circle.addEventListener("click", () => { stopReplay(); applyMapReveal(mapUi.nodes.length - 1); selectMapNode(node); });
             circle.addEventListener("keydown", (event) => {
-              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); showMapDetail(entry, timelineIndex); }
+              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); stopReplay(); applyMapReveal(mapUi.nodes.length - 1); selectMapNode(node); }
             });
-            svg.append(circle);
+            circle.addEventListener("focus", () => focusGrow(group));
+            circle.addEventListener("blur", () => focusGrow(null));
+            group.append(nodeGroup);
+            branch.nodes.push(node);
+            mapUi.nodes[index] = node;
+          });
+          group.addEventListener("pointerenter", () => focusGrow(group));
+          group.addEventListener("pointerleave", () => focusGrow(null));
+          branchLayer.append(group);
+          mapUi.branches.push(branch);
+          if (!reduced) {
+            for (let p = 0; p < 2; p += 1) {
+              const pulse = svgEl("circle", { r: 2.4, class: "map-pulse" });
+              const duration = (4.5 + rand() * 2).toFixed(2);
+              const motion = svgEl("animateMotion", { dur: `${duration}s`, repeatCount: "indefinite", begin: `${(branchIndex * .7 + p * duration / 2).toFixed(2)}s`, rotate: "auto" });
+              const mpath = svgEl("mpath", { href: `#hypha-${branchIndex}` });
+              mpath.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", `#hypha-${branchIndex}`);
+              motion.append(mpath);
+              const fade = svgEl("animate", { attributeName: "opacity", values: "0;.95;.95;0", keyTimes: "0;.1;.8;1", dur: `${duration}s`, repeatCount: "indefinite", begin: motion.getAttribute("begin") });
+              pulse.append(motion, fade);
+              pulseLayer.append(pulse);
+            }
+          }
+        });
+        svg.append(branchLayer, pulseLayer);
+
+        // Hub
+        svg.append(svgEl("circle", { cx: MAP_HUB.x, cy: MAP_HUB.y, r: 26, class: "map-hub-glow" }));
+        svg.append(svgEl("circle", { cx: MAP_HUB.x, cy: MAP_HUB.y, r: 14, class: "map-hub" }));
+        // Zoom to fit the actual network (keeps a 5:3 frame) so small journals fill the map.
+        const box = branchLayer.getBBox();
+        const aspect = window.innerWidth < 560 ? 1.15 : 5 / 3;
+        let vw = Math.max(box.width + 70, 380), vh = Math.max(box.height + 70, 300);
+        if (vw / vh < aspect) vw = vh * aspect; else vh = vw / aspect;
+        const vx = box.x + box.width / 2 - vw / 2, vy = box.y + box.height / 2 - vh / 2;
+        svg.setAttribute("viewBox", `${vx.toFixed(1)} ${vy.toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`);
+        const harvests = state.entries.filter((entry) => hasHarvestRecord(entry) || Number(entry.freshYieldG) > 0).length;
+        const caption = svgEl("text", { x: (vx + 14).toFixed(1), y: (vy + vh - 14).toFixed(1), class: "map-caption" });
+        caption.textContent = `${days.length} check-in${days.length === 1 ? "" : "s"} · ${growsWithEntries.length} hypha${growsWithEntries.length === 1 ? "" : "e"} · ${harvests} harvest${harvests === 1 ? "" : "s"}`;
+        svg.append(caption);
+
+        // Measure branches, then draw them in.
+        mapUi.branches.forEach((branch) => {
+          branch.length = branch.path.getTotalLength ? branch.path.getTotalLength() : 600;
+          [branch.path, branch.glow].forEach((path) => {
+            path.style.strokeDasharray = `${branch.length.toFixed(1)}px`;
+            path.style.transition = "none";
+            path.style.strokeDashoffset = animate ? `${branch.length}px` : "0px";
           });
         });
-        svg.append(svgEl("circle", { cx: hub.x, cy: hub.y, r: 15, class: "map-hub" }));
-        const hubLabel = svgEl("text", { x: hub.x, y: hub.y + 35, class: "map-hub-label" });
-        hubLabel.textContent = "MYCELIUM"; svg.append(hubLabel);
-        const latestIndex = days.length - 1;
-        slider.value = String(latestIndex);
-        showMapDetail(days[latestIndex].entry, latestIndex);
+        if (animate) {
+          svg.classList.add("is-growing");
+          svg.getBoundingClientRect();
+          window.requestAnimationFrame(() => {
+            applyMapReveal(days.length - 1, true);
+            window.setTimeout(() => svg.classList.remove("is-growing"), 1800);
+          });
+        } else {
+          applyMapReveal(days.length - 1, false);
+        }
+        const latest = mapUi.nodes[days.length - 1];
+        slider.value = String(days.length - 1);
+        if (latest) selectMapNode(latest, false);
       }
       function daysSince(firstDate, date) {
         const first = new Date(`${firstDate}T12:00:00`).getTime();
@@ -1329,7 +1617,10 @@
             detail: `${dateLabel(entry.date)}${parts.length ? ` · ${parts.join(" + ")}` : ""}`,
             xp: entry.xpAwarded
           };
-        }).concat(academyFeedItems().map((item) => ({
+        }).concat(TROPHIES.filter(([id]) => state.trophies && state.trophies[id]).map(([id, title, , xp]) => ({
+          sort: `${String(state.trophies[id]).slice(0, 10)}|${state.trophies[id]}`, title: `Trophy · ${title}`,
+          detail: `${dateLabel(String(state.trophies[id]).slice(0, 10))} · trophy unlocked`, xp
+        }))).concat(academyFeedItems().map((item) => ({
           sort: `${item.at.slice(0, 10)}|${item.at}`, title: item.title,
           detail: `${dateLabel(item.at.slice(0, 10))} · ${item.detail}`, xp: item.xp
         }))).sort((a, b) => b.sort.localeCompare(a.sort)).slice(0, 10);
@@ -1345,16 +1636,71 @@
           item.append(title, detail, amount); feed.append(item);
         });
       }
+      function longestStreak() {
+        const times = uniqueCheckinTimes();
+        let best = times.length ? 1 : 0, run = best;
+        for (let index = 1; index < times.length; index += 1) {
+          run = times[index] - times[index - 1] <= STREAK_GRACE_MS ? run + 1 : 1;
+          best = Math.max(best, run);
+        }
+        return best;
+      }
+      function trophyProgress() {
+        const growsWithEntries = state.grows.filter((grow) => growEntries(grow.id).length);
+        const mostStages = Math.max(0, ...growsWithEntries.map((grow) => stagesReached(grow.id).size));
+        const fullCycle = state.grows.some((grow) => grow.archived && growEntries(grow.id).some((entry) => hasHarvestRecord(entry) || Number(entry.freshYieldG) > 0));
+        return {
+          "first-root": [Math.min(state.entries.length, 1), 1],
+          "stage-seeker": [Math.min(mostStages, 3), 3],
+          "pin-party": [state.entries.some((entry) => STAGES.indexOf(entry.stage) >= STAGES.indexOf("Fruiting") ||
+            (Array.isArray(entry.stageHistory) && entry.stageHistory.includes("Fruiting"))) ? 1 : 0, 1],
+          "week-warrior": [Math.min(longestStreak(), 7), 7],
+          "full-cycle": [fullCycle ? 1 : 0, 1],
+          "network": [Math.min(growsWithEntries.length, 3), 3],
+          "steady-keeper": [Math.min(state.entries.length, 30), 30],
+          "condition-keeper": [Math.min(state.entries.filter((entry) => Number.isFinite(entry.temperature) && Number.isFinite(entry.humidity)).length, 10), 10]
+        };
+      }
+      const trophyUi = { justUnlocked: new Set() };
+      function trophyXp() {
+        if (!state.trophies || typeof state.trophies !== "object") return 0;
+        return TROPHIES.reduce((sum, [id, , , xp]) => sum + (state.trophies[id] ? xp : 0), 0);
+      }
+      function updateTrophyUnlocks() {
+        const progress = trophyProgress();
+        if (!state.trophies || typeof state.trophies !== "object") state.trophies = {};
+        const fresh = TROPHIES.filter(([id]) => !state.trophies[id] && progress[id][0] >= progress[id][1]);
+        if (!fresh.length) return;
+        const levelBefore = levelForXp(totalXp());
+        const now = new Date().toISOString();
+        fresh.forEach(([id]) => { state.trophies[id] = now; trophyUi.justUnlocked.add(id); });
+        saveState();
+        const levelAfter = levelForXp(totalXp());
+        const names = fresh.map(([, title]) => title).join(", ");
+        const xp = fresh.reduce((sum, [, , , value]) => sum + value, 0);
+        window.setTimeout(() => showToast(`🏆 Trophy unlocked: ${names} · +${fmt(xp)} XP${levelAfter > levelBefore ? ` · Level up! You're now level ${levelAfter}.` : ""}`), 900);
+      }
       function renderTrophies() {
         const grid = $("#trophy-grid"); grid.replaceChildren();
-        TROPHIES.forEach(([id, title, icon]) => {
-          const item = document.createElement("article"); item.className = "trophy";
-          item.setAttribute("aria-label", `${title}: locked. Unlock rule awaits definition.`);
+        const progress = trophyProgress();
+        const unlockedCount = TROPHIES.filter(([id]) => state.trophies && state.trophies[id]).length;
+        $("#trophy-count").textContent = `${unlockedCount} of ${TROPHIES.length} unlocked`;
+        TROPHIES.forEach(([id, title, icon, xp, rule]) => {
+          const unlockedAt = state.trophies && state.trophies[id];
+          const [current, target] = progress[id];
+          const item = document.createElement("article");
+          item.className = `trophy${unlockedAt ? " unlocked" : ""}${trophyUi.justUnlocked.has(id) ? " just-unlocked" : ""}`;
+          item.setAttribute("aria-label", `${title}: ${unlockedAt ? `unlocked ${dateLabel(String(unlockedAt).slice(0, 10))}` : `locked, ${current} of ${target}`}. ${rule}. ${xp} XP.`);
           const symbol = document.createElement("span"); symbol.className = "trophy-icon"; symbol.setAttribute("aria-hidden", "true"); symbol.textContent = icon;
           const name = document.createElement("strong"); name.textContent = title;
-          const hint = document.createElement("small"); hint.textContent = "Locked · unlock rule awaits definition";
-          item.append(symbol, name, hint); grid.append(item);
+          const hint = document.createElement("small"); hint.textContent = rule;
+          const track = document.createElement("span"); track.className = "trophy-track"; track.setAttribute("aria-hidden", "true");
+          const fill = document.createElement("span"); fill.style.width = `${unlockedAt ? 100 : current / target * 100}%`; track.append(fill);
+          const meta = document.createElement("small"); meta.className = "trophy-meta";
+          meta.textContent = unlockedAt ? `✓ ${dateLabel(String(unlockedAt).slice(0, 10))} · +${fmt(xp)} XP` : `${current} / ${target} · ${fmt(xp)} XP`;
+          item.append(symbol, name, hint, track, meta); grid.append(item);
         });
+        window.setTimeout(() => trophyUi.justUnlocked.clear(), 1200);
       }
       // ---------- First Grow Academy ----------
       // Prep steps are self-checked checklists (small XP). Milestones are verified
@@ -1370,15 +1716,18 @@
         colonization: (ctx) => ({ ok: ctx.maxStage >= STAGE_ORDER("Colonization"), label: "A check-in logged at the Colonization stage" }),
         age14: (ctx) => ({ ok: ctx.age >= 14, label: `At least 14 days since inoculation (day ${Math.max(0, ctx.age)})` }),
         clean: (ctx) => ({ ok: !ctx.contaminated, label: "No “Possible contamination” flag on the latest check-in" }),
-        harvest: (ctx) => ({ ok: ctx.harvested, label: "A harvest recorded (Harvest stage or a yield logged)" })
+        harvest: (ctx) => ({ ok: ctx.harvested, label: "A harvest recorded (Harvest stage or a yield logged)" }),
+        fruiting: (ctx) => ({ ok: ctx.maxStage >= STAGE_ORDER("Fruiting"), label: "A check-in logged at the Fruiting stage" }),
+        fruiting3: (ctx) => ({ ok: ctx.fruitingDays >= 3, label: `Fruiting-stage check-ins on 3 different days (${Math.min(ctx.fruitingDays, 3)}/3)` }),
+        harvestYield: (ctx) => ({ ok: ctx.entries.some((entry) => Number(entry.freshYieldG) > 0), label: "A harvest check-in with a fresh yield in grams" }),
+        flush2: (ctx) => ({ ok: ctx.entries.some((entry) => Number(entry.flushNumber) >= 2 && Number(entry.freshYieldG) > 0), label: "Flush 2 logged with a fresh yield" })
       };
       const QUESTS = [
         {
           id: "brf", icon: "◐", title: "Brown rice flour cakes", subtitle: "PF Tek · the classic first grow",
           level: "Beginner", time: "2–4 weeks to colonize", species: "Blue oyster", defaultName: "BRF cakes · batch 1",
-          video: "https://www.youtube.com/watch?v=IyJs3bDee64", videoLabel: "Watch the BRF cake lesson",
           blurb: "Mix a simple flour-and-vermiculite cake in small jars, sterilize it, inoculate it, and watch it turn white. Cheap, forgiving, and the best way to learn clean technique.",
-          completeTitle: "BRF Cultivator", completeCopy: "Your cakes are fully colonized. They're ready for fruiting conditions; log that next stage in your grow to earn the harvest bonus.",
+          completeTitle: "BRF Cultivator", completeCopy: "Your cakes are fully colonized. Head to the “Fruit your first flush” quest to birth them and grow your first mushrooms.",
           steps: [
             { id: "kit", phase: "Prep", title: "Gather your kit", time: "15 min", xp: 50,
               intro: "Get everything within reach before you start. Clean technique is easier when you aren't hunting for tools.",
@@ -1410,18 +1759,14 @@
               warning: "Green, blue, black, pink or slimy patches are contamination. Don't open the jar indoors; mark the check-in as “Possible contamination” and dispose of it sealed." },
             { id: "full", phase: "Colonize", title: "Fully colonized cakes", time: "week 2–4", xp: 300, kind: "milestone", final: true, verify: ["linked", "colonization", "age14", "clean"],
               intro: "A finished cake is solid white from top to bottom with no off colours. Give it about a week more after it looks done so the mycelium fully consolidates.",
-              checklist: ["The cake is white throughout, including the bottom", "No off colours, odd smells, or wet patches"] },
-            { id: "harvest", phase: "Bonus", title: "Bonus: first harvest", time: "next lesson", xp: 500, kind: "milestone", bonus: true, verify: ["linked", "harvest"],
-              intro: "Fruiting comes after colonization. When you harvest, log it at the Harvest stage with your fresh yield to earn this bonus.",
-              checklist: ["I harvested mushrooms from this batch"] }
+              checklist: ["The cake is white throughout, including the bottom", "No off colours, odd smells, or wet patches"] }
           ]
         },
         {
           id: "popcorn", icon: "◇", title: "Popcorn grain spawn", subtitle: "Grain spawn · the next step up",
           level: "Intermediate", time: "2–3 weeks to colonize", species: "Blue oyster", defaultName: "Popcorn spawn · batch 1",
-          video: "https://www.youtube.com/watch?v=SBuBQKUWyo4", videoLabel: "Watch the grain spawn lesson",
           blurb: "Turn plain popcorn kernels into grain spawn: hydrate, dry, sterilize, inoculate, and shake. Popcorn's big, tough kernels are hard to overcook, which makes it a great first grain.",
-          completeTitle: "Grain Spawn Maker", completeCopy: "Your spawn is fully colonized. It's ready to inoculate more grain or a bulk substrate; record that harvest later for the bonus.",
+          completeTitle: "Grain Spawn Maker", completeCopy: "Your spawn is fully colonized and ready to inoculate more grain or a bulk substrate. Record the harvest from it later for the bonus.",
           steps: [
             { id: "kit", phase: "Prep", title: "Gather your kit", time: "15 min", xp: 50,
               intro: "Grain spawn needs a little more gear than BRF cakes, mainly for drying the kernels properly.",
@@ -1463,6 +1808,39 @@
             { id: "harvest", phase: "Bonus", title: "Bonus: first harvest", time: "after spawning to bulk", xp: 500, kind: "milestone", bonus: true, verify: ["linked", "harvest"],
               intro: "Spawn your grain into a bulk substrate and fruit it. Log the harvest with your fresh yield to earn this bonus.",
               checklist: ["I harvested mushrooms grown from this spawn"] }
+          ]
+        },
+        {
+          id: "fruiting", icon: "♧", title: "Fruit your first flush", subtitle: "Fruiting · from white cakes to mushrooms",
+          level: "Next step", time: "1–3 weeks to harvest", species: "Blue oyster", defaultName: "",
+          blurb: "Take a fully colonized grow into fruiting conditions: build a simple chamber, birth your cakes, dial in humidity and fresh air, then harvest and go again for a second flush.",
+          completeTitle: "Harvest Master", completeCopy: "You took a grow from spore to harvest. Rehydrate and go for a second flush, or start a new batch.",
+          steps: [
+            { id: "link", phase: "Choose", title: "Pick a colonized grow", time: "1 min", xp: 50, kind: "inoculate", linkOnly: true,
+              intro: "Fruiting picks up where colonization ends. Choose the grow you're taking into fruiting; it must already have a Colonization-stage check-in.",
+              checklist: ["The cakes or spawn are fully white with no off colours", "They've had about a week to consolidate after looking finished"],
+              tip: "Finish the BRF cakes or popcorn spawn quest first if you don't have a colonized grow yet." },
+            { id: "chamber", phase: "Prep", title: "Build a fruiting chamber", time: "45 min", xp: 75,
+              intro: "A shotgun fruiting chamber is a clear tote full of small holes sitting on a damp perlite bed. The perlite holds humidity; the holes let fresh air move through.",
+              checklist: ["Clear plastic tote with a lid, cleaned with soap and water", "Drill 6 mm (¼ in) holes about 5 cm (2 in) apart on all sides, the bottom, and the lid", "Raise the tote on blocks so air can enter from below", "Rinse and soak perlite, drain until it stops dripping, and spread a 5–10 cm layer", "Prepare a small square of foil or a jar lid for each cake to sit on"],
+              tip: "Perlite should be wet but not sitting in water. Re-wet it whenever it starts to look pale and dry." },
+            { id: "birth", phase: "Birth", title: "Birth, dunk, and roll", time: "12–24 h", xp: 100, timer: { minutes: 720, label: "Cold-water dunk" },
+              intro: "Birthing means taking the cakes out of their jars. A long cold soak rehydrates them for the work of fruiting.",
+              checklist: ["With clean hands, open the jar and scrape off the dry vermiculite layer", "Tip the cake out in one piece", "Rinse each cake gently under cold water", "Submerge the cakes in cold water for 12–24 hours, weighted so they stay under", "Drain, roll each cake in dry vermiculite to hold moisture, and place it on its foil square in the chamber"],
+              warning: "Grain spawn isn't birthed like this: it gets mixed into a pasteurized bulk substrate instead and needs to colonize again before fruiting." },
+            { id: "conditions", phase: "Fruit", title: "Dial in fruiting conditions", time: "daily", xp: 150, kind: "milestone", verify: ["linked", "fruiting3", "clean"],
+              intro: "Mushrooms want high humidity, fresh air, and some light. Log daily check-ins at the Fruiting stage with temperature and humidity so you can learn what works.",
+              checklist: ["Mist the chamber walls (not the cakes directly) when droplets disappear", "Fan the lid 2–3 times a day for fresh air exchange", "Indirect light around 12 hours a day; no direct sun", "Keep humidity at 90% or higher and the room around 20–24 °C (68–75 °F)"],
+              tip: "Long, thin stems and small caps usually mean they want more fresh air." },
+            { id: "pins", phase: "Fruit", title: "Pins appear", time: "5–14 days", xp: 200, kind: "milestone", verify: ["linked", "fruiting", "clean"],
+              intro: "Pins are tiny baby mushrooms forming on the cake. Once they show, avoid misting them directly and keep conditions steady.",
+              checklist: ["I can see small pins forming on the cakes"] },
+            { id: "harvest", phase: "Harvest", title: "First harvest", time: "a few days after pinning", xp: 300, kind: "milestone", final: true, verify: ["linked", "harvestYield"],
+              intro: "Harvest just before the caps fully flatten (or before the veil breaks, for veiled species). Twist and pull each cluster at the base, then log a Harvest check-in with flush 1 and the fresh weight.",
+              checklist: ["Harvested before the caps fully flattened", "Weighed the fresh harvest", "Logged a Harvest-stage check-in with flush number 1 and the yield"] },
+            { id: "second", phase: "Bonus", title: "Bonus: second flush", time: "1–2 weeks later", xp: 400, kind: "milestone", bonus: true, verify: ["linked", "flush2"],
+              intro: "Soak the cakes in cold water again for 12–24 hours to rehydrate them, return them to the chamber, and repeat. Log flush 2 with its yield.",
+              checklist: ["Rehydrated the cakes with another cold soak", "Harvested and logged flush 2"] }
           ]
         }
       ];
@@ -1514,6 +1892,7 @@
         return {
           grow, entries, maxStage, age,
           days: new Set(entries.map((entry) => entry.date)),
+          fruitingDays: new Set(entries.filter((entry) => STAGE_ORDER(entry.stage) >= STAGE_ORDER("Fruiting")).map((entry) => entry.date)).size,
           contaminated: !!latest && latest.appearance === "Possible contamination",
           harvested: stages.has("Harvest") || stages.has("Complete") || entries.some((entry) => hasHarvestRecord(entry) || Number(entry.freshYieldG) > 0)
         };
@@ -1604,7 +1983,7 @@
         view.replaceChildren(...[
           el("div", { class: "quest-head" },
             el("div", {}, el("h3", { text: quest.title }), el("p", { text: quest.blurb })),
-            el("a", { class: "lesson-link", href: quest.video, target: "_blank", rel: "noopener noreferrer", text: `▶ ${quest.videoLabel} ↗` })),
+            el("span", { class: "quest-icon", "aria-hidden": "true", text: quest.icon })),
           el("div", { class: "progress-track", role: "progressbar", "aria-label": `${quest.title} progress`, "aria-valuemin": "0", "aria-valuemax": String(progress.total), "aria-valuenow": String(progress.done) }, fill),
           el("div", { class: "quest-progress-copy" },
             el("span", { text: `${progress.done} of ${progress.total} steps` }),
@@ -1640,7 +2019,7 @@
         const button = el("button", { class: "button", type: "button" });
         const note = el("span", { class: "form-note", role: "status" });
         const verify = (step.verify || []).map((rule) => verifyRules[rule](ctx));
-        const linkForm = step.kind === "inoculate" && status !== "done" ? renderLinkGrow(quest, ctx) : null;
+        const linkForm = step.kind === "inoculate" && status !== "done" ? renderLinkGrow(quest, ctx, step) : null;
         const refresh = () => {
           const allChecked = step.checklist.every((_, i) => checks.has(i));
           const verified = verify.every((result) => result.ok);
@@ -1651,7 +2030,7 @@
           note.textContent = status === "locked" ? "Finish the steps above to unlock this one."
             : !verified ? "Your grow log hasn't confirmed this yet. Keep checking in."
               : !allChecked ? `${step.checklist.length - [...checks].filter((i) => i < step.checklist.length).length} item(s) left to tick.`
-                : needsLink ? "Name the grow you're linking." : "Ready when you are.";
+                : needsLink ? (step.linkOnly ? "Choose the grow you're fruiting." : "Name the grow you're linking.") : "Ready when you are.";
         };
         body.append(el("ul", { class: "checklist" }, step.checklist.map((text, i) => {
           const box = el("input", { type: "checkbox", checked: checks.has(i), disabled: status !== "open" });
@@ -1735,11 +2114,13 @@
           if (!running) { window.clearInterval(academyUi.timerInterval); academyUi.timerInterval = null; }
         }, 1000);
       }
-      function renderLinkGrow(quest, ctx) {
+      function renderLinkGrow(quest, ctx, step) {
         if (ctx.grow) return null;
-        const active = state.grows.filter((grow) => !grow.archived);
+        const linkOnly = !!step.linkOnly;
+        const active = state.grows.filter((grow) => !grow.archived &&
+          (!linkOnly || Math.max(-1, ...[...stagesReached(grow.id)].map(STAGE_ORDER)) >= STAGE_ORDER("Colonization")));
         const select = el("select", { "aria-label": "Grow to link" },
-          el("option", { value: "", text: "Create a new grow" }),
+          linkOnly ? el("option", { value: "", text: active.length ? "Choose a colonized grow" : "No colonized grows yet" }) : el("option", { value: "", text: "Create a new grow" }),
           active.map((grow) => el("option", { value: grow.id, text: `${grow.name} · ${grow.species}` })));
         const name = el("input", { maxLength: 60, value: quest.defaultName, "aria-label": "New grow name" });
         const species = el("input", { maxLength: 60, value: quest.species, "aria-label": "Species" });
@@ -1751,14 +2132,16 @@
         };
         [select, name, species].forEach((node) => node.addEventListener("input", changed));
         select.addEventListener("change", changed);
-        const node = el("div", {},
-          el("p", { text: "Link this batch to your grow log. It starts at Inoculation with today's date." }),
-          el("label", { class: "field" }, "Grow", select),
-          el("div", { class: "link-grow" }, el("label", { class: "field" }, "Grow name", name), el("label", { class: "field" }, "Species", species)));
+        const node = linkOnly
+          ? el("div", {}, el("label", { class: "field" }, "Colonized grow", select))
+          : el("div", {},
+            el("p", { text: "Link this batch to your grow log. It starts at Inoculation with today's date." }),
+            el("label", { class: "field" }, "Grow", select),
+            el("div", { class: "link-grow" }, el("label", { class: "field" }, "Grow name", name), el("label", { class: "field" }, "Species", species)));
         return {
           node,
           onChange: (fn) => listeners.push(fn),
-          ready: () => !!select.value || (!!name.value.trim() && !!species.value.trim()),
+          ready: () => !!select.value || (!linkOnly && !!name.value.trim() && !!species.value.trim()),
           link: () => {
             let grow = select.value ? growById(select.value) : findGrow(name.value, species.value);
             if (!grow) grow = addGrow(name.value, species.value, state.grows, todayKey());
@@ -1860,7 +2243,7 @@
         if (anyTimer) ensureTimerTick();
       }
       function renderAll() {
-        renderAcademy(); renderStats(); renderGrowList(); renderMapKey(); renderMap(); renderStories(); renderFeed(); renderTrophies(); renderComparison();
+        updateTrophyUnlocks(); renderAcademy(); renderStats(); renderGrowList(); renderMapKey(); renderMap(); renderStories(); renderFeed(); renderTrophies(); renderComparison();
       }
       function findGrow(name, species, grows = state.grows) {
         return grows.find((grow) => norm(grow.name) === norm(name) && norm(grow.species) === norm(species));
@@ -2268,9 +2651,13 @@
         setPhotoPreview("");
       });
       $("#map-timeline-slider").addEventListener("input", (event) => {
-        const selected = orderedEntries()[Number(event.currentTarget.value)];
-        if (selected) showMapDetail(selected.entry, Number(event.currentTarget.value));
+        const index = Number(event.currentTarget.value);
+        stopReplay();
+        applyMapReveal(index, true);
+        const node = mapUi.nodes[index];
+        if (node) selectMapNode(node, false);
       });
+      $("#map-replay").addEventListener("click", () => { if (mapUi.replayTimer) stopReplay(); else startReplay(); });
       $("#compare-button").addEventListener("click", renderComparison);
       $("#compare-grow-a").addEventListener("change", renderComparison);
       $("#compare-grow-b").addEventListener("change", renderComparison);
