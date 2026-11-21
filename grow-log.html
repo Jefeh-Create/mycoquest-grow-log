@@ -491,13 +491,120 @@
       let state = loadState();
       let toastTimer;
 
+      // Photos live in IndexedDB (large quota); localStorage keeps only the journal text.
+      // In memory, entries still carry photoDataUrl so rendering, export and import are unchanged.
+      // A photo is only stripped from localStorage after IndexedDB confirms it was written.
+      const PHOTO_DB_NAME = "mycoquest-grow-log-photos";
+      const PHOTO_STORE = "photos";
+      const savedPhotos = new Map(); // entry id -> data URL confirmed in IndexedDB
+      let photoDbPromise = null;
+      let photosReady = false;
+      let photoSyncRunning = false;
+      let photoSyncAgain = false;
+
+      function photoDb() {
+        if (!photoDbPromise) {
+          photoDbPromise = new Promise((resolve, reject) => {
+            if (!("indexedDB" in window)) { reject(new Error("IndexedDB unavailable")); return; }
+            const request = indexedDB.open(PHOTO_DB_NAME, 1);
+            request.onupgradeneeded = () => request.result.createObjectStore(PHOTO_STORE);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+            request.onblocked = () => reject(new Error("Photo storage is blocked by another open tab."));
+          });
+          photoDbPromise.catch(() => {});
+        }
+        return photoDbPromise;
+      }
+      function photoTx(mode, work) {
+        return photoDb().then((db) => new Promise((resolve, reject) => {
+          const tx = db.transaction(PHOTO_STORE, mode);
+          const result = work(tx.objectStore(PHOTO_STORE));
+          tx.oncomplete = () => resolve(result && "result" in result ? result.result : undefined);
+          tx.onerror = () => reject(tx.error);
+          tx.onabort = () => reject(tx.error || new Error("Photo storage transaction aborted."));
+        }));
+      }
+      function serializeState() {
+        return JSON.stringify({
+          ...state,
+          entries: state.entries.map((entry) => {
+            if (entry.photoDataUrl) {
+              return savedPhotos.get(entry.id) === entry.photoDataUrl
+                ? { ...entry, photoDataUrl: "", photoStored: true }
+                : { ...entry, photoStored: false };
+            }
+            return entry.photoStored && !photosReady ? entry : { ...entry, photoStored: !!entry.photoStored };
+          })
+        });
+      }
+      function writeLocalState() {
+        localStorage.setItem(STORAGE_KEY, serializeState());
+      }
+      async function syncPhotos() {
+        if (!photosReady) return;
+        if (photoSyncRunning) { photoSyncAgain = true; return; }
+        photoSyncRunning = true;
+        try {
+          do {
+            photoSyncAgain = false;
+            const wanted = new Map(state.entries.filter((entry) => entry.id && entry.photoDataUrl).map((entry) => [entry.id, entry.photoDataUrl]));
+            const keep = new Set(state.entries.filter((entry) => entry.id && (entry.photoDataUrl || entry.photoStored)).map((entry) => entry.id));
+            const toPut = [...wanted].filter(([id, url]) => savedPhotos.get(id) !== url);
+            const toDelete = [...savedPhotos.keys()].filter((id) => !keep.has(id));
+            if (!toPut.length && !toDelete.length) continue;
+            await photoTx("readwrite", (store) => {
+              toPut.forEach(([id, url]) => store.put(url, id));
+              toDelete.forEach((id) => store.delete(id));
+            });
+            toPut.forEach(([id, url]) => savedPhotos.set(id, url));
+            toDelete.forEach((id) => savedPhotos.delete(id));
+            writeLocalState(); // now safe to drop the confirmed photos from localStorage
+          } while (photoSyncAgain);
+        } catch (error) {
+          $("#storage-note").textContent = "Photos could not be saved to this browser's photo storage. Export a backup now to keep them.";
+        } finally {
+          photoSyncRunning = false;
+        }
+      }
+      async function loadPhotos() {
+        try {
+          const [keys, values] = await Promise.all([
+            photoTx("readonly", (store) => store.getAllKeys()),
+            photoTx("readonly", (store) => store.getAll())
+          ]);
+          const stored = new Map(keys.map((key, index) => [key, values[index]]));
+          let attached = false;
+          state.entries.forEach((entry) => {
+            const url = stored.get(entry.id);
+            if (!url) return;
+            savedPhotos.set(entry.id, url);
+            if (!entry.photoDataUrl && entry.photoStored) { entry.photoDataUrl = url; attached = true; }
+          });
+          // Remember stored photos that no entry references so the next sync can clean them up.
+          stored.forEach((url, id) => { if (!savedPhotos.has(id)) savedPhotos.set(id, url); });
+          photosReady = true;
+          if (attached) renderAll();
+          try { writeLocalState(); } catch (error) { /* syncPhotos below retries */ }
+          if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+          syncPhotos(); // moves any photos still inline in localStorage into IndexedDB
+        } catch (error) {
+          // No IndexedDB (e.g. some private modes): photos stay inline in localStorage as before.
+          if (state.entries.some((entry) => entry.photoStored && !entry.photoDataUrl)) {
+            $("#storage-note").textContent = "Photo storage could not be opened, so saved photos are not shown right now. Your check-ins are safe.";
+          }
+        }
+      }
+
       function saveState() {
         try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          writeLocalState();
           $("#storage-note").textContent = "";
+          syncPhotos();
           return true;
         } catch (error) {
           $("#storage-note").textContent = "Browser storage is unavailable or full. Export a backup now to keep your changes.";
+          syncPhotos(); // moving photos out of localStorage may free enough space for the next save
           return false;
         }
       }
@@ -1568,6 +1675,7 @@
       $("#reset-button").addEventListener("click", resetApp);
       $("#grow-start-date").value = todayKey();
       renderAll();
+      loadPhotos();
     })();
   </script>
 </body>

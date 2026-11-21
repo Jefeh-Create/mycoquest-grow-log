@@ -8,6 +8,8 @@ Single-file app (grow-log.html), plain HTML/CSS/JS, localStorage only.
 - Grow stage and recipe posts still use the pending/approve/reject flow
 - Export format: { app: "MycoQuest grow log", version: 2, entries, recipes }
   must stay importable by the storefront demo
+- Photos are stored in IndexedDB (`mycoquest-grow-log-photos`), keyed by entry id;
+  localStorage holds only journal text. Exports still include photos inline.
 
 ## Next up
 - [x] Move `const $` above `let state = load()` (crash on bad saved data)
