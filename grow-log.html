@@ -125,6 +125,8 @@
     .button:hover { background: #becb9d; }
     .button.secondary { background: transparent; color: var(--ink); border-color: var(--line); }
     .button.secondary:hover { border-color: var(--moss); }
+    .button:disabled, .button:disabled:hover { opacity: .42; cursor: not-allowed; background: var(--moss); }
+    .button.secondary:disabled { background: transparent; border-color: var(--line); }
     .button.small { min-height: 34px; padding: 6px 10px; font-size: .76rem; }
     .form-actions { margin-top: 13px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
     .form-note, .message { color: var(--muted); font-size: .72rem; margin: 10px 0 0; min-height: 1.2em; }
@@ -222,6 +224,85 @@
     .toast { position: fixed; right: 20px; bottom: 20px; z-index: 12; max-width: min(400px, calc(100% - 40px)); padding: 13px 16px; border: 1px solid rgba(169,185,134,.42); border-radius: 12px; background: #292b21; box-shadow: 0 12px 34px #0007; font-size: .83rem; }
     [hidden] { display: none !important; }
 
+    /* ---------- First Grow Academy ---------- */
+    .academy-rank { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px; padding: 14px 18px; margin-bottom: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(120deg, rgba(100,115,74,.22), rgba(32,31,25,.9) 60%); }
+    .rank-badge { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 14px; border: 1px solid rgba(226,189,120,.45); background: rgba(226,189,120,.1); color: var(--gold); font-size: 1.3rem; }
+    .rank-copy strong { display: block; font-family: Georgia, serif; font-weight: 500; font-size: 1.15rem; }
+    .rank-copy small { color: var(--muted); font-size: .74rem; }
+    .rank-copy .progress-track { margin-top: 8px; height: 6px; }
+    .rank-xp { color: var(--gold); font-weight: 760; font-size: .9rem; white-space: nowrap; }
+    .quest-picker { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .quest-card { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: center; width: 100%; padding: 16px; text-align: left; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); cursor: pointer; transition: border-color .2s, transform .2s; }
+    .quest-card:hover { border-color: rgba(169,185,134,.5); }
+    .quest-card[aria-selected="true"] { border-color: var(--moss); background: linear-gradient(160deg, rgba(100,115,74,.25), var(--surface) 70%); }
+    .quest-ring { --p: 0; width: 58px; height: 58px; display: grid; place-items: center; border-radius: 50%; background: conic-gradient(var(--moss) calc(var(--p) * 1%), #3a392f 0); }
+    .quest-ring span { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: var(--surface); font-size: .72rem; font-weight: 760; }
+    .quest-card strong { display: block; font-size: .98rem; }
+    .quest-card small { display: block; color: var(--muted); font-size: .72rem; }
+    .quest-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+    .chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border: 1px solid var(--line); border-radius: 99px; color: var(--muted); font-size: .66rem; white-space: nowrap; }
+    .chip.xp { border-color: rgba(226,189,120,.4); color: var(--gold); }
+    .chip.done { border-color: rgba(169,185,134,.5); color: var(--moss); }
+    .quest-head { display: flex; justify-content: space-between; align-items: start; gap: 14px; flex-wrap: wrap; }
+    .quest-head h3 { margin: 0; }
+    .quest-head p { margin: 4px 0 0; color: var(--muted); font-size: .8rem; max-width: 560px; }
+    .lesson-link { display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); font-size: .78rem; text-decoration: none; white-space: nowrap; }
+    .lesson-link:hover { border-color: var(--moss); }
+    .quest-progress-copy { display: flex; justify-content: space-between; gap: 10px; margin-top: 12px; color: var(--muted); font-size: .74rem; }
+    .quest-alert { margin-top: 14px; padding: 12px 14px; border: 1px solid rgba(217,139,111,.55); border-radius: 12px; background: rgba(217,139,111,.1); font-size: .8rem; }
+    .quest-alert strong { color: var(--coral); }
+    .quest-complete { margin-top: 14px; padding: 14px; border: 1px solid rgba(226,189,120,.5); border-radius: 12px; background: rgba(226,189,120,.08); font-size: .82rem; }
+    .quest-complete strong { color: var(--gold); }
+    .step-list { display: grid; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; counter-reset: step; }
+    .step { border: 1px solid var(--line); border-radius: 13px; background: rgba(23,24,18,.55); }
+    .step.is-current { border-color: rgba(169,185,134,.55); }
+    .step.is-done { opacity: .82; }
+    .step summary { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 12px 14px; cursor: pointer; list-style: none; }
+    .step summary::-webkit-details-marker { display: none; }
+    .step-dot { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); color: var(--muted); font-size: .74rem; font-weight: 760; }
+    .is-current .step-dot { border-color: var(--moss); color: var(--moss); box-shadow: 0 0 0 4px rgba(169,185,134,.12); }
+    .is-done .step-dot { background: var(--moss); border-color: var(--moss); color: #1b1d15; }
+    .is-locked .step-dot { opacity: .6; }
+    .step-title strong { display: block; font-size: .88rem; }
+    .step-title small { color: var(--muted); font-size: .7rem; }
+    .step-body { padding: 0 14px 16px 56px; font-size: .82rem; }
+    .step-body > p { color: var(--muted); margin: 0 0 12px; }
+    .checklist { display: grid; gap: 6px; margin: 0 0 12px; padding: 0; list-style: none; }
+    .checklist label { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
+    .checklist input { width: 20px; height: 20px; min-height: 0; margin: 1px 0 0; padding: 0; accent-color: var(--moss); }
+    .checklist input:checked + span { color: var(--muted); text-decoration: line-through; text-decoration-color: rgba(169,185,134,.6); }
+    .callout { margin: 0 0 10px; padding: 10px 12px; border-left: 3px solid var(--blue); border-radius: 0 10px 10px 0; background: rgba(141,180,177,.08); font-size: .78rem; }
+    .callout.warn { border-left-color: var(--coral); background: rgba(217,139,111,.08); }
+    .callout b { display: block; margin-bottom: 2px; font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; }
+    .jar-calc { margin: 0 0 12px; padding: 12px; border: 1px dashed rgba(169,185,134,.4); border-radius: 12px; }
+    .jar-calc label { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: .76rem; }
+    .jar-calc input { width: 90px; }
+    .jar-calc table { width: 100%; margin-top: 10px; border-collapse: collapse; font-size: .78rem; }
+    .jar-calc td { padding: 5px 0; border-bottom: 1px solid var(--line); }
+    .jar-calc td:last-child { text-align: right; color: var(--gold); font-variant-numeric: tabular-nums; }
+    .step-timer { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; }
+    .step-timer output { font-variant-numeric: tabular-nums; font-weight: 760; font-size: 1.05rem; min-width: 84px; }
+    .step-timer small { color: var(--muted); font-size: .72rem; flex: 1 1 140px; }
+    .step-timer.finished output { color: var(--moss); }
+    .verify-list { display: grid; gap: 6px; margin: 0 0 12px; padding: 0; list-style: none; }
+    .verify-list li { display: flex; gap: 8px; align-items: start; font-size: .78rem; color: var(--muted); }
+    .verify-list li::before { content: "○"; color: var(--muted); }
+    .verify-list li.ok { color: var(--ink); }
+    .verify-list li.ok::before { content: "✓"; color: var(--moss); font-weight: 760; }
+    .link-grow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 12px; }
+    .step-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .step-actions .form-note { margin: 0; }
+    .step.just-done { animation: step-pop .6s ease-out; }
+    @keyframes step-pop { 0% { box-shadow: 0 0 0 0 rgba(226,189,120,.55); } 100% { box-shadow: 0 0 0 14px rgba(226,189,120,0); } }
+    @media (max-width: 820px) { .quest-picker { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) {
+      .academy-rank { grid-template-columns: auto minmax(0, 1fr); padding: 12px 14px; }
+      .rank-xp { grid-column: 1 / -1; }
+      .step-body { padding: 0 12px 14px; }
+      .link-grow { grid-template-columns: 1fr; }
+      .step-actions .button { flex: 1 1 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) { .step.just-done { animation: none; } }
     @media (max-width: 820px) {
       .hero { grid-template-columns: 1fr; gap: 18px; }
       .hero-aside { max-width: 520px; }
@@ -293,7 +374,7 @@
         <span class="brand-mark" aria-hidden="true">✳</span><span>MYCOQUEST <span style="color:var(--muted);font-weight:500">/ GROW LOG</span></span>
       </a>
       <nav class="nav" aria-label="Main navigation">
-        <a href="#grows">Grows</a><a href="#map">Mycelial map</a><a href="#stories">Stories</a><a href="#trophies">Trophies</a>
+        <a href="#grows">Grows</a><a href="#academy">Academy</a><a href="#map">Mycelial map</a><a href="#stories">Stories</a><a href="#trophies">Trophies</a>
       </nav>
       <div class="level-pill"><span id="top-level">Level 1</span><span class="mini-track" aria-hidden="true"><span id="top-progress"></span></span></div>
     </div>
@@ -379,6 +460,16 @@
         </form>
       </div>
     </dialog>
+
+    <section class="section" id="academy" aria-labelledby="academy-title">
+      <div class="section-heading">
+        <div><span class="eyebrow">First grow academy</span><h2 id="academy-title">Learn by growing</h2></div>
+        <p>Step-by-step quests for your first grows. Prep steps earn XP as you tick them off; the big rewards unlock only when your grow log shows real progress.</p>
+      </div>
+      <div class="academy-rank" id="academy-rank"></div>
+      <div class="quest-picker" id="quest-picker" role="tablist" aria-label="Academy quests"></div>
+      <article class="panel" id="quest-view" role="tabpanel"></article>
+    </section>
 
     <section class="section" id="map" aria-labelledby="map-title">
       <div class="section-heading">
@@ -636,7 +727,7 @@
         for (let current = 1; current < level; current += 1) total += levelUpCost(current);
         return total;
       }
-      function totalXp() { return state.entries.reduce((sum, entry) => sum + (entry.xpAwarded || 0), 0); }
+      function totalXp() { return state.entries.reduce((sum, entry) => sum + (entry.xpAwarded || 0), 0) + academyXp(); }
       function dateDaysBefore(date, amount) {
         const day = new Date(`${date}T12:00:00`);
         day.setDate(day.getDate() - amount);
@@ -1223,17 +1314,8 @@
       }
       function renderFeed() {
         const feed = $("#xp-feed"); feed.replaceChildren();
-        const rewarded = [...state.entries].filter((entry) => entry.xpAwarded > 0)
-          .sort((a, b) => b.date.localeCompare(a.date) || String(b.createdAt).localeCompare(String(a.createdAt))).slice(0, 10);
-        if (!rewarded.length) {
-          feed.append(Object.assign(document.createElement("p"), { className: "empty", textContent: "Your first XP will show up after your first check-in." }));
-          return;
-        }
-        rewarded.forEach((entry) => {
+        const items = [...state.entries].filter((entry) => entry.xpAwarded > 0).map((entry) => {
           const grow = growById(entry.growId);
-          const item = document.createElement("div"); item.className = "feed-item";
-          const title = document.createElement("strong"); title.textContent = `${grow ? grow.name : entry.growName} · ${entry.stage}`;
-          const detail = document.createElement("small");
           const parts = [];
           if (entry.firstGrowXp) parts.push("first grow");
           if (entry.stageXp) parts.push("new stage");
@@ -1241,8 +1323,25 @@
           if (entry.dailyXp) parts.push("daily check-in");
           if (entry.streakXp) parts.push("48-hour streak");
           if (entry.legacyXp) parts.push("imported grow XP");
-          detail.textContent = `${dateLabel(entry.date)}${parts.length ? ` · ${parts.join(" + ")}` : ""}`;
-          const amount = document.createElement("span"); amount.className = "feed-xp"; amount.textContent = `+${fmt(entry.xpAwarded)} demo-only XP`;
+          return {
+            sort: `${entry.date}|${entry.createdAt || ""}`,
+            title: `${grow ? grow.name : entry.growName} · ${entry.stage}`,
+            detail: `${dateLabel(entry.date)}${parts.length ? ` · ${parts.join(" + ")}` : ""}`,
+            xp: entry.xpAwarded
+          };
+        }).concat(academyFeedItems().map((item) => ({
+          sort: `${item.at.slice(0, 10)}|${item.at}`, title: item.title,
+          detail: `${dateLabel(item.at.slice(0, 10))} · ${item.detail}`, xp: item.xp
+        }))).sort((a, b) => b.sort.localeCompare(a.sort)).slice(0, 10);
+        if (!items.length) {
+          feed.append(Object.assign(document.createElement("p"), { className: "empty", textContent: "Your first XP will show up after your first check-in or academy step." }));
+          return;
+        }
+        items.forEach((entry) => {
+          const item = document.createElement("div"); item.className = "feed-item";
+          const title = document.createElement("strong"); title.textContent = entry.title;
+          const detail = document.createElement("small"); detail.textContent = entry.detail;
+          const amount = document.createElement("span"); amount.className = "feed-xp"; amount.textContent = `+${fmt(entry.xp)} demo-only XP`;
           item.append(title, detail, amount); feed.append(item);
         });
       }
@@ -1257,8 +1356,511 @@
           item.append(symbol, name, hint); grid.append(item);
         });
       }
+      // ---------- First Grow Academy ----------
+      // Prep steps are self-checked checklists (small XP). Milestones are verified
+      // against the linked grow's real check-ins before XP can be claimed.
+      const ACADEMY_RANKS = [
+        [0, "Curious sprout", "✳"], [300, "Spore scout", "✧"], [900, "Jar tender", "◍"],
+        [1800, "Grain wrangler", "❋"], [2800, "Certified cultivator", "✺"]
+      ];
+      const STAGE_ORDER = (stage) => STAGES.indexOf(stage);
+      const verifyRules = {
+        linked: (ctx) => ({ ok: !!ctx.grow, label: ctx.grow ? `Linked to “${ctx.grow.name}”` : "Link a grow in your log" }),
+        checkins3: (ctx) => ({ ok: ctx.days.size >= 3, label: `Check-ins on 3 different days (${Math.min(ctx.days.size, 3)}/3)` }),
+        colonization: (ctx) => ({ ok: ctx.maxStage >= STAGE_ORDER("Colonization"), label: "A check-in logged at the Colonization stage" }),
+        age14: (ctx) => ({ ok: ctx.age >= 14, label: `At least 14 days since inoculation (day ${Math.max(0, ctx.age)})` }),
+        clean: (ctx) => ({ ok: !ctx.contaminated, label: "No “Possible contamination” flag on the latest check-in" }),
+        harvest: (ctx) => ({ ok: ctx.harvested, label: "A harvest recorded (Harvest stage or a yield logged)" })
+      };
+      const QUESTS = [
+        {
+          id: "brf", icon: "◐", title: "Brown rice flour cakes", subtitle: "PF Tek · the classic first grow",
+          level: "Beginner", time: "2–4 weeks to colonize", species: "Blue oyster", defaultName: "BRF cakes · batch 1",
+          video: "https://www.youtube.com/watch?v=IyJs3bDee64", videoLabel: "Watch the BRF cake lesson",
+          blurb: "Mix a simple flour-and-vermiculite cake in small jars, sterilize it, inoculate it, and watch it turn white. Cheap, forgiving, and the best way to learn clean technique.",
+          completeTitle: "BRF Cultivator", completeCopy: "Your cakes are fully colonized. They're ready for fruiting conditions; log that next stage in your grow to earn the harvest bonus.",
+          steps: [
+            { id: "kit", phase: "Prep", title: "Gather your kit", time: "15 min", xp: 50,
+              intro: "Get everything within reach before you start. Clean technique is easier when you aren't hunting for tools.",
+              checklist: ["Wide-mouth half-pint jars, washed", "Measuring cups or a kitchen scale, a large mixing bowl, a sieve and a spoon", "Brown rice flour, fine vermiculite, instant coffee, and powdered gypsum", "Pressure cooker, aluminium foil, and masking tape", "Still air box (a clear tote with arm holes) and 70% isopropyl alcohol", "Spore syringe or liquid culture, plus a lighter or small torch for the needle"],
+              tip: "Wide-mouth jars matter: you'll slide the finished cake out in one piece later." },
+            { id: "mix", phase: "Prep", title: "Mix the substrate", time: "20 min", xp: 75, calc: "brf",
+              intro: "Each jar takes a small batch. Use the calculator to scale it, then mix in this order so the moisture spreads evenly.",
+              checklist: ["Dissolve the instant coffee in the water", "Pour the water over the vermiculite and mix until evenly damp", "Stir the gypsum into the brown rice flour", "Fold the flour mix into the wet vermiculite until no dry pockets remain", "Squeeze test: a handful should feel like a damp sponge, a few drops at most, never streaming"],
+              tip: "Coffee and gypsum are optional boosters (nutrients and texture). The cake works without them, but they help." },
+            { id: "fill", phase: "Prep", title: "Fill and cap the jars", time: "15 min", xp: 50,
+              intro: "Loose cakes colonize faster than packed ones, and the dry top layer is your first line of defence.",
+              checklist: ["Spoon the mix in loosely to about ¾ full; don't pack it down", "Wipe the rim and the inside glass above the mix completely clean", "Fill the last ¼ with dry vermiculite as a contamination barrier", "Cover with foil and run a strip of tape across the top to mark your injection spot"],
+              warning: "Any flour left on the glass above the barrier layer is food for mold. Wipe it off now." },
+            { id: "sterilize", phase: "Sterilize", title: "Pressure sterilize", time: "45 min at pressure + cooling", xp: 100, timer: { minutes: 45, label: "Hold at 15 PSI" },
+              intro: "Sterilizing kills everything competing with your mushroom. Follow your pressure cooker's manual for water level and safety.",
+              checklist: ["Add water to the cooker and set the jars on the rack, not the base", "Bring up to 15 PSI and start the timer", "Hold steady pressure for the full time (45 minutes is standard for half-pint jars)", "Turn off the heat and let it depressurize on its own", "Let the jars cool to room temperature before opening the cooker room (overnight is ideal)"],
+              warning: "Never open or force-cool a pressure cooker under pressure. Injecting into warm jars can kill your culture." },
+            { id: "inoculate", phase: "Inoculate", title: "Inoculate in a still air box", time: "30 min", xp: 150, kind: "inoculate",
+              intro: "This is the moment that matters most. Move slowly, keep your hands inside the box, and don't breathe into it.",
+              checklist: ["Wipe the still air box, jars, syringe and your gloved hands with 70% isopropyl", "Shake the syringe to spread the spores or culture", "Flame the needle until it glows red, then let it cool a few seconds", "Inject about 1 cc per jar through the foil, aiming down the glass so you can watch growth", "Cover the holes with a fresh strip of tape"],
+              tip: "Link this batch to your grow log below. From here on, your daily check-ins are what earn the big XP." },
+            { id: "incubate", phase: "Incubate", title: "Incubate and observe", time: "first week", xp: 150, kind: "milestone", verify: ["linked", "checkins3", "clean"],
+              intro: "Keep the jars somewhere dark and warm, around 24–27 °C (75–80 °F), and leave them alone. Check daily without opening them.",
+              checklist: ["Jars are in a dark, warm, stable spot", "I'm logging a daily check-in with temperature and a quick look"],
+              tip: "Nothing visible for the first week is normal. Patience is part of the technique." },
+            { id: "colonize", phase: "Colonize", title: "First white growth", time: "week 1–2", xp: 200, kind: "milestone", verify: ["linked", "colonization", "clean"],
+              intro: "Fluffy white threads spreading from the injection points mean your mycelium has taken hold. Log your next check-in at the Colonization stage.",
+              checklist: ["I can see white mycelium growing from the injection points"],
+              warning: "Green, blue, black, pink or slimy patches are contamination. Don't open the jar indoors; mark the check-in as “Possible contamination” and dispose of it sealed." },
+            { id: "full", phase: "Colonize", title: "Fully colonized cakes", time: "week 2–4", xp: 300, kind: "milestone", final: true, verify: ["linked", "colonization", "age14", "clean"],
+              intro: "A finished cake is solid white from top to bottom with no off colours. Give it about a week more after it looks done so the mycelium fully consolidates.",
+              checklist: ["The cake is white throughout, including the bottom", "No off colours, odd smells, or wet patches"] },
+            { id: "harvest", phase: "Bonus", title: "Bonus: first harvest", time: "next lesson", xp: 500, kind: "milestone", bonus: true, verify: ["linked", "harvest"],
+              intro: "Fruiting comes after colonization. When you harvest, log it at the Harvest stage with your fresh yield to earn this bonus.",
+              checklist: ["I harvested mushrooms from this batch"] }
+          ]
+        },
+        {
+          id: "popcorn", icon: "◇", title: "Popcorn grain spawn", subtitle: "Grain spawn · the next step up",
+          level: "Intermediate", time: "2–3 weeks to colonize", species: "Blue oyster", defaultName: "Popcorn spawn · batch 1",
+          video: "https://www.youtube.com/watch?v=SBuBQKUWyo4", videoLabel: "Watch the grain spawn lesson",
+          blurb: "Turn plain popcorn kernels into grain spawn: hydrate, dry, sterilize, inoculate, and shake. Popcorn's big, tough kernels are hard to overcook, which makes it a great first grain.",
+          completeTitle: "Grain Spawn Maker", completeCopy: "Your spawn is fully colonized. It's ready to inoculate more grain or a bulk substrate; record that harvest later for the bonus.",
+          steps: [
+            { id: "kit", phase: "Prep", title: "Gather your kit", time: "15 min", xp: 50,
+              intro: "Grain spawn needs a little more gear than BRF cakes, mainly for drying the kernels properly.",
+              checklist: ["Plain popcorn kernels (not microwave popcorn)", "Large pot, colander, and clean towels or a drying screen", "Jars with filter lids or injection ports", "Pressure cooker", "Still air box and 70% isopropyl alcohol", "Spore syringe or liquid culture"] },
+            { id: "soak", phase: "Hydrate", title: "Rinse and soak", time: "12–24 h", xp: 75, timer: { minutes: 720, label: "Soak at least 12 hours" },
+              intro: "Soaking hydrates the kernels evenly and wakes up any bacterial spores so sterilization can kill them.",
+              checklist: ["Rinse until the water runs clear; discard floaters and debris", "Cover with plenty of clean water (it will absorb a lot)", "Soak for 12–24 hours at room temperature"] },
+            { id: "simmer", phase: "Hydrate", title: "Simmer", time: "20–30 min", xp: 75, timer: { minutes: 25, label: "Gentle simmer" },
+              intro: "A gentle simmer finishes hydrating the kernels. Popcorn is tough, so it's hard to overdo, but don't boil it into mush.",
+              checklist: ["Bring to a gentle simmer, not a rolling boil", "Cut a kernel: it should be evenly hydrated with no hard, chalky core", "A few split kernels is fine; lots of burst kernels means too long"] },
+            { id: "dry", phase: "Hydrate", title: "Drain and surface-dry", time: "30–60 min", xp: 75, timer: { minutes: 45, label: "Surface drying" },
+              intro: "This is the step most first-timers rush. Wet grain is the number one cause of bacterial contamination.",
+              checklist: ["Drain well in a colander", "Spread in a thin layer on towels or a screen", "Wait until kernels look matte and no water film or drops remain", "Roll a few in a dry paper towel: it should stay mostly dry"],
+              warning: "If water pools at the bottom of a jar after sterilizing, the grain was too wet. Let it dry longer next time." },
+            { id: "fill", phase: "Prep", title: "Fill the jars", time: "10 min", xp: 50,
+              intro: "Leave space to shake. Colonized grain needs room to break apart and redistribute.",
+              checklist: ["Fill each jar about ⅔ to ¾ full", "Wipe the rims clean", "Fit filter lids or injection-port lids", "Cover the lids with foil to keep the filters dry"] },
+            { id: "sterilize", phase: "Sterilize", title: "Pressure sterilize", time: "90 min at pressure + cooling", xp: 100, timer: { minutes: 90, label: "Hold at 15 PSI" },
+              intro: "Grain is dense and full of spores, so it needs a longer cycle than BRF cakes. Follow your cooker's manual for safety.",
+              checklist: ["Jars on the rack with water to the manufacturer's level", "Bring to 15 PSI and hold for 90 minutes", "Let it depressurize naturally", "Cool to room temperature, ideally overnight"],
+              warning: "Never open or force-cool a pressure cooker under pressure." },
+            { id: "inoculate", phase: "Inoculate", title: "Inoculate in a still air box", time: "30 min", xp: 150, kind: "inoculate",
+              intro: "Same clean routine as always: wipe everything down, keep your movements slow, and work inside the box.",
+              checklist: ["Wipe the still air box, jars, syringe and gloves with 70% isopropyl", "Flame the needle red-hot, then let it cool", "Inject 1–2 cc per jar through the port", "Wipe the port again afterwards"],
+              tip: "Link this batch to your grow log below. Your real check-ins unlock the rest of the quest." },
+            { id: "incubate", phase: "Incubate", title: "Incubate and observe", time: "first week", xp: 150, kind: "milestone", verify: ["linked", "checkins3", "clean"],
+              intro: "Store the jars dark and warm, around 24–27 °C (75–80 °F). Log a quick check-in each day.",
+              checklist: ["Jars are in a dark, warm, stable spot", "I'm logging a daily check-in"] },
+            { id: "colonize", phase: "Colonize", title: "First white growth", time: "week 1", xp: 200, kind: "milestone", verify: ["linked", "colonization", "clean"],
+              intro: "White threads wrapping the first kernels means it's working. Log a check-in at the Colonization stage.",
+              checklist: ["I can see white mycelium spreading across kernels"],
+              warning: "Cloudy, slimy kernels or a sour smell usually means bacteria; green or black means mold. Keep that jar sealed and away from the others." },
+            { id: "shake", phase: "Colonize", title: "Break and shake", time: "~25–30% colonized", xp: 100, kind: "milestone", verify: ["linked", "colonization", "clean"],
+              intro: "Once roughly a quarter of the jar is white, shake it to spread colonized kernels through the jar. It speeds things up a lot.",
+              checklist: ["About a quarter to a third of the jar was white", "I broke up the colonized grain and shook the jar until evenly mixed"] },
+            { id: "full", phase: "Colonize", title: "Fully colonized spawn", time: "week 2–3", xp: 300, kind: "milestone", final: true, verify: ["linked", "colonization", "age14", "clean"],
+              intro: "Every kernel is bound together in white mycelium. Your spawn is ready to use.",
+              checklist: ["The jar is white throughout with no uncolonized kernels", "No off colours, odd smells, or wet patches"] },
+            { id: "harvest", phase: "Bonus", title: "Bonus: first harvest", time: "after spawning to bulk", xp: 500, kind: "milestone", bonus: true, verify: ["linked", "harvest"],
+              intro: "Spawn your grain into a bulk substrate and fruit it. Log the harvest with your fresh yield to earn this bonus.",
+              checklist: ["I harvested mushrooms grown from this spawn"] }
+          ]
+        }
+      ];
+      const academyUi = { open: {}, timerInterval: null, lastLevel: null };
+
+      function academy() {
+        if (!state.academy || typeof state.academy !== "object") state.academy = { active: "brf", quests: {} };
+        if (!state.academy.quests || typeof state.academy.quests !== "object") state.academy.quests = {};
+        return state.academy;
+      }
+      function questState(questId) {
+        const quests = academy().quests;
+        if (!quests[questId]) quests[questId] = { done: {}, checks: {}, timers: {} };
+        const quest = quests[questId];
+        ["done", "checks", "timers"].forEach((key) => { if (!quest[key] || typeof quest[key] !== "object") quest[key] = {}; });
+        return quest;
+      }
+      function academyXp() {
+        if (!state.academy || !state.academy.quests) return 0;
+        return QUESTS.reduce((sum, quest) => {
+          const saved = state.academy.quests[quest.id];
+          if (!saved || !saved.done) return sum;
+          return sum + quest.steps.reduce((inner, step) => inner + (saved.done[step.id] ? Math.min(step.xp, Number(saved.done[step.id].xp) || 0) : 0), 0);
+        }, 0);
+      }
+      function levelForXp(xp) {
+        let level = 1;
+        while (level < 50 && xp >= xpAtLevel(level + 1)) level += 1;
+        return level;
+      }
+      function linkedGrow(questId) {
+        const saved = state.academy && state.academy.quests && state.academy.quests[questId];
+        if (!saved) return null;
+        let grow = saved.growId ? growById(saved.growId) : null;
+        if (!grow && saved.growName && saved.growSpecies) {
+          grow = findGrow(saved.growName, saved.growSpecies) || null;
+          if (grow) saved.growId = grow.id;
+        }
+        return grow;
+      }
+      function questContext(questId) {
+        const grow = linkedGrow(questId);
+        const entries = grow ? growEntries(grow.id) : [];
+        const stages = grow ? stagesReached(grow.id) : new Set();
+        const maxStage = Math.max(-1, ...[...stages].map(STAGE_ORDER));
+        const start = grow && escapeDate(grow.startDate) ? Date.parse(`${grow.startDate}T12:00:00`) : NaN;
+        const age = Number.isFinite(start) ? Math.floor((Date.parse(`${todayKey()}T12:00:00`) - start) / 86400000) : 0;
+        const latest = entries[entries.length - 1];
+        return {
+          grow, entries, maxStage, age,
+          days: new Set(entries.map((entry) => entry.date)),
+          contaminated: !!latest && latest.appearance === "Possible contamination",
+          harvested: stages.has("Harvest") || stages.has("Complete") || entries.some((entry) => hasHarvestRecord(entry) || Number(entry.freshYieldG) > 0)
+        };
+      }
+      function stepStatus(quest, index) {
+        const saved = questState(quest.id);
+        const step = quest.steps[index];
+        if (saved.done[step.id]) return "done";
+        const blocker = quest.steps.slice(0, index).find((previous) => !previous.bonus && !saved.done[previous.id]);
+        if (blocker && !(step.bonus && saved.done.inoculate)) return "locked";
+        return "open";
+      }
+      function currentStepIndex(quest) {
+        const index = quest.steps.findIndex((step, i) => stepStatus(quest, i) === "open" && !step.bonus);
+        return index === -1 ? quest.steps.findIndex((step, i) => stepStatus(quest, i) === "open") : index;
+      }
+      function questProgress(quest) {
+        const saved = questState(quest.id);
+        const required = quest.steps.filter((step) => !step.bonus);
+        const done = required.filter((step) => saved.done[step.id]).length;
+        const earned = quest.steps.reduce((sum, step) => sum + (saved.done[step.id] ? Math.min(step.xp, Number(saved.done[step.id].xp) || 0) : 0), 0);
+        const possible = quest.steps.reduce((sum, step) => sum + step.xp, 0);
+        return { done, total: required.length, earned, possible, complete: done === required.length };
+      }
+      function el(tag, props = {}, ...children) {
+        const node = document.createElement(tag);
+        Object.entries(props).forEach(([key, value]) => {
+          if (value === undefined || value === null || value === false) return;
+          if (key === "class") node.className = value;
+          else if (key === "text") node.textContent = value;
+          else if (key.startsWith("on")) node.addEventListener(key.slice(2), value);
+          else if (key in node && key !== "list") node[key] = value;
+          else node.setAttribute(key, value === true ? "" : value);
+        });
+        children.flat().forEach((child) => { if (child !== null && child !== undefined && child !== false) node.append(child); });
+        return node;
+      }
+      function formatDuration(ms) {
+        const total = Math.max(0, Math.ceil(ms / 1000));
+        const hours = Math.floor(total / 3600), minutes = Math.floor(total % 3600 / 60), seconds = total % 60;
+        return hours ? `${hours}h ${String(minutes).padStart(2, "0")}m` : `${minutes}:${String(seconds).padStart(2, "0")}`;
+      }
+      function renderAcademyRank() {
+        const xp = academyXp();
+        let index = 0;
+        ACADEMY_RANKS.forEach(([threshold], i) => { if (xp >= threshold) index = i; });
+        const [threshold, name, icon] = ACADEMY_RANKS[index];
+        const next = ACADEMY_RANKS[index + 1];
+        const progress = next ? Math.min(100, (xp - threshold) / (next[0] - threshold) * 100) : 100;
+        const fill = el("div", { class: "progress-fill" }); fill.style.width = `${progress}%`;
+        $("#academy-rank").replaceChildren(
+          el("span", { class: "rank-badge", "aria-hidden": "true", text: icon }),
+          el("div", { class: "rank-copy" },
+            el("strong", { text: name }),
+            el("small", { text: next ? `${fmt(next[0] - xp)} academy XP to ${next[1]}` : "Top academy rank reached" }),
+            el("div", { class: "progress-track", role: "progressbar", "aria-label": "Academy rank progress", "aria-valuemin": "0", "aria-valuemax": "100", "aria-valuenow": String(Math.round(progress)) }, fill)),
+          el("span", { class: "rank-xp", text: `${fmt(xp)} academy XP` })
+        );
+      }
+      function renderQuestPicker() {
+        const active = academy().active;
+        $("#quest-picker").replaceChildren(...QUESTS.map((quest) => {
+          const progress = questProgress(quest);
+          const percent = Math.round(progress.done / progress.total * 100);
+          const ring = el("span", { class: "quest-ring", "aria-hidden": "true" }, el("span", { text: progress.complete ? "✓" : `${percent}%` }));
+          ring.style.setProperty("--p", String(percent));
+          return el("button", {
+            class: "quest-card", type: "button", role: "tab", id: `quest-tab-${quest.id}`,
+            "aria-selected": String(quest.id === active), "aria-controls": "quest-view",
+            onclick: () => { academy().active = quest.id; saveState(); renderAcademy(); }
+          }, ring, el("span", {},
+            el("strong", { text: quest.title }),
+            el("small", { text: quest.subtitle }),
+            el("span", { class: "quest-meta" },
+              el("span", { class: "chip", text: quest.level }),
+              el("span", { class: "chip", text: quest.time }),
+              progress.complete ? el("span", { class: "chip done", text: `✓ ${quest.completeTitle}` }) : el("span", { class: "chip xp", text: `${fmt(progress.earned)} / ${fmt(progress.possible)} XP` }))));
+        }));
+      }
+      function renderQuestView() {
+        const quest = QUESTS.find((item) => item.id === academy().active) || QUESTS[0];
+        const progress = questProgress(quest);
+        const ctx = questContext(quest.id);
+        const fill = el("div", { class: "progress-fill" }); fill.style.width = `${progress.done / progress.total * 100}%`;
+        const current = currentStepIndex(quest);
+        const view = $("#quest-view");
+        view.setAttribute("aria-labelledby", `quest-tab-${quest.id}`);
+        view.replaceChildren(...[
+          el("div", { class: "quest-head" },
+            el("div", {}, el("h3", { text: quest.title }), el("p", { text: quest.blurb })),
+            el("a", { class: "lesson-link", href: quest.video, target: "_blank", rel: "noopener noreferrer", text: `▶ ${quest.videoLabel} ↗` })),
+          el("div", { class: "progress-track", role: "progressbar", "aria-label": `${quest.title} progress`, "aria-valuemin": "0", "aria-valuemax": String(progress.total), "aria-valuenow": String(progress.done) }, fill),
+          el("div", { class: "quest-progress-copy" },
+            el("span", { text: `${progress.done} of ${progress.total} steps` }),
+            el("span", { text: `${fmt(progress.earned)} of ${fmt(progress.possible)} XP earned` })),
+          ctx.contaminated ? el("div", { class: "quest-alert", role: "alert" },
+            el("strong", { text: "Possible contamination flagged. " }),
+            "Keep affected jars sealed, move them away from clean jars, and dispose of them outside. Milestones pause until a clean check-in is logged.") : null,
+          progress.complete ? el("div", { class: "quest-complete" },
+            el("strong", { text: `✺ Quest complete: ${quest.completeTitle}. ` }), quest.completeCopy) : null,
+          el("ol", { class: "step-list" }, quest.steps.map((step, index) => renderStep(quest, step, index, index === current, ctx)))
+        ].filter(Boolean));
+      }
+      function renderStep(quest, step, index, isCurrent, ctx) {
+        const saved = questState(quest.id);
+        const status = stepStatus(quest, index);
+        const key = `${quest.id}:${step.id}`;
+        const open = academyUi.open[key] ?? (isCurrent && status === "open");
+        const details = el("details", { class: `step is-${status}${isCurrent && status === "open" ? " is-current" : ""}`, open });
+        details.dataset.key = key;
+        details.addEventListener("toggle", () => { academyUi.open[key] = details.open; });
+        const award = saved.done[step.id];
+        details.append(el("summary", {},
+          el("span", { class: "step-dot", "aria-hidden": "true", text: status === "done" ? "✓" : status === "locked" ? "🔒" : String(index + 1) }),
+          el("span", { class: "step-title" },
+            el("strong", { text: step.title }),
+            el("small", { text: `${step.phase} · ${step.time}${status === "done" && award ? ` · completed ${dateLabel(String(award.at).slice(0, 10))}` : ""}` })),
+          el("span", { class: `chip ${status === "done" ? "done" : "xp"}`, text: status === "done" ? `+${fmt(step.xp)} XP` : `${fmt(step.xp)} XP` })));
+
+        const body = el("div", { class: "step-body" }, el("p", { text: step.intro }));
+        if (step.calc === "brf") body.append(renderJarCalc());
+        if (step.timer) body.append(renderTimer(quest, step, status));
+        const checks = new Set(Array.isArray(saved.checks[step.id]) ? saved.checks[step.id] : []);
+        const button = el("button", { class: "button", type: "button" });
+        const note = el("span", { class: "form-note", role: "status" });
+        const verify = (step.verify || []).map((rule) => verifyRules[rule](ctx));
+        const linkForm = step.kind === "inoculate" && status !== "done" ? renderLinkGrow(quest, ctx) : null;
+        const refresh = () => {
+          const allChecked = step.checklist.every((_, i) => checks.has(i));
+          const verified = verify.every((result) => result.ok);
+          const needsLink = step.kind === "inoculate" && !ctx.grow && linkForm && !linkForm.ready();
+          if (status === "done") { button.disabled = true; button.textContent = "Completed ✓"; note.textContent = ""; return; }
+          button.disabled = status === "locked" || !allChecked || !verified || needsLink;
+          button.textContent = step.kind === "milestone" ? `Claim +${fmt(step.xp)} XP` : `Complete step · +${fmt(step.xp)} XP`;
+          note.textContent = status === "locked" ? "Finish the steps above to unlock this one."
+            : !verified ? "Your grow log hasn't confirmed this yet. Keep checking in."
+              : !allChecked ? `${step.checklist.length - [...checks].filter((i) => i < step.checklist.length).length} item(s) left to tick.`
+                : needsLink ? "Name the grow you're linking." : "Ready when you are.";
+        };
+        body.append(el("ul", { class: "checklist" }, step.checklist.map((text, i) => {
+          const box = el("input", { type: "checkbox", checked: checks.has(i), disabled: status !== "open" });
+          box.addEventListener("change", () => {
+            if (box.checked) checks.add(i); else checks.delete(i);
+            questState(quest.id).checks[step.id] = [...checks].sort((a, b) => a - b);
+            saveState(); refresh();
+          });
+          return el("li", {}, el("label", {}, box, el("span", { text })));
+        })));
+        if (verify.length) {
+          body.append(el("p", { text: "Verified from your grow log:" }),
+            el("ul", { class: "verify-list" }, verify.map((result) => el("li", { class: result.ok ? "ok" : "", text: result.label }))));
+        }
+        if (step.tip) body.append(el("div", { class: "callout" }, el("b", { text: "Pro tip" }), step.tip));
+        if (step.warning) body.append(el("div", { class: "callout warn" }, el("b", { text: "Watch out" }), step.warning));
+        if (linkForm) { body.append(linkForm.node); linkForm.onChange(refresh); }
+        if (step.kind === "inoculate" && ctx.grow) body.append(el("p", { text: `Linked grow: ${ctx.grow.name} (${ctx.grow.species}), inoculated ${dateLabel(ctx.grow.startDate)}.` }));
+        button.addEventListener("click", () => completeStep(quest, step, linkForm));
+        body.append(el("div", { class: "step-actions" }, button, note));
+        refresh();
+        details.append(body);
+        return el("li", {}, details);
+      }
+      function renderJarCalc() {
+        const input = el("input", { type: "number", min: "1", max: "48", step: "1", value: String(academy().jars || 6), "aria-label": "Number of jars" });
+        const table = el("table");
+        const draw = () => {
+          const jars = Math.min(48, Math.max(1, Math.round(Number(input.value) || 1)));
+          const rows = [["Brown rice flour", `${fmt(60 * jars)} ml`], ["Vermiculite (in the mix)", `${fmt(120 * jars)} ml`], ["Water", `${fmt(55 * jars)} ml`],
+            ["Instant coffee", `${jars} small spoon${jars > 1 ? "s" : ""}`], ["Powdered gypsum", `${jars} small spoon${jars > 1 ? "s" : ""}`], ["Spore syringe / culture", `${jars} cc`]];
+          table.replaceChildren(...rows.map(([label, value]) => el("tr", {}, el("td", { text: label }), el("td", { text: value }))));
+        };
+        input.addEventListener("input", () => { draw(); const jars = Math.round(Number(input.value)); if (jars >= 1 && jars <= 48) { academy().jars = jars; saveState(); } });
+        draw();
+        return el("div", { class: "jar-calc" }, el("label", {}, "Jars in this batch", input), table,
+          el("small", { class: "form-note", text: "Per jar: 60 ml flour, 120 ml vermiculite, 55 ml water. Plus dry vermiculite for the top layer." }));
+      }
+      function renderTimer(quest, step, status) {
+        const saved = questState(quest.id);
+        const output = el("output", {});
+        const wrap = el("div", { class: "step-timer" });
+        const startButton = el("button", { class: "button small secondary", type: "button" });
+        wrap.dataset.timer = `${quest.id}:${step.id}`;
+        const update = () => {
+          const end = Number(saved.timers[step.id]) || 0;
+          const left = end - Date.now();
+          wrap.classList.toggle("finished", !!end && left <= 0);
+          output.textContent = !end ? formatDuration(step.timer.minutes * 60000) : left > 0 ? formatDuration(left) : "Done ✓";
+          startButton.textContent = end ? "Restart timer" : "Start timer";
+        };
+        startButton.disabled = status === "done";
+        startButton.addEventListener("click", () => {
+          saved.timers[step.id] = Date.now() + step.timer.minutes * 60000;
+          delete saved.timers[`${step.id}:notified`];
+          saveState(); update(); ensureTimerTick();
+        });
+        wrap._update = update;
+        update();
+        wrap.append(output, el("small", { text: `${step.timer.label}. The timer keeps running if you close the app.` }), startButton);
+        return wrap;
+      }
+      function ensureTimerTick() {
+        if (academyUi.timerInterval) return;
+        academyUi.timerInterval = window.setInterval(() => {
+          let running = false;
+          document.querySelectorAll(".step-timer").forEach((node) => node._update && node._update());
+          QUESTS.forEach((quest) => {
+            const saved = state.academy && state.academy.quests && state.academy.quests[quest.id];
+            if (!saved || !saved.timers) return;
+            quest.steps.forEach((step) => {
+              const end = Number(saved.timers[step.id]) || 0;
+              if (!end) return;
+              if (end > Date.now()) { running = true; return; }
+              if (!saved.timers[`${step.id}:notified`]) {
+                saved.timers[`${step.id}:notified`] = true; saveState();
+                showToast(`⏱ ${quest.title}: “${step.title}” timer finished.`);
+              }
+            });
+          });
+          if (!running) { window.clearInterval(academyUi.timerInterval); academyUi.timerInterval = null; }
+        }, 1000);
+      }
+      function renderLinkGrow(quest, ctx) {
+        if (ctx.grow) return null;
+        const active = state.grows.filter((grow) => !grow.archived);
+        const select = el("select", { "aria-label": "Grow to link" },
+          el("option", { value: "", text: "Create a new grow" }),
+          active.map((grow) => el("option", { value: grow.id, text: `${grow.name} · ${grow.species}` })));
+        const name = el("input", { maxLength: 60, value: quest.defaultName, "aria-label": "New grow name" });
+        const species = el("input", { maxLength: 60, value: quest.species, "aria-label": "Species" });
+        const listeners = [];
+        const changed = () => {
+          const creating = !select.value;
+          name.disabled = !creating; species.disabled = !creating;
+          listeners.forEach((fn) => fn());
+        };
+        [select, name, species].forEach((node) => node.addEventListener("input", changed));
+        select.addEventListener("change", changed);
+        const node = el("div", {},
+          el("p", { text: "Link this batch to your grow log. It starts at Inoculation with today's date." }),
+          el("label", { class: "field" }, "Grow", select),
+          el("div", { class: "link-grow" }, el("label", { class: "field" }, "Grow name", name), el("label", { class: "field" }, "Species", species)));
+        return {
+          node,
+          onChange: (fn) => listeners.push(fn),
+          ready: () => !!select.value || (!!name.value.trim() && !!species.value.trim()),
+          link: () => {
+            let grow = select.value ? growById(select.value) : findGrow(name.value, species.value);
+            if (!grow) grow = addGrow(name.value, species.value, state.grows, todayKey());
+            return grow;
+          }
+        };
+      }
+      function completeStep(quest, step, linkForm) {
+        const index = quest.steps.indexOf(step);
+        if (stepStatus(quest, index) !== "open") return;
+        const saved = questState(quest.id);
+        const checks = new Set(saved.checks[step.id] || []);
+        if (!step.checklist.every((_, i) => checks.has(i))) return;
+        if (step.kind === "inoculate" && !linkedGrow(quest.id)) {
+          if (!linkForm || !linkForm.ready()) return;
+          const grow = linkForm.link();
+          saved.growId = grow.id; saved.growName = grow.name; saved.growSpecies = grow.species;
+        }
+        const ctx = questContext(quest.id);
+        if (!(step.verify || []).every((rule) => verifyRules[rule](ctx).ok)) return;
+        const levelBefore = levelForXp(totalXp());
+        saved.done[step.id] = { at: new Date().toISOString(), xp: step.xp };
+        const progress = questProgress(quest);
+        saveState(); renderAll();
+        const levelAfter = levelForXp(totalXp());
+        const node = document.querySelector(`.step[data-key="${quest.id}:${step.id}"]`);
+        if (node) node.classList.add("just-done");
+        const next = quest.steps[currentStepIndex(quest)];
+        if (next) academyUi.open[`${quest.id}:${next.id}`] = true;
+        const message = step.final && progress.complete ? `✺ Quest complete: ${quest.completeTitle}! +${fmt(step.xp)} XP`
+          : `+${fmt(step.xp)} XP · ${step.title} complete`;
+        showToast(levelAfter > levelBefore ? `${message} · Level up! You're now level ${levelAfter}.` : message);
+        window.setTimeout(() => { academyUi.open[`${quest.id}:${step.id}`] = false; renderQuestView(); }, 650);
+      }
+      function academyFeedItems() {
+        const items = [];
+        QUESTS.forEach((quest) => {
+          const saved = state.academy && state.academy.quests && state.academy.quests[quest.id];
+          if (!saved || !saved.done) return;
+          quest.steps.forEach((step) => {
+            const award = saved.done[step.id];
+            if (!award) return;
+            items.push({ at: String(award.at || ""), title: `Academy · ${quest.title}`, detail: step.title, xp: Math.min(step.xp, Number(award.xp) || 0) });
+          });
+        });
+        return items;
+      }
+      function sanitizeAcademy(raw) {
+        if (!raw || typeof raw !== "object") return null;
+        const clean = { active: QUESTS.some((quest) => quest.id === raw.active) ? raw.active : "brf", quests: {} };
+        if (Number.isInteger(raw.jars) && raw.jars >= 1 && raw.jars <= 48) clean.jars = raw.jars;
+        QUESTS.forEach((quest) => {
+          const source = raw.quests && raw.quests[quest.id];
+          if (!source || typeof source !== "object") return;
+          const target = { done: {}, checks: {}, timers: {} };
+          quest.steps.forEach((step) => {
+            const award = source.done && source.done[step.id];
+            if (award && typeof award === "object" && !Number.isNaN(Date.parse(award.at))) {
+              target.done[step.id] = { at: String(award.at), xp: Math.min(step.xp, Math.max(0, Number(award.xp) || 0)) };
+            }
+            const checks = source.checks && source.checks[step.id];
+            if (Array.isArray(checks)) target.checks[step.id] = checks.filter((i) => Number.isInteger(i) && i >= 0 && i < step.checklist.length);
+          });
+          if (typeof source.growName === "string" && typeof source.growSpecies === "string") {
+            target.growName = source.growName.slice(0, 60); target.growSpecies = source.growSpecies.slice(0, 60);
+          }
+          clean.quests[quest.id] = target;
+        });
+        return clean;
+      }
+      function exportAcademy() {
+        const clean = sanitizeAcademy(state.academy);
+        if (!clean) return undefined;
+        QUESTS.forEach((quest) => {
+          const grow = linkedGrow(quest.id);
+          if (grow && clean.quests[quest.id]) { clean.quests[quest.id].growName = grow.name; clean.quests[quest.id].growSpecies = grow.species; }
+        });
+        return clean;
+      }
+      function mergeAcademy(target, incoming) {
+        const clean = sanitizeAcademy(incoming);
+        if (!clean) return target;
+        if (!target || typeof target !== "object") return clean;
+        const merged = sanitizeAcademy(target) || { active: clean.active, quests: {} };
+        Object.entries(clean.quests).forEach(([id, quest]) => {
+          const existing = merged.quests[id] || { done: {}, checks: {}, timers: {} };
+          Object.entries(quest.done).forEach(([stepId, award]) => { if (!existing.done[stepId]) existing.done[stepId] = award; });
+          Object.entries(quest.checks).forEach(([stepId, checks]) => { existing.checks[stepId] = [...new Set([...(existing.checks[stepId] || []), ...checks])]; });
+          if (!existing.growName && quest.growName) { existing.growName = quest.growName; existing.growSpecies = quest.growSpecies; }
+          existing.timers = (target.quests && target.quests[id] && target.quests[id].timers) || {};
+          merged.quests[id] = existing;
+        });
+        return merged;
+      }
+      function renderAcademy() {
+        renderAcademyRank(); renderQuestPicker(); renderQuestView();
+        const anyTimer = state.academy && Object.values(state.academy.quests || {}).some((quest) =>
+          Object.entries(quest.timers || {}).some(([key, end]) => !key.includes(":") && Number(end) > Date.now()));
+        if (anyTimer) ensureTimerTick();
+      }
       function renderAll() {
-        renderStats(); renderGrowList(); renderMapKey(); renderMap(); renderStories(); renderFeed(); renderTrophies(); renderComparison();
+        renderAcademy(); renderStats(); renderGrowList(); renderMapKey(); renderMap(); renderStories(); renderFeed(); renderTrophies(); renderComparison();
       }
       function findGrow(name, species, grows = state.grows) {
         return grows.find((grow) => norm(grow.name) === norm(name) && norm(grow.species) === norm(species));
@@ -1474,7 +2076,7 @@
           name: grow.name, species: grow.species, startDate: grow.startDate || "",
           archived: Boolean(grow.archived), completedAt: grow.completedAt || ""
         }));
-        const payload = { app: "MycoQuest grow log", version: 2, grows, entries, recipes: [] };
+        const payload = { app: "MycoQuest grow log", version: 2, grows, entries, recipes: [], academy: exportAcademy() };
         const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -1599,6 +2201,9 @@
           const matching = next.entries.filter((entry) => entry.growId === grow.id).map((entry) => entry.date).sort()[0];
           if (!escapeDate(grow.startDate) && matching) grow.startDate = matching;
         });
+        if (source === "standalone" && parsed.academy) {
+          next.academy = $("#import-mode").value === "replace" ? sanitizeAcademy(parsed.academy) : mergeAcademy(next.academy, parsed.academy);
+        }
         state = next;
         saveState(); renderAll();
         $("#backup-message").textContent = `${added} grow check-in${added === 1 ? "" : "s"} imported${duplicates ? `; ${duplicates} duplicate${duplicates === 1 ? "" : "s"} skipped` : ""}. Recipe and storefront activity was not imported.`;

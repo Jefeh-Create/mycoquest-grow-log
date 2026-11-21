@@ -19,6 +19,7 @@ http://127.0.0.1:8765/grow-log.html
 ## Features
 
 - Leveling and XP progress
+- First Grow Academy: guided BRF cake and popcorn grain spawn quests with timers, a jar calculator, and XP verified by real check-ins
 - Daily check-ins with temperature, humidity, and appearance
 - Stage-based progress tracking
 - Mycelial map, auto-written stories, streaks, and trophies

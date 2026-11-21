@@ -10,6 +10,11 @@ Single-file app (grow-log.html), plain HTML/CSS/JS, localStorage only.
   must stay importable by the storefront demo
 - Photos are stored in IndexedDB (`mycoquest-grow-log-photos`), keyed by entry id;
   localStorage holds only journal text. Exports still include photos inline.
+- First Grow Academy (`#academy`): quests defined in the `QUESTS` array (BRF cakes, popcorn spawn).
+  Prep steps = self-ticked checklists (small XP). Milestones verify against the linked grow's
+  check-ins (`verifyRules`) before XP can be claimed. Academy XP counts toward the main level.
+  Stored in `state.academy`; exported as an extra `academy` key and restored on import
+  (linked grow re-resolved by name + species).
 
 ## Next up
 - [x] Move `const $` above `let state = load()` (crash on bad saved data)
