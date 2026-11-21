@@ -10,7 +10,7 @@ Single-file app (grow-log.html), plain HTML/CSS/JS, localStorage only.
   must stay importable by the storefront demo
 
 ## Next up
-- [ ] Move `const $` above `let state = load()` (crash on bad saved data)
+- [x] Move `const $` above `let state = load()` (crash on bad saved data)
 - [x] Mycelial Map (SVG, one branch per grow, nodes colored by stage)
 - [x] Grow Story (auto-written summary per grow)
 - [x] Streaks and trophies
