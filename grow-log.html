@@ -260,6 +260,10 @@
 
     .map-panel { overflow: hidden; }
     .map-top { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+    .replay-bar { display: flex; align-items: center; gap: 8px; grid-column: 1 / -1; }
+    .replay-bar input[type=range] { flex: 1; }
+    .replay-bar select { width: auto; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
     .map-key { display: flex; flex-wrap: wrap; gap: 9px 13px; color: var(--muted); font-size: .66rem; margin: 10px 0 0; }
     .map-hud { margin-top: 12px; display: grid; gap: 12px; }
     .stage-chips { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -603,7 +607,7 @@
       <article class="panel map-panel">
         <div class="map-top"><div><h3>Your growing network</h3><div class="map-hud"><div class="stage-chips" id="map-key" role="group" aria-label="Filter the map by stage"></div><div class="stat-tiles" id="map-stats" aria-label="Your growing totals"></div></div></div></div>
         <div class="map-wrap" id="map-wrap"><svg id="mycelial-map" viewBox="0 0 800 480" role="group" aria-label="Mycelial map of your grows and check-ins"></svg><div class="map-empty" id="map-empty" hidden>Add a grow, even one you're still planning, and it will take root here.<br><button class="button small secondary" type="button" data-load-sample>Preview with a sample journal</button></div></div>
-        <div class="map-timeline"><button class="button small secondary" id="map-replay" type="button" aria-pressed="false" disabled>▶ Replay growth</button><label for="map-timeline-slider">Timeline</label><input id="map-timeline-slider" type="range" min="0" max="0" value="0" step="1" disabled><output id="map-timeline-date">No check-ins yet</output></div>
+        <div class="map-timeline"><button class="button small secondary" id="map-replay" type="button" aria-pressed="false" disabled>▶ Replay growth</button><div class="replay-bar"><label class="sr-only" for="map-replay-scrub">Replay position</label><input id="map-replay-scrub" type="range" min="0" max="1000" value="0" step="1" aria-label="Replay position"><label class="sr-only" for="map-speed">Replay speed</label><select id="map-speed" aria-label="Replay speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></div><label for="map-timeline-slider">Timeline</label><input id="map-timeline-slider" type="range" min="0" max="0" value="0" step="1" disabled><output id="map-timeline-date">No check-ins yet</output></div>
         <p class="map-detail" id="map-detail" aria-live="polite">Select a check-in node to read its note.</p>
       </article>
     </section>
@@ -640,14 +644,15 @@
       <div class="section-heading"><div><span class="eyebrow">Your data, your device</span><h2 id="backup-title">Back up your journal</h2></div></div>
       <div class="backup-layout">
         <article class="panel">
-          <h3>Export a backup</h3><p class="panel-intro">Exports the storefront-compatible “standalone grow log v2” JSON format.</p>
-          <div class="backup-actions"><button class="button" id="export-button" type="button">Export grow log v2</button><button class="button secondary" id="reset-button" type="button">Reset this app</button></div>
+          <h3>Export a backup</h3><p class="panel-intro">Exports the storefront-compatible “standalone grow log v2” JSON format. Photos and videos from your process trail go in their own optional file.</p>
+          <div class="backup-actions"><button class="button" id="export-button" type="button">Export grow log v2</button><button class="button secondary" id="export-media-button" type="button">Export photos &amp; videos</button><button class="button secondary" id="reset-button" type="button">Reset this app</button></div>
         </article>
         <article class="panel">
           <h3>Bring in your history</h3><p class="panel-intro">Import a grow log v2 file or your MycoQuest storefront progress file. Recipe and shop activity is left out.</p>
           <div class="backup-actions">
             <label class="file-label">Import grow log v2<input id="import-grow-file" type="file" accept="application/json,.json"></label>
             <label class="file-label">Import storefront progress<input id="import-site-file" type="file" accept="application/json,.json"></label>
+            <label class="file-label">Import photos &amp; videos<input id="import-media-file" type="file" accept="application/json,.json"></label>
           </div>
           <label class="field import-options">Import mode<select id="import-mode"><option value="add">Add to my grows</option><option value="replace">Replace this app's data</option></select></label>
           <p class="message" id="backup-message" role="status" aria-live="polite"></p>
@@ -675,7 +680,8 @@
         ["full-cycle", "Full Cycle", "◉", 300, "Harvest a grow and mark it complete"],
         ["network", "Mycelial Network", "⌘", 150, "Have 3 grows with check-ins"],
         ["steady-keeper", "Steady Keeper", "✧", 250, "Log 30 check-ins in total"],
-        ["condition-keeper", "Condition Keeper", "◌", 100, "Log 10 check-ins with both temperature and humidity"]
+        ["condition-keeper", "Condition Keeper", "◌", 100, "Log 10 check-ins with both temperature and humidity"],
+        ["documented", "Documented", "◈", 150, "Document 5 Academy steps with a photo or video"]
       ];
       // @pure:begin media-rules
       const VIDEO_MAX_SECONDS = 15;
@@ -810,6 +816,41 @@
       }
       // @exports trailForExport, mergeTrail
       // @pure:end export-extras
+      // @pure:begin replay-time
+      // Maps real elapsed days onto a 12 to 40 second replay. Undated items (seed nodes) start the show.
+      function replayTimes(items) {
+        if (!items.length) return { durationMs: 0, times: [] };
+        const dated = items.map((item) => item.ms).filter((ms) => Number.isFinite(ms));
+        const min = dated.length ? Math.min(...dated) : 0, max = dated.length ? Math.max(...dated) : 0;
+        const spanDays = (max - min) / 864e5;
+        const LEAD = 600, TAIL = 2200, GAP = 250;
+        const total = Math.min(40000, Math.max(12000, Math.round(spanDays * 450)));
+        const usable = total - LEAD - TAIL;
+        const times = [];
+        items.forEach((item, index) => {
+          const fraction = spanDays > 0 && Number.isFinite(item.ms) ? (item.ms - min) / (max - min) : (items.length > 1 ? index / (items.length - 1) * (spanDays > 0 ? 0 : 1) : 0);
+          let t = Math.round(LEAD + fraction * usable);
+          if (index > 0) t = Math.max(t, times[index - 1] + GAP);
+          times.push(t);
+        });
+        return { durationMs: Math.max(total, times[times.length - 1] + TAIL), times };
+      }
+      // @exports replayTimes
+      // @pure:end replay-time
+      // @pure:begin media-backup
+      function parseMediaBackup(json) {
+        if (!json || typeof json !== "object" || json.app !== "MycoQuest media backup" || json.version !== 1 || !Array.isArray(json.items)) {
+          return { ok: false, reason: "Choose a MycoQuest media backup file." };
+        }
+        const photo = /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
+        const video = /^data:video\/[a-z0-9.+-]+(?:;[a-z0-9=.+-]+)*;base64,[A-Za-z0-9+/=]+$/i;
+        const items = json.items.filter((item) => item && typeof item.id === "string" && item.id &&
+          ((item.kind === "photo" && photo.test(String(item.dataUrl))) || (item.kind === "video" && video.test(String(item.dataUrl)))))
+          .map((item) => ({ id: item.id, kind: item.kind, dataUrl: item.dataUrl }));
+        return { ok: true, items };
+      }
+      // @exports parseMediaBackup
+      // @pure:end media-backup
       // @pure:begin smoke
       const smokeOk = true;
       // @exports smokeOk
@@ -1599,16 +1640,6 @@
         const shown = total ? Math.round(mapUi.filaments.length * Math.min(1, (index + 1) / total)) : 0;
         mapUi.filaments.forEach((filament, i) => filament.classList.toggle("is-future", i >= shown));
       }
-      function stopReplay() {
-        if (mapUi.replayTimer) window.clearInterval(mapUi.replayTimer);
-        mapUi.replayTimer = null;
-        mapUi.process.forEach((item) => item.g.classList.remove("is-future"));
-        const svg = $("#mycelial-map");
-        svg.classList.remove("is-replaying");
-        const button = $("#map-replay");
-        button.textContent = "▶ Replay growth";
-        button.setAttribute("aria-pressed", "false");
-      }
       function clearFinale() { const old = $("#mycelial-map .finale"); if (old) old.remove(); }
       // The finale: the user's real harvest photo spawns up out of the substrate as the cap of a fruiting body.
       function playFinale() {
@@ -1637,35 +1668,91 @@
         showToast("🏆 Harvest reel: " + flush + yieldText);
         return true;
       }
+      const replay = { beats: [], durationMs: 0, elapsed: 0, fired: 0, speed: 1, playing: false, raf: 0, last: 0 };
+      function ensureBeats() {
+        if (replay.beats.length) return replay.beats.length;
+        const items = [
+          ...mapUi.process.map((item) => ({ kind: "p", item, ms: item.at ? Date.parse(item.at) : null, order: 0 })),
+          ...mapUi.nodes.filter(Boolean).map((node) => ({ kind: "e", node, ms: Date.parse(node.entry.date + "T12:00:00"), order: 1 + node.index }))
+        ].sort((a, b) => (Number.isFinite(a.ms) ? a.ms : -Infinity) - (Number.isFinite(b.ms) ? b.ms : -Infinity) || a.order - b.order);
+        const { durationMs, times } = replayTimes(items);
+        replay.beats = items.map((item, i) => ({ ...item, t: times[i] }));
+        replay.durationMs = durationMs;
+        return replay.beats.length;
+      }
+      function replayButton(label, pressed) { const button = $("#map-replay"); button.textContent = label; button.setAttribute("aria-pressed", String(pressed)); }
+      function updateScrub() { const scrub = $("#map-replay-scrub"); if (scrub && replay.durationMs) scrub.value = String(Math.round(replay.elapsed / replay.durationMs * 1000)); }
+      function fireBeat(beat) {
+        if (beat.kind === "p") { beat.item.g.classList.remove("is-future"); beat.item.activate(true); }
+        else { applyMapReveal(beat.node.index, true); selectMapNode(beat.node, !prefersReducedMotion()); }
+      }
+      function stopReplay() {
+        if (replay.raf) window.cancelAnimationFrame(replay.raf);
+        replay.raf = 0; replay.playing = false; replay.elapsed = 0; replay.fired = 0; replay.beats = []; replay.durationMs = 0;
+        mapUi.process.forEach((item) => item.g.classList.remove("is-future"));
+        $("#mycelial-map").classList.remove("is-replaying");
+        replayButton("▶ Replay growth", false);
+        const scrub = $("#map-replay-scrub"); if (scrub) scrub.value = "0";
+      }
+      function pauseReplay() {
+        if (replay.raf) window.cancelAnimationFrame(replay.raf);
+        replay.raf = 0; replay.playing = false;
+        replayButton("▶ Resume", false);
+      }
+      function replayFrame(now) {
+        if (!replay.playing) return;
+        replay.elapsed = Math.min(replay.durationMs, replay.elapsed + (now - replay.last) * replay.speed);
+        replay.last = now;
+        while (replay.fired < replay.beats.length && replay.beats[replay.fired].t <= replay.elapsed) { fireBeat(replay.beats[replay.fired]); replay.fired += 1; }
+        updateScrub();
+        if (replay.elapsed >= replay.durationMs) { finishReplay(); return; }
+        replay.raf = window.requestAnimationFrame(replayFrame);
+      }
+      function finishReplay() {
+        if (replay.raf) window.cancelAnimationFrame(replay.raf);
+        replay.raf = 0; replay.playing = false; replay.elapsed = replay.durationMs; replay.fired = replay.beats.length;
+        mapUi.process.forEach((item) => item.g.classList.remove("is-future"));
+        applyMapReveal(mapUi.nodes.length - 1, true);
+        $("#mycelial-map").classList.remove("is-replaying");
+        replayButton("▶ Replay growth", false);
+        const scrub = $("#map-replay-scrub"); if (scrub) scrub.value = "1000";
+        replay.beats = []; replay.elapsed = 0; replay.fired = 0;
+        playFinale();
+      }
+      // Jump to a point in the replay without firing popups for everything skipped.
+      function seekReplay(ms) {
+        if (!ensureBeats()) return;
+        clearFinale();
+        replay.elapsed = Math.max(0, Math.min(replay.durationMs, ms));
+        replay.fired = replay.beats.filter((beat) => beat.t <= replay.elapsed).length;
+        $("#mycelial-map").classList.add("is-replaying");
+        const seen = replay.beats.slice(0, replay.fired);
+        mapUi.process.forEach((item) => item.g.classList.toggle("is-future", !seen.some((beat) => beat.kind === "p" && beat.item === item)));
+        const lastEntry = [...seen].reverse().find((beat) => beat.kind === "e");
+        applyMapReveal(lastEntry ? lastEntry.node.index : -1, false);
+        if (lastEntry) selectMapNode(lastEntry.node, false);
+        updateScrub();
+        if (replay.elapsed >= replay.durationMs) { finishReplay(); return; }
+        replayButton(replay.playing ? "❚❚ Pause" : "▶ Resume", replay.playing);
+      }
       function startReplay() {
-        const nodes = mapUi.nodes.filter(Boolean);
-        const procs = [...mapUi.process].sort((a, b) => String(a.at).localeCompare(String(b.at)));
-        const total = procs.length + nodes.length;
-        if (!total) return;
-        stopReplay(); clearFinale();
-        const svg = $("#mycelial-map");
-        svg.classList.add("is-replaying");
-        const button = $("#map-replay");
-        button.textContent = "❚❚ Pause";
-        button.setAttribute("aria-pressed", "true");
-        procs.forEach((item) => item.g.classList.add("is-future"));
+        if (!ensureBeats()) return;
+        stopReplay(); ensureBeats(); clearFinale();
+        $("#mycelial-map").classList.add("is-replaying");
+        if (prefersReducedMotion()) { finishReplay(); return; }
+        mapUi.process.forEach((item) => item.g.classList.add("is-future"));
         applyMapReveal(-1, false);
-        let step = 0;
-        const delay = Math.max(320, Math.min(950, Math.round(7000 / total)));
-        const tick = () => {
-          if (step < procs.length) {
-            const item = procs[step]; item.g.classList.remove("is-future"); item.activate();
-          } else if (step - procs.length < nodes.length) {
-            const index = step - procs.length;
-            applyMapReveal(index, true);
-            selectMapNode(nodes[index], !prefersReducedMotion());
-          } else {
-            stopReplay(); applyMapReveal(nodes.length - 1, true); playFinale(); return;
-          }
-          step += 1;
-        };
-        tick();
-        mapUi.replayTimer = window.setInterval(tick, delay);
+        replay.playing = true; replay.last = performance.now(); replay.elapsed = 0; replay.fired = 0;
+        replayButton("❚❚ Pause", true);
+        replay.raf = window.requestAnimationFrame(replayFrame);
+      }
+      function toggleReplay() {
+        if (replay.playing) { pauseReplay(); return; }
+        if (replay.beats.length && replay.elapsed > 0 && replay.elapsed < replay.durationMs) {
+          replay.playing = true; replay.last = performance.now(); replayButton("❚❚ Pause", true);
+          replay.raf = window.requestAnimationFrame(replayFrame); return;
+        }
+        startReplay();
       }
       function renderMap() {
         stopReplay();
@@ -1737,9 +1824,9 @@
             const glyph = svgEl("text", { x: point.x.toFixed(1), y: (point.y - 10).toFixed(1), class: "map-emoji", "font-size": "18", "text-anchor": "middle", tabindex: 0, role: "button", "aria-label": label });
             glyph.textContent = emoji;
             const tip = svgEl("title"); tip.textContent = label; glyph.append(tip);
-            const activate = () => { stopReplay(); glyph.classList.remove("react"); void glyph.getBoundingClientRect(); glyph.classList.add("react"); open(); sporeBurst(point.x, point.y, color, 6); };
-            glyph.addEventListener("click", activate);
-            glyph.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); activate(); } });
+            const activate = (fromReplay) => { if (!fromReplay) stopReplay(); glyph.classList.remove("react"); void glyph.getBoundingClientRect(); glyph.classList.add("react"); open(); sporeBurst(point.x, point.y, color, 6); };
+            glyph.addEventListener("click", () => activate(false));
+            glyph.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); activate(false); } });
             g.append(glyph);
             if (animate) g.style.animationDelay = (.2 + s).toFixed(2) + "s";
             group.append(g); branch.process.push(g);
@@ -2146,6 +2233,7 @@
           "full-cycle": [fullCycle ? 1 : 0, 1],
           "network": [Math.min(growsWithEntries.length, 3), 3],
           "steady-keeper": [Math.min(state.entries.length, 30), 30],
+          "documented": [Math.min(Object.keys(state.docAwards || {}).length, 5), 5],
           "condition-keeper": [Math.min(state.entries.filter((entry) => Number.isFinite(entry.temperature) && Number.isFinite(entry.humidity)).length, 10), 10]
         };
       }
@@ -3057,6 +3145,45 @@
         saveState(); renderAll();
         showToast(`${grow.name} moved back to active grows`);
       }
+      function blobToDataUrl(blob) {
+        return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = () => reject(reader.error); reader.readAsDataURL(blob); });
+      }
+      async function exportMediaBackup() {
+        const message = $("#backup-message"); const items = [];
+        message.textContent = "Collecting your photos and videos…";
+        for (const capture of state.trail) {
+          try {
+            const value = await getMedia(capture.id);
+            if (!value) continue;
+            items.push({ id: capture.id, kind: capture.kind, dataUrl: typeof value === "string" ? value : await blobToDataUrl(value) });
+          } catch (error) { /* skip unreadable media */ }
+        }
+        if (!items.length) { message.textContent = "No photos or videos to back up yet."; return; }
+        const blob = new Blob([JSON.stringify({ app: "MycoQuest media backup", version: 1, items })], { type: "application/json" });
+        const url = URL.createObjectURL(blob); const link = document.createElement("a");
+        link.href = url; link.download = `MycoQuest-media-${todayKey()}.json`; link.click();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+        message.textContent = `${items.length} photo${items.length === 1 ? "" : "s"} and video${items.length === 1 ? "" : "s"} saved. Import your journal first, then this file.`;
+      }
+      async function importMediaBackup(event) {
+        const file = event.target.files[0]; event.target.value = "";
+        const message = $("#backup-message");
+        if (!file) return;
+        try {
+          const parsed = parseMediaBackup(JSON.parse(await file.text()));
+          if (!parsed.ok) { message.textContent = parsed.reason; return; }
+          const known = new Map(state.trail.map((capture) => [capture.id, capture]));
+          let restored = 0;
+          for (const item of parsed.items) {
+            const capture = known.get(item.id);
+            if (!capture) continue;
+            await putMedia(item.id, item.kind === "video" ? await (await fetch(item.dataUrl)).blob() : item.dataUrl);
+            capture.hasMedia = true; restored += 1;
+          }
+          saveState(); renderAll();
+          message.textContent = restored ? `${restored} photo${restored === 1 ? "" : "s"} and video${restored === 1 ? "" : "s"} restored.` : "None of those files match your process trail. Import your journal first, then this file.";
+        } catch (error) { message.textContent = "That media backup could not be read."; }
+      }
       function exportData() {
         const entries = state.entries.map((entry) => ({
           growName: (growById(entry.growId) || entry).name || entry.growName,
@@ -3310,7 +3437,10 @@
         const fruitSteps = ["link", "chamber", "birth", "conditions", "pins", "harvest"];
         const popSteps = ["kit", "soak", "simmer", "dry", "fill", "sterilize", "inoculate", "incubate", "colonize", "shake"];
         return {
-          version: 3, sample: true, grows, entries, trail: [], docAwards: {},
+          version: 3, sample: true, grows, entries,
+          trail: ["kit", "soak", "simmer", "dry", "fill"].map((stepId, i) => ({ id: "sample-cap-" + stepId, growId: grows[1].id, questId: "popcorn", stepId, kind: "photo",
+            caption: ["Everything laid out", "Dry kernels after 12 h soak", "Gentle simmer, no rolling boil", "Drying on towels", "Jars filled two-thirds"][i], takenAt: stamp(25 - i, 10), hasMedia: true })),
+          docAwards: { "popcorn:kit": 10, "popcorn:soak": 10, "popcorn:simmer": 10, "popcorn:dry": 10, "popcorn:fill": 10 },
           academy: {
             active: "fruiting", jars: 6,
             quests: {
@@ -3321,10 +3451,24 @@
           }
         };
       }
+      async function seedSampleMedia() {
+        const pretty = { kit: ["#6b7a4e", "🧰"], soak: ["#4d7a8c", "💧"], simmer: ["#a8623a", "🔥"], dry: ["#b59a5a", "🌾"], fill: ["#7a6a8f", "🫙"] };
+        for (const capture of state.trail.filter((item) => String(item.id).startsWith("sample-cap-"))) {
+          const [color, emoji] = pretty[capture.stepId] || ["#556b3a", "🍄"];
+          const canvas = document.createElement("canvas"); canvas.width = 360; canvas.height = 240;
+          const ctx = canvas.getContext("2d");
+          const gradient = ctx.createLinearGradient(0, 0, 360, 240); gradient.addColorStop(0, color); gradient.addColorStop(1, "#1d2118");
+          ctx.fillStyle = gradient; ctx.fillRect(0, 0, 360, 240);
+          ctx.font = "96px 'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif"; ctx.textAlign = "center"; ctx.fillText(emoji, 180, 140);
+          ctx.font = "600 18px system-ui, sans-serif"; ctx.fillStyle = "#f4ecd8"; ctx.fillText(capture.caption, 180, 200);
+          try { await putMedia(capture.id, canvas.toDataURL("image/jpeg", .8)); } catch (error) { /* sample photos are best-effort */ }
+        }
+      }
       function loadSampleJournal() {
         if (!journalIsEmpty()) { showToast("The sample is only available while your journal is empty."); return; }
         state = buildSampleJournal();
         saveState(); renderAll();
+        seedSampleMedia();
         const map = $("#map");
         map.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth" });
         window.setTimeout(() => startReplay(), prefersReducedMotion() ? 0 : 1600);
@@ -3332,6 +3476,7 @@
       function clearSampleJournal() {
         if (!state.sample) return;
         if (!window.confirm("Clear the sample journal and start your own? Anything added while the sample was open will be removed too.")) return;
+        state.trail.forEach((capture) => { deleteMedia(capture.id).catch(() => {}); });
         state = emptyState();
         trophyUi.justUnlocked.clear();
         saveState(); renderAll();
@@ -3397,11 +3542,19 @@
         const node = mapUi.nodes[index];
         if (node) selectMapNode(node, false);
       });
-      $("#map-replay").addEventListener("click", () => { if (mapUi.replayTimer) stopReplay(); else startReplay(); });
+      $("#map-replay").addEventListener("click", toggleReplay);
+      $("#map-speed").addEventListener("change", (event) => { replay.speed = Number(event.target.value) || 1; });
+      $("#map-replay-scrub").addEventListener("input", (event) => {
+        if (!ensureBeats()) return;
+        seekReplay(Number(event.target.value) / 1000 * replay.durationMs);
+        if (replay.playing) replay.last = performance.now();
+      });
       $("#compare-button").addEventListener("click", renderComparison);
       $("#compare-grow-a").addEventListener("change", renderComparison);
       $("#compare-grow-b").addEventListener("change", renderComparison);
       $("#export-button").addEventListener("click", exportData);
+      $("#export-media-button").addEventListener("click", exportMediaBackup);
+      $("#import-media-file").addEventListener("change", importMediaBackup);
       $("#import-grow-file").addEventListener("change", handleImport);
       $("#import-site-file").addEventListener("change", handleImport);
       $("#reset-button").addEventListener("click", resetApp);

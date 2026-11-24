@@ -32,8 +32,11 @@ Spec: `docs/superpowers/specs/2026-11-24-planning-phase-living-map-design.md`; p
   Academy capture slots (photo / 15 s video, IndexedDB `media` store, `state.trail`, +10 XP once per step in `state.docAwards`);
   12-family SVG mushroom glyphs + rhizomorph + spore clouds + hover/tap reactions on the map;
   contamination 🦠 node and `incidentNote` field/popup; v2 export extras (`trail`, `incidentNote`, `planning`, `docAwards`; no media bytes).
-- Not done yet: replay plan/controller + harvest-photo finale (plan Tasks 6, 9), "Documented" trophy + sample trail (Task 10),
-  separate media backup file (videos/photos in the trail are not carried by export or import yet), trail props as map nodes.
+- Also done: every grow is on the map (planning-only too) with seed + capture nodes; stage chips/stat tiles; harvest-photo finale;
+  replay paced by real elapsed days (`replayTimes`, 12-40 s) with play/pause/scrub/0.5x-1x-2x; "Documented" trophy (5 documented steps);
+  sample journal ships a 5-step process trail with generated photos; separate media backup file
+  (`MycoQuest media backup` v1: export/import photos and videos, import the journal first, then the media).
+- Still open: pop-up polish for tiny phones, a way to move captures between grows, trimming videos in-app.
 - Tests: `node tests/run.mjs` (pure logic), `sh tests/smoke.sh` (console errors), `node tests/dom.mjs tests/dom/<scenario>.js` (real UI in headless Chrome).
 
 ## Next up

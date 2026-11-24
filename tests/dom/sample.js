@@ -16,6 +16,6 @@ async function scenario(h) {
   input.files = dt.files; input.dispatchEvent(new Event("change", { bubbles: true }));
   await h.sleep(900);
   const saved = JSON.parse(localStorage.getItem("mycoquest-standalone-grow-log-v3"));
-  h.check("capture works on top of the sample journal", !!saved.trail && saved.trail.length === 1, JSON.stringify(saved.trail));
+  h.check("capture works on top of the sample journal", !!saved.trail && saved.trail.length === 6 && saved.trail.some((c) => !String(c.id).startsWith("sample-cap-")), JSON.stringify(saved.trail));
   h.$("#map").scrollIntoView();
 }

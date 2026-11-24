@@ -111,3 +111,47 @@ test("mergeTrail de-duplicates by id and drops items whose grow is unknown", () 
   assert.equal(merged[1].growId, "g1");
   assert.equal(merged[1].hasMedia, false);
 });
+
+test("replayTimes returns nothing for no items", () => {
+  const { replayTimes } = loadPure(["replay-time"]);
+  const out = replayTimes([]);
+  assert.equal(out.durationMs, 0);
+  assert.equal(out.times.length, 0);
+});
+test("replayTimes keeps same-day items apart and the replay at least 12 s", () => {
+  const { replayTimes } = loadPure(["replay-time"]);
+  const day = Date.parse("2026-11-01T12:00:00");
+  const out = replayTimes([{ ms: day }, { ms: day }, { ms: day }]);
+  assert.ok(out.durationMs >= 12000);
+  for (let i = 1; i < out.times.length; i += 1) assert.ok(out.times[i] - out.times[i - 1] >= 250, "gap at " + i);
+});
+test("replayTimes paces by real elapsed days and clamps to 40 s", () => {
+  const { replayTimes } = loadPure(["replay-time"]);
+  const d0 = Date.parse("2026-11-01T12:00:00"), DAY = 864e5;
+  const out = replayTimes([{ ms: d0 }, { ms: d0 + DAY }, { ms: d0 + 10 * DAY }]);
+  const gapShort = out.times[1] - out.times[0], gapLong = out.times[2] - out.times[1];
+  assert.ok(gapLong > gapShort * 5, "10 real days should take much longer than 1 on screen");
+  const long = replayTimes([{ ms: d0 }, { ms: d0 + 400 * DAY }]);
+  assert.ok(long.durationMs <= 40000, "duration " + long.durationMs);
+});
+test("replayTimes treats undated items as the start", () => {
+  const { replayTimes } = loadPure(["replay-time"]);
+  const d0 = Date.parse("2026-11-01T12:00:00");
+  const out = replayTimes([{ ms: null }, { ms: d0 }, { ms: d0 + 5 * 864e5 }]);
+  assert.ok(out.times[0] <= out.times[1] && out.times[1] < out.times[2]);
+});
+test("parseMediaBackup rejects other files and filters unsafe items", () => {
+  const { parseMediaBackup } = loadPure(["media-backup"]);
+  assert.equal(parseMediaBackup({ app: "something else", version: 1, items: [] }).ok, false);
+  assert.equal(parseMediaBackup(null).ok, false);
+  const good = { id: "c1", kind: "photo", dataUrl: "data:image/png;base64,AAAA" };
+  const video = { id: "c2", kind: "video", dataUrl: "data:video/webm;base64,AAAA" };
+  const result = parseMediaBackup({ app: "MycoQuest media backup", version: 1, items: [
+    good, video,
+    { id: "c3", kind: "photo", dataUrl: "data:video/webm;base64,AAAA" },
+    { id: "c4", kind: "photo", dataUrl: "javascript:alert(1)" },
+    { kind: "photo", dataUrl: "data:image/png;base64,AAAA" }
+  ] });
+  assert.equal(result.ok, true);
+  assert.deepEqual(result.items.map((item) => item.id), ["c1", "c2"]);
+});
