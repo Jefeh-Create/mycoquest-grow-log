@@ -53,8 +53,9 @@ test("validateInoculationDate rejects future, blank, and malformed dates", () =>
 });
 test("cleanPlanningDetail keeps known fields, trims, and caps length", () => {
   const { cleanPlanningDetail } = loadPure(["planning"]);
-  const result = cleanPlanningDetail({ substrate: "  BRF  ", waterRatio: "1:1", sterilizationMin: "45", notes: "x".repeat(900), evil: "drop me" });
+  const result = cleanPlanningDetail({ grain: "  Rye berries ", substrate: "  BRF  ", waterRatio: "1:1", sterilizationMin: "45", notes: "x".repeat(900), evil: "drop me" });
   assert.equal(result.substrate, "BRF");
+  assert.equal(result.grain, "Rye berries");
   assert.equal(result.sterilizationMin, 45);
   assert.equal(result.notes.length, 500);
   assert.equal("evil" in result, false);

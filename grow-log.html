@@ -250,6 +250,10 @@
     .map-emoji { cursor: pointer; transform-box: fill-box; transform-origin: 50% 100%; }
     .map-emoji.react { animation: mush-shiver .45s ease 3; }
     .map-incident { margin: 6px 0 0; padding: 8px 10px; border-left: 3px solid #ce876b; background: #ce876b1a; border-radius: 6px; }
+    .process-ring { stroke: var(--ink, #fff); stroke-width: 1.2; stroke-dasharray: 2.5 2; opacity: .85; }
+    .process-node .map-emoji { font-size: 13px; }
+    .map-emoji:hover { animation: mush-bob .55s ease; }
+    .capture-grow { font-size: .8rem; color: var(--muted); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
     .stage-tag { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: .7rem; white-space: nowrap; }
     .stage-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--moss); }
     .empty { color: var(--muted); font-size: .82rem; padding: 14px 0; }
@@ -257,6 +261,32 @@
     .map-panel { overflow: hidden; }
     .map-top { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
     .map-key { display: flex; flex-wrap: wrap; gap: 9px 13px; color: var(--muted); font-size: .66rem; margin: 10px 0 0; }
+    .map-hud { margin-top: 12px; display: grid; gap: 12px; }
+    .stage-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .stage-chip { display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px 5px 5px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.03); color: var(--text, inherit); font: inherit; font-size: .72rem; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease, background .18s ease; }
+    .stage-chip:hover, .stage-chip:focus-visible { transform: translateY(-2px); box-shadow: 0 6px 18px -8px var(--chip); background: color-mix(in srgb, var(--chip) 14%, transparent); }
+    .stage-chip[aria-pressed="true"] { background: color-mix(in srgb, var(--chip) 24%, transparent); border-color: var(--chip); box-shadow: 0 0 0 1px var(--chip), 0 8px 22px -8px var(--chip); }
+    .chip-badge { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; font-size: 15px; background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--chip) 70%, #fff), var(--chip)); box-shadow: 0 0 10px -2px var(--chip); transition: transform .25s cubic-bezier(.3,1.6,.5,1); }
+    .stage-chip:hover .chip-badge { transform: scale(1.18) rotate(-8deg); }
+    .stage-chip.pop .chip-badge { animation: chip-pop .5s ease; }
+    @keyframes chip-pop { 0% { transform: scale(1); } 40% { transform: scale(1.5) rotate(12deg); } 100% { transform: scale(1); } }
+    .chip-count { min-width: 20px; text-align: center; padding: 1px 6px; border-radius: 999px; background: rgba(255,255,255,.08); font-size: .66rem; }
+    .stat-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 8px; }
+    .stat-tile { display: grid; justify-items: center; gap: 1px; padding: 9px 6px; border-radius: 12px; border: 1px solid var(--line); background: linear-gradient(160deg, rgba(169,185,134,.10), rgba(169,185,134,.02)); transition: transform .2s ease, border-color .2s ease; }
+    .stat-tile:hover { transform: translateY(-3px); border-color: rgba(169,185,134,.5); }
+    .tile-emoji { font-size: 1.35rem; line-height: 1.2; transition: transform .25s cubic-bezier(.3,1.6,.5,1); }
+    .stat-tile:hover .tile-emoji { transform: scale(1.3) rotate(-10deg); }
+    .stat-tile b { font-family: Georgia, serif; font-size: 1.15rem; font-weight: 500; }
+    .stat-tile small { color: var(--muted); font-size: .64rem; text-transform: uppercase; letter-spacing: .08em; }
+    .map-emoji { font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; filter: drop-shadow(0 1px 2px rgba(0,0,0,.5)); }
+    .map-emoji:hover, .map-emoji:focus-visible { animation: mush-bob .55s ease; filter: drop-shadow(0 0 6px rgba(255,235,170,.9)); outline: none; }
+    .map-node { transition: transform .18s ease; transform-box: fill-box; transform-origin: center; cursor: pointer; }
+    .map-node:hover { transform: scale(1.3); }
+    .has-stage-filter .map-node-g { opacity: .18; }
+    .has-stage-filter .map-node-g.stage-match { opacity: 1; filter: drop-shadow(0 0 7px rgba(255,235,170,.55)); }
+    .finale { cursor: pointer; }
+    .finale-label { fill: #f2d9a0; font-size: 11px; font-weight: 600; paint-order: stroke; stroke: rgba(0,0,0,.6); stroke-width: 3px; }
+    .finale-body { filter: drop-shadow(0 4px 10px rgba(0,0,0,.5)); }
     .key-item { display: inline-flex; align-items: center; gap: 5px; }
     .key-dot { width: 7px; height: 7px; border-radius: 50%; }
     .map-wrap { margin-top: 13px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: radial-gradient(ellipse at 50% 50%, rgba(169,185,134,.06), transparent 62%); }
@@ -571,8 +601,8 @@
         <p>Your journal as a living network. Every grow is a hypha, every check-in a node, and every harvest a fruiting body. Tap a node to release its spores, or replay the whole grow from day one.</p>
       </div>
       <article class="panel map-panel">
-        <div class="map-top"><div><h3>Your growing network</h3><div class="map-key" id="map-key" aria-label="Map stage colors"></div></div></div>
-        <div class="map-wrap" id="map-wrap"><svg id="mycelial-map" viewBox="0 0 800 480" role="group" aria-label="Mycelial map of your grows and check-ins"></svg><div class="map-empty" id="map-empty" hidden>Your first check-in will become the first node in your map.<br><button class="button small secondary" type="button" data-load-sample>Preview with a sample journal</button></div></div>
+        <div class="map-top"><div><h3>Your growing network</h3><div class="map-hud"><div class="stage-chips" id="map-key" role="group" aria-label="Filter the map by stage"></div><div class="stat-tiles" id="map-stats" aria-label="Your growing totals"></div></div></div></div>
+        <div class="map-wrap" id="map-wrap"><svg id="mycelial-map" viewBox="0 0 800 480" role="group" aria-label="Mycelial map of your grows and check-ins"></svg><div class="map-empty" id="map-empty" hidden>Add a grow, even one you're still planning, and it will take root here.<br><button class="button small secondary" type="button" data-load-sample>Preview with a sample journal</button></div></div>
         <div class="map-timeline"><button class="button small secondary" id="map-replay" type="button" aria-pressed="false" disabled>▶ Replay growth</button><label for="map-timeline-slider">Timeline</label><input id="map-timeline-slider" type="range" min="0" max="0" value="0" step="1" disabled><output id="map-timeline-date">No check-ins yet</output></div>
         <p class="map-detail" id="map-detail" aria-live="polite">Select a check-in node to read its note.</p>
       </article>
@@ -675,7 +705,7 @@
         const source = raw && typeof raw === "object" ? raw : {};
         const text = (value, max) => String(value == null ? "" : value).trim().slice(0, max);
         const out = {};
-        ["substrate", "waterRatio"].forEach((key) => { const value = text(source[key], 80); if (value) out[key] = value; });
+        ["grain", "substrate", "waterRatio"].forEach((key) => { const value = text(source[key], 80); if (value) out[key] = value; });
         const minutes = Number(source.sterilizationMin);
         if (String(source.sterilizationMin ?? "").trim() !== "" && Number.isFinite(minutes) && minutes >= 0 && minutes <= 1440) out.sterilizationMin = minutes;
         const notes = text(source.notes, 500);
@@ -1192,7 +1222,11 @@
         };
         const note = document.createElement("span"); note.className = "form-note"; note.setAttribute("role", "status");
         const save = document.createElement("button"); save.type = "submit"; save.className = "button small"; save.textContent = "Save details";
-        form.append(field("Substrate recipe", "substrate", "text", "e.g. BRF + vermiculite"), field("Water ratio", "waterRatio", "text", "e.g. 1:1"),
+        const grainField = field("Grain used", "grain", "text", "e.g. Rye berries");
+        const grainList = document.createElement("datalist"); grainList.id = "grain-options-" + grow.id;
+        ["Rye berries", "Popcorn", "Millet", "Wheat berries", "Oats", "Sorghum", "Brown rice", "Corn"].forEach((name) => { const option = document.createElement("option"); option.value = name; grainList.append(option); });
+        grainField.querySelector("input").setAttribute("list", grainList.id);
+        form.append(grainField, grainList, field("Substrate recipe", "substrate", "text", "e.g. BRF + vermiculite"), field("Water ratio", "waterRatio", "text", "e.g. 1:1"),
           field("Sterilization (minutes)", "sterilizationMin", "number", "e.g. 45"), field("Notes", "notes"), save, note);
         form.addEventListener("submit", (event) => {
           event.preventDefault();
@@ -1274,13 +1308,46 @@
         if (!second.value && state.grows[1]) second.value = state.grows[1].id;
         $("#compare-button").disabled = state.grows.length < 2;
       }
+      const STAGE_EMOJI = { Planning: "📝", Inoculation: "💉", Colonization: "🕸️", Fruiting: "🍄", Harvest: "🧺", Complete: "🏆" };
+      function stageCount(stage) {
+        const entries = state.entries.filter((entry) => entry.stage === stage).length;
+        return stage === "Planning" ? entries + state.trail.length + state.grows.filter((grow) => grow.planning).length : entries;
+      }
       function renderMapKey() {
         const key = $("#map-key"); key.replaceChildren();
         STAGES.forEach((stage, index) => {
-          const item = document.createElement("span"); item.className = "key-item";
-          const dot = document.createElement("i"); dot.className = "key-dot"; dot.style.backgroundColor = STAGE_COLORS[index];
-          item.append(dot, document.createTextNode(stage)); key.append(item);
+          const chip = document.createElement("button"); chip.type = "button"; chip.className = "stage-chip";
+          chip.style.setProperty("--chip", STAGE_COLORS[index]);
+          chip.setAttribute("aria-pressed", String(mapUi.filter === stage));
+          const count = stageCount(stage);
+          chip.setAttribute("aria-label", `${stage}: ${count} on the map. Tap to highlight.`);
+          const badge = document.createElement("span"); badge.className = "chip-badge"; badge.setAttribute("aria-hidden", "true"); badge.textContent = STAGE_EMOJI[stage];
+          const label = document.createElement("span"); label.className = "chip-label"; label.textContent = stage;
+          const num = document.createElement("b"); num.className = "chip-count"; num.textContent = String(count);
+          chip.append(badge, label, num);
+          chip.addEventListener("click", () => {
+            mapUi.filter = mapUi.filter === stage ? null : stage;
+            key.querySelectorAll(".stage-chip").forEach((item) => item.setAttribute("aria-pressed", String(item === chip && mapUi.filter === stage)));
+            chip.classList.remove("pop"); void chip.offsetWidth; chip.classList.add("pop");
+            applyStageFilter();
+          });
+          key.append(chip);
         });
+        const stats = $("#map-stats"); stats.replaceChildren();
+        const harvests = state.entries.filter((entry) => hasHarvestRecord(entry) || Number(entry.freshYieldG) > 0).length;
+        [["🧫", "Grows", state.grows.length], ["📸", "Captures", state.trail.length], ["🍄", "Fruitings", state.entries.filter((entry) => entry.stage === "Fruiting").length],
+          ["🧺", "Harvests", harvests], ["🔥", "Streak", currentStreak()]].forEach(([emoji, name, value]) => {
+          const tile = document.createElement("div"); tile.className = "stat-tile";
+          const icon = document.createElement("span"); icon.className = "tile-emoji"; icon.setAttribute("aria-hidden", "true"); icon.textContent = emoji;
+          const number = document.createElement("b"); number.textContent = String(value);
+          const caption = document.createElement("small"); caption.textContent = name;
+          tile.append(icon, number, caption); stats.append(tile);
+        });
+      }
+      function applyStageFilter() {
+        const svg = $("#mycelial-map");
+        svg.classList.toggle("has-stage-filter", !!mapUi.filter);
+        svg.querySelectorAll(".map-node-g").forEach((g) => g.classList.toggle("stage-match", !!mapUi.filter && g.dataset.stage === mapUi.filter));
       }
       const svgEl = (name, attrs = {}) => {
         const node = document.createElementNS("http://www.w3.org/2000/svg", name);
@@ -1296,6 +1363,40 @@
         return state.entries.map((entry, order) => ({ entry, order }))
           .sort((a, b) => a.entry.date.localeCompare(b.entry.date) ||
             String(a.entry.createdAt || "").localeCompare(String(b.entry.createdAt || "")) || a.order - b.order);
+      }
+      const STEP_EMOJI = { kit: "🧰", mix: "🥣", fill: "🫙", sterilize: "♨️", inoculate: "💉", incubate: "🌡️", colonize: "🕸️", full: "🧫", shake: "🫙",
+        soak: "💧", simmer: "🔥", dry: "🌾", link: "🔗", chamber: "🪣", birth: "💦", conditions: "🌡️", pins: "🍄", harvest: "🧺", second: "🧺" };
+      function captureStepTitle(capture) {
+        const quest = QUESTS.find((item) => item.id === capture.questId);
+        const step = quest && quest.steps.find((item) => item.id === capture.stepId);
+        return step ? step.title : "Process capture";
+      }
+      function mapDetailReset(titleText, bodyText) {
+        const detail = $("#map-detail");
+        detail.replaceChildren();
+        const title = document.createElement("strong"); title.textContent = titleText;
+        const body = document.createElement("span"); body.textContent = bodyText ? " — " + bodyText : "";
+        detail.append(title, body);
+        return detail;
+      }
+      function showGrowDetail(grow) {
+        const info = grow.planningDetail || {};
+        const parts = [info.grain && "Grain: " + info.grain, info.substrate && "Substrate: " + info.substrate, info.waterRatio && "Water: " + info.waterRatio,
+          Number.isFinite(info.sterilizationMin) && "Sterilize: " + info.sterilizationMin + " min", info.notes].filter(Boolean);
+        const captured = state.trail.filter((item) => item.growId === grow.id).length;
+        const status = grow.planning ? "In Planning, not inoculated yet. Follow an Academy quest and capture each step; this branch grows with you."
+          : "Inoculated " + dateLabel(grow.startDate) + ". Add your first check-in to start the timeline.";
+        mapDetailReset(grow.name + " · " + grow.species, status + (captured ? " " + captured + " capture" + (captured === 1 ? "" : "s") + " so far." : "") + (parts.length ? " " + parts.join(" · ") : ""));
+      }
+      function showCaptureDetail(capture, grow) {
+        const detail = mapDetailReset(grow.name + " · " + captureStepTitle(capture) + " · " + dateLabel(String(capture.takenAt).slice(0, 10)), capture.caption || (capture.kind === "video" ? "Video" : "Photo"));
+        captureSource(capture).then((src) => {
+          if (!src || $("#map-detail") !== detail || !detail.textContent.includes(captureStepTitle(capture))) return;
+          const media = capture.kind === "video" ? document.createElement("video") : document.createElement("img");
+          media.className = "map-detail-photo"; media.src = src;
+          if (capture.kind === "video") { media.controls = true; media.preload = "metadata"; } else media.alt = (capture.caption || captureStepTitle(capture)) + " photo";
+          detail.append(media);
+        });
       }
       function showMapDetail(entry, timelineIndex) {
         const grow = growById(entry.growId);
@@ -1350,7 +1451,7 @@
       // The background network gets denser as you log more. Nutrient pulses flow
       // outward, "Replay growth" regrows the whole history, and tapping a node
       // releases spores.
-      const mapUi = { branches: [], filaments: [], nodes: [], replayTimer: null, signature: "", selected: null };
+      const mapUi = { branches: [], filaments: [], nodes: [], process: [], filter: null, replayTimer: null, signature: "", selected: null };
       const MAP_HUB = { x: 400, y: 240 };
       const MAP_REACH = { x: 305, y: 196 };
       function prefersReducedMotion() {
@@ -1486,13 +1587,13 @@
         const full = index >= last;
         mapUi.branches.forEach((branch) => {
           const visible = branch.nodes.filter((node) => node.index <= index);
-          const reach = full ? 1 : visible.length ? Math.min(1, Math.max(...visible.map((node) => node.s)) + .04) : 0;
+          const reach = full ? 1 : visible.length ? Math.min(1, Math.max(...visible.map((node) => node.s)) + .04) : branch.process.length ? .3 : 0;
           branch.path.style.transition = animate ? "" : "none";
           branch.glow.style.transition = animate ? "" : "none";
           const offset = branch.length * (1 - reach);
           branch.path.style.strokeDashoffset = `${offset}px`;
           branch.glow.style.strokeDashoffset = `${offset}px`;
-          branch.group.classList.toggle("is-dormant", !visible.length);
+          branch.group.classList.toggle("is-dormant", !visible.length && !branch.process.length);
           branch.nodes.forEach((node) => node.g.classList.toggle("is-future", node.index > index));
         });
         const shown = total ? Math.round(mapUi.filaments.length * Math.min(1, (index + 1) / total)) : 0;
@@ -1501,31 +1602,70 @@
       function stopReplay() {
         if (mapUi.replayTimer) window.clearInterval(mapUi.replayTimer);
         mapUi.replayTimer = null;
+        mapUi.process.forEach((item) => item.g.classList.remove("is-future"));
         const svg = $("#mycelial-map");
         svg.classList.remove("is-replaying");
         const button = $("#map-replay");
         button.textContent = "▶ Replay growth";
         button.setAttribute("aria-pressed", "false");
       }
+      function clearFinale() { const old = $("#mycelial-map .finale"); if (old) old.remove(); }
+      // The finale: the user's real harvest photo spawns up out of the substrate as the cap of a fruiting body.
+      function playFinale() {
+        clearFinale();
+        const harvest = [...mapUi.nodes].reverse().find((node) => node && node.entry.photoDataUrl && /^data:image\/(?:jpeg|png|webp);base64,/i.test(node.entry.photoDataUrl) && (hasHarvestRecord(node.entry) || node.entry.stage === "Harvest" || node.entry.stage === "Complete"));
+        if (!harvest) return false;
+        const svg = $("#mycelial-map");
+        const id = "finale-clip-" + Date.now();
+        const g = svgEl("g", { class: "finale", transform: "translate(" + harvest.x.toFixed(1) + " " + (harvest.y + 6).toFixed(1) + ")", tabindex: 0, role: "button", "aria-label": "Your harvest photo. Press to dismiss." });
+        const defs = svgEl("defs"); const clip = svgEl("clipPath", { id }); clip.append(svgEl("path", { d: "M-30 -14 Q-32 -52 0 -54 Q32 -52 30 -14 Q0 -22 -30 -14Z" })); defs.append(clip);
+        const body = svgEl("g", { class: "mush spawn fx-reishi finale-body" });
+        body.append(svgEl("rect", { x: -6, y: -16, width: 12, height: 20, rx: 5, fill: "#efe4cc" }));
+        const photo = svgEl("image", { x: -32, y: -56, width: 64, height: 44, "clip-path": "url(#" + id + ")", preserveAspectRatio: "xMidYMid slice" });
+        photo.setAttribute("href", harvest.entry.photoDataUrl);
+        body.append(photo, svgEl("path", { d: "M-30 -14 Q-32 -52 0 -54 Q32 -52 30 -14 Q0 -22 -30 -14Z", fill: "none", stroke: "#f2d9a0", "stroke-width": "2" }));
+        const flush = harvest.entry.flushNumber ? "Flush " + harvest.entry.flushNumber : "Harvest";
+        const yieldText = Number.isFinite(harvest.entry.freshYieldG) ? " · " + fmt(harvest.entry.freshYieldG) + " g" : "";
+        const label = svgEl("text", { x: 0, y: 20, class: "finale-label", "text-anchor": "middle" }); label.textContent = "🧺 " + flush + yieldText;
+        g.append(defs, body, label);
+        [-1, 1].forEach((dir, i) => g.append(mushroomSprite(harvest.pick || pickMushroom("", "x"), i ? "young" : "mature", dir * 44, 2, { spawn: true })));
+        svg.append(g);
+        const dismiss = () => g.remove();
+        g.addEventListener("click", dismiss);
+        g.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " " || event.key === "Escape") { event.preventDefault(); dismiss(); } });
+        window.setTimeout(() => { sporeCloud(harvest.x, harvest.y - 40, (harvest.pick && harvest.pick.sporeColor) || "#f7f1e4"); sporeBurst(harvest.x, harvest.y - 20, "#f2d9a0", 14); }, 650);
+        showToast("🏆 Harvest reel: " + flush + yieldText);
+        return true;
+      }
       function startReplay() {
-        const nodes = mapUi.nodes;
-        if (!nodes.length) return;
-        stopReplay();
+        const nodes = mapUi.nodes.filter(Boolean);
+        const procs = [...mapUi.process].sort((a, b) => String(a.at).localeCompare(String(b.at)));
+        const total = procs.length + nodes.length;
+        if (!total) return;
+        stopReplay(); clearFinale();
         const svg = $("#mycelial-map");
         svg.classList.add("is-replaying");
         const button = $("#map-replay");
         button.textContent = "❚❚ Pause";
         button.setAttribute("aria-pressed", "true");
-        let index = 0;
-        applyMapReveal(0, false);
-        selectMapNode(nodes[0]);
-        const delay = Math.max(260, Math.min(900, Math.round(6000 / nodes.length)));
-        mapUi.replayTimer = window.setInterval(() => {
-          index += 1;
-          if (index >= nodes.length) { stopReplay(); applyMapReveal(nodes.length - 1, true); return; }
-          applyMapReveal(index, true);
-          selectMapNode(nodes[index], !prefersReducedMotion());
-        }, delay);
+        procs.forEach((item) => item.g.classList.add("is-future"));
+        applyMapReveal(-1, false);
+        let step = 0;
+        const delay = Math.max(320, Math.min(950, Math.round(7000 / total)));
+        const tick = () => {
+          if (step < procs.length) {
+            const item = procs[step]; item.g.classList.remove("is-future"); item.activate();
+          } else if (step - procs.length < nodes.length) {
+            const index = step - procs.length;
+            applyMapReveal(index, true);
+            selectMapNode(nodes[index], !prefersReducedMotion());
+          } else {
+            stopReplay(); applyMapReveal(nodes.length - 1, true); playFinale(); return;
+          }
+          step += 1;
+        };
+        tick();
+        mapUi.replayTimer = window.setInterval(tick, delay);
       }
       function renderMap() {
         stopReplay();
@@ -1533,9 +1673,9 @@
         const days = orderedEntries();
         const slider = $("#map-timeline-slider");
         slider.min = "0"; slider.max = String(Math.max(0, days.length - 1)); slider.disabled = !days.length;
-        $("#map-replay").disabled = days.length < 2;
-        mapUi.branches = []; mapUi.filaments = []; mapUi.nodes = []; mapUi.selected = null;
-        if (!days.length) {
+        $("#map-replay").disabled = !state.grows.length;
+        mapUi.branches = []; mapUi.filaments = []; mapUi.nodes = []; mapUi.process = []; mapUi.selected = null;
+        if (!state.grows.length) {
           svg.hidden = true;
           $("#map-empty").hidden = false;
           $("#map-timeline-date").textContent = "No check-ins yet";
@@ -1548,7 +1688,8 @@
         $("#map-empty").hidden = true;
         const reduced = prefersReducedMotion();
         const timelineIndex = new Map(days.map((item, index) => [item.entry.id, index]));
-        const signature = `${days.length}|${state.grows.length}|${days[days.length - 1].entry.id}`;
+        const signature = `${days.length}|${state.grows.length}|${days.length ? days[days.length - 1].entry.id : ""}|${state.trail.length}|${state.grows.filter((grow) => grow.planning).length}`;
+        if (!days.length) $("#map-timeline-date").textContent = "No check-ins yet";
         const animate = !reduced && signature !== mapUi.signature;
         mapUi.signature = signature;
 
@@ -1567,12 +1708,12 @@
         svg.append(filamentLayer);
 
         // One hypha per grow, spaced around the hub.
-        const growsWithEntries = state.grows.map((grow) => ({ grow, entries: growEntries(grow.id) })).filter((item) => item.entries.length)
+        const growsWithEntries = state.grows.map((grow) => ({ grow, entries: growEntries(grow.id), captures: state.trail.filter((item) => item.growId === grow.id).sort((a, b) => String(a.takenAt).localeCompare(String(b.takenAt))) }))
           .sort((a, b) => String(a.grow.createdAt || a.grow.startDate).localeCompare(String(b.grow.createdAt || b.grow.startDate)));
         const baseAngle = hashAngle(growsWithEntries[0].grow.id);
         const branchLayer = svgEl("g", {});
         const pulseLayer = svgEl("g", { class: "map-pulses", "aria-hidden": "true" });
-        growsWithEntries.forEach(({ grow, entries }, branchIndex) => {
+        growsWithEntries.forEach(({ grow, entries, captures }, branchIndex) => {
           const rand = seededRandom(grow.id);
           const angle = baseAngle + branchIndex * Math.PI * 2 / growsWithEntries.length + (rand() - .5) * .35;
           const steps = 48;
@@ -1587,7 +1728,35 @@
           const label = svgEl("text", { x: (tip.x + cos * 10).toFixed(1), y: (tip.y + Math.sin(angle) * 14 + 4).toFixed(1), class: "map-label", "text-anchor": cos < -.3 ? "end" : cos > .3 ? "start" : "middle" });
           label.textContent = grow.name.length > 18 ? `${grow.name.slice(0, 17)}…` : grow.name;
           group.append(label);
-          const branch = { grow, group, path, glow, length: 0, nodes: [] };
+          const branch = { grow, group, path, glow, length: 0, nodes: [], process: [] };
+          const walkAt = (s) => walk[Math.min(steps, Math.max(0, Math.round((s - .06) / .94 * steps)))];
+          const addProcess = (s, emoji, label, color, open, when) => {
+            const point = walkAt(s);
+            const g = svgEl("g", { class: "map-node-g process-node" }); g.dataset.stage = "Planning";
+            g.append(svgEl("circle", { cx: point.x.toFixed(1), cy: point.y.toFixed(1), r: 7, class: "process-ring", fill: color }));
+            const glyph = svgEl("text", { x: point.x.toFixed(1), y: (point.y - 10).toFixed(1), class: "map-emoji", "font-size": "18", "text-anchor": "middle", tabindex: 0, role: "button", "aria-label": label });
+            glyph.textContent = emoji;
+            const tip = svgEl("title"); tip.textContent = label; glyph.append(tip);
+            const activate = () => { stopReplay(); glyph.classList.remove("react"); void glyph.getBoundingClientRect(); glyph.classList.add("react"); open(); sporeBurst(point.x, point.y, color, 6); };
+            glyph.addEventListener("click", activate);
+            glyph.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); activate(); } });
+            g.append(glyph);
+            if (animate) g.style.animationDelay = (.2 + s).toFixed(2) + "s";
+            group.append(g); branch.process.push(g);
+            mapUi.process.push({ g, at: when || "", activate, x: point.x, y: point.y });
+          };
+          if (!entries.length) {
+            const planning = !!grow.planning;
+            const seedPick = pickMushroom(grow.species, grow.id);
+            addProcess(.16, planning ? "📝" : "🧫", `${grow.name}, ${planning ? "planning" : "inoculated"}, open details`, stageColor(planning ? "Planning" : "Inoculation"), () => showGrowDetail(grow));
+            const pin = mushroomSprite(seedPick, "pin", walkAt(.16).x + 11, walkAt(.16).y + 4, { spawn: animate });
+            group.append(pin);
+          }
+          captures.forEach((capture, captureIndex) => {
+            const s = entries.length ? .07 + (captures.length === 1 ? .05 : captureIndex / (captures.length - 1) * .1) : .34 + (captures.length === 1 ? 0 : captureIndex / (captures.length - 1) * .5);
+            const stepTitle = captureStepTitle(capture);
+            addProcess(s, STEP_EMOJI[capture.stepId] || "📷", `${grow.name}, ${stepTitle}, ${capture.kind}, open field note`, stageColor("Planning"), () => showCaptureDetail(capture, grow), capture.takenAt);
+          });
           entries.forEach((entry, entryIndex) => {
             const s = entries.length === 1 ? .5 : .2 + entryIndex / (entries.length - 1) * .62;
             const point = walk[Math.min(steps, Math.max(0, Math.round((s - .06) / .94 * steps)))];
@@ -1621,8 +1790,8 @@
             }
             if (contaminated) {
               nodeGroup.append(svgEl("circle", { cx: point.x, cy: point.y, r: 9, class: "map-alert-ring" }));
-              const germ = svgEl("text", { x: (point.x + 10).toFixed(1), y: (point.y - 8).toFixed(1), class: "map-emoji", "font-size": "13" });
-              germ.textContent = "🦠"; nodeGroup.append(germ); sprites.push(germ);
+              const germ = svgEl("text", { x: (point.x + 12).toFixed(1), y: (point.y - 2).toFixed(1), class: "map-emoji", "font-size": "15" });
+              germ.textContent = "🦠"; germ.setAttribute("data-label", "Contamination flag"); nodeGroup.append(germ); sprites.push(germ);
             }
             const index = timelineIndex.get(entry.id);
             const circle = svgEl("circle", {
@@ -1631,10 +1800,15 @@
               "aria-label": `${grow.name}, ${dateLabel(entry.date)}, ${entry.stage} check-in${contaminated ? ", possible contamination flagged" : ""}${entry.flushNumber ? `, flush ${entry.flushNumber}` : ""}`
             });
             nodeGroup.append(circle);
+            nodeGroup.dataset.stage = entry.stage;
+            const stageBadge = svgEl("text", { x: point.x.toFixed(1), y: (point.y - 12).toFixed(1), class: "map-emoji stage-emoji", "font-size": "17", "text-anchor": "middle" });
+            stageBadge.textContent = STAGE_EMOJI[entry.stage] || "🍄"; stageBadge.setAttribute("data-label", entry.stage + " check-in");
+            const stageTip = svgEl("title"); stageTip.textContent = entry.stage + " · " + dateLabel(entry.date); stageBadge.append(stageTip);
+            nodeGroup.append(stageBadge); sprites.push(stageBadge);
             const node = { g: nodeGroup, entry, index, s, x: point.x, y: point.y, color, branch, pick };
             sprites.forEach((sprite) => {
               sprite.setAttribute("tabindex", "0"); sprite.setAttribute("role", "button");
-              sprite.setAttribute("aria-label", `${sprite.classList && sprite.tagName === "text" ? "Contamination flag" : pick.family + " mushroom"}, ${dateLabel(entry.date)}, open field note`);
+              sprite.setAttribute("aria-label", `${sprite.getAttribute("data-label") || pick.family + " mushroom"}, ${dateLabel(entry.date)}, open field note`);
               sprite.addEventListener("click", () => { stopReplay(); applyMapReveal(mapUi.nodes.length - 1); selectMapNode(node); });
               sprite.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); stopReplay(); applyMapReveal(mapUi.nodes.length - 1); selectMapNode(node); } });
             });
@@ -1680,7 +1854,7 @@
         svg.setAttribute("viewBox", `${vx.toFixed(1)} ${vy.toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`);
         const harvests = state.entries.filter((entry) => hasHarvestRecord(entry) || Number(entry.freshYieldG) > 0).length;
         const caption = svgEl("text", { x: (vx + 14).toFixed(1), y: (vy + vh - 14).toFixed(1), class: "map-caption" });
-        caption.textContent = `${days.length} check-in${days.length === 1 ? "" : "s"} · ${growsWithEntries.length} hypha${growsWithEntries.length === 1 ? "" : "e"} · ${harvests} harvest${harvests === 1 ? "" : "s"}`;
+        caption.textContent = `${days.length} check-in${days.length === 1 ? "" : "s"} · ${state.trail.length} capture${state.trail.length === 1 ? "" : "s"} · ${growsWithEntries.length} hypha${growsWithEntries.length === 1 ? "" : "e"} · ${harvests} harvest${harvests === 1 ? "" : "s"}`;
         svg.append(caption);
 
         // Measure branches, then draw them in.
@@ -1702,6 +1876,7 @@
         } else {
           applyMapReveal(days.length - 1, false);
         }
+        applyStageFilter();
         const latest = mapUi.nodes[days.length - 1];
         slider.value = String(days.length - 1);
         if (latest) selectMapNode(latest, false);
@@ -2349,7 +2524,7 @@
         const capture = { id, growId: growId || null, questId, stepId, kind, caption: String(caption || "").trim().slice(0, 140), takenAt: new Date().toISOString(), hasMedia: true };
         state.trail.push(capture);
         const xp = awardDocumentation(questId, stepId);
-        saveState();
+        saveState(); renderMap();
         if (xp) { renderStats(); showToast("+" + xp + " XP · documented " + (QUESTS.find((q) => q.id === questId)?.steps.find((s) => s.id === stepId)?.title || "step")); }
         return capture;
       }
@@ -2371,7 +2546,19 @@
         const thumbs = el("div", { class: "capture-thumbs" });
         const note = el("p", { class: "form-note", role: "status" });
         const caption = el("input", { class: "capture-caption", type: "text", maxlength: "140", placeholder: "Caption (optional), e.g. kernels after the soak", "aria-label": "Caption for your next photo or video" });
-        const growId = ctx.grow ? ctx.grow.id : null;
+        const savedQuest = questState(quest.id);
+        const growOf = () => ctx.grow || growById(savedQuest.planGrowId) || null;
+        const growId = growOf() ? growOf().id : null;
+        let growPicker = null;
+        if (!ctx.grow && state.grows.some((grow) => !grow.archived)) {
+          growPicker = el("label", { class: "capture-grow" }, "Attach to grow: ");
+          const select = el("select", { "aria-label": "Grow these captures belong to" });
+          select.append(el("option", { value: "", text: "No grow yet (attach later)" }));
+          state.grows.filter((grow) => !grow.archived).forEach((grow) => select.append(el("option", { value: grow.id, text: grow.name + (grow.planning ? " (planning)" : "") })));
+          select.value = growById(savedQuest.planGrowId) ? savedQuest.planGrowId : "";
+          select.addEventListener("change", () => { savedQuest.planGrowId = select.value || ""; saveState(); renderAcademy(); });
+          growPicker.append(select);
+        }
         const refresh = () => {
           const items = capturesForStep(quest.id, step.id, growId);
           thumbs.replaceChildren(...items.map((capture) => {
@@ -2382,7 +2569,7 @@
               holder.prepend(media);
             });
             holder.append(el("small", { text: capture.caption || (capture.kind === "video" ? "Video" : "Photo") }),
-              el("button", { class: "button small secondary capture-remove", type: "button", "aria-label": "Remove this capture", text: "Remove", onclick: async () => { await removeCapture(capture.id); refresh(); } }));
+              el("button", { class: "button small secondary capture-remove", type: "button", "aria-label": "Remove this capture", text: "Remove", onclick: async () => { await removeCapture(capture.id); refresh(); renderMap(); } }));
             return holder;
           }));
         };
@@ -2404,7 +2591,7 @@
         };
         slot.append(
           el("div", { class: "capture-head" }, el("strong", { text: "Capture this step" }), el("small", { text: " Optional. +" + DOC_XP + " XP the first time you document a step." })),
-          thumbs, caption,
+          growPicker || el("span"), thumbs, caption,
           el("div", { class: "capture-actions" }, picker("photo", "Add photo", "image/*"), picker("video", "Add video (up to " + VIDEO_MAX_SECONDS + " s)", "video/*")),
           note);
         refresh();

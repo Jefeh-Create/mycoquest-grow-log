@@ -20,11 +20,13 @@ async function scenario(h) {
   await h.sleep(50);
   h.check("future date refused", h.$("#grow-list .inoculate-control small").textContent.includes("future"));
   const df = h.$("#grow-list .plan-detail-form");
+  h.check("grain field sits above substrate", df.elements.grain.compareDocumentPosition(df.elements.substrate) & Node.DOCUMENT_POSITION_FOLLOWING);
+  h.fill(df.elements.grain, "Rye berries");
   h.fill(df.elements.substrate, "BRF");
   h.submit(df);
   await h.sleep(50);
   const saved = JSON.parse(localStorage.getItem(KEY));
-  h.check("planning detail persisted", !!(saved.grows[0].planningDetail && saved.grows[0].planningDetail.substrate === "BRF"));
+  h.check("planning detail persisted", !!(saved.grows[0].planningDetail && saved.grows[0].planningDetail.substrate === "BRF" && saved.grows[0].planningDetail.grain === "Rye berries"));
   h.check("planning flag persisted", saved.grows[0].planning === true && saved.grows[0].startDate === "");
   h.fill(h.$("#grow-list .inoculate-control input"), new Date().toISOString().slice(0, 10));
   h.click(h.$$("#grow-list button").find((b) => b.textContent === "Start inoculation"));

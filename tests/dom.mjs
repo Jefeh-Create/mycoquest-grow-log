@@ -9,7 +9,7 @@ import { dirname, join, resolve } from "node:path";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const scenarioFile = resolve(process.argv[2]);
 const query = process.argv[3] || "";
-const html = readFileSync(join(root, "grow-log.html"), "utf8");
+const html = readFileSync(process.env.HTML_SRC || join(root, "grow-log.html"), "utf8");
 const helpers = `
 window.__results = [];
 const h = {
