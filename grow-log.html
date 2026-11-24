@@ -216,6 +216,40 @@
     @keyframes trophy-flare { from { opacity: 1; transform: scale(.2); } to { opacity: 0; transform: scale(1.3); } }
     .photo-preview { display: none; max-width: 100%; max-height: 220px; border-radius: 10px; object-fit: contain; }
     .photo-preview.visible { display: block; }
+    .plan-first { grid-column: 1 / -1; }
+    .plan-first small { color: var(--muted); }
+    .inoculate-control { display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .plan-detail { margin-top: 8px; font-size: .8rem; }
+    .plan-detail summary { cursor: pointer; color: var(--muted); }
+    .plan-detail-form { display: grid; gap: 8px; margin-top: 8px; max-width: 420px; }
+    .capture-slot { margin-top: 14px; padding: 12px; border: 1px dashed var(--line, #6a7a5a); border-radius: 12px; display: grid; gap: 8px; }
+    .capture-head small { color: var(--muted); }
+    .capture-thumbs { display: flex; gap: 10px; flex-wrap: wrap; }
+    .capture-thumb { display: grid; gap: 4px; width: 140px; }
+    .capture-thumb img, .capture-thumb video { width: 140px; height: 100px; object-fit: cover; border-radius: 8px; background: #0003; }
+    .capture-thumb small { color: var(--muted); font-size: .7rem; overflow-wrap: anywhere; }
+    .capture-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .capture-add { position: relative; cursor: pointer; }
+    .capture-add:focus-within { outline: 2px solid currentColor; outline-offset: 2px; }
+    .sr-file { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .capture-caption { width: 100%; }
+    .mush { transform-box: fill-box; transform-origin: 50% 100%; cursor: pointer; }
+    .mush.spawn { animation: mush-spawn .9s cubic-bezier(.2,.9,.3,1.3) both; }
+    @keyframes mush-spawn { 0% { transform: scale(.2,0); } 55% { transform: scale(1.15,.88); } 78% { transform: scale(.95,1.08); } 100% { transform: scale(1); } }
+    @keyframes mush-bob { 0%,100% { transform: scale(1); } 40% { transform: scale(1.12,.92); } 70% { transform: scale(.97,1.07); } }
+    @keyframes mush-sway { 0%,100% { transform: rotate(0); } 30% { transform: rotate(-7deg); } 70% { transform: rotate(7deg); } }
+    @keyframes mush-shiver { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-1.2px); } 60% { transform: translateX(1.2px); } }
+    @keyframes mush-gleam { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.45) saturate(1.2); } }
+    .mush:hover, .mush:focus-visible, .mush.react { animation: mush-bob .55s ease; }
+    .fx-oyster:hover, .fx-oyster.react, .fx-enoki:hover, .fx-enoki.react, .fx-turkeytail:hover, .fx-turkeytail.react { animation: mush-sway .7s ease; }
+    .fx-lionsmane:hover, .fx-lionsmane.react, .fx-morel:hover, .fx-morel.react { animation: mush-shiver .5s ease 2; }
+    .fx-reishi:hover, .fx-reishi.react, .fx-agaric:hover, .fx-agaric.react { animation: mush-gleam .8s ease; }
+    .rhizo-rope { fill: none; stroke: #efe6d2; stroke-width: 2; stroke-linecap: round; opacity: .8; }
+    .rhizo-fine { fill: none; stroke: #f7f1e4; stroke-width: .7; stroke-linecap: round; opacity: .7; }
+    @media (prefers-reduced-motion: reduce) { .mush, .mush.spawn, .mush:hover, .mush.react { animation: none !important; } }
+    .map-emoji { cursor: pointer; transform-box: fill-box; transform-origin: 50% 100%; }
+    .map-emoji.react { animation: mush-shiver .45s ease 3; }
+    .map-incident { margin: 6px 0 0; padding: 8px 10px; border-left: 3px solid #ce876b; background: #ce876b1a; border-radius: 6px; }
     .stage-tag { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: .7rem; white-space: nowrap; }
     .stage-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--moss); }
     .empty { color: var(--muted); font-size: .82rem; padding: 14px 0; }
@@ -476,6 +510,7 @@
               <label class="field">Grow name<input name="name" maxlength="60" required placeholder="e.g. Oyster batch 1"></label>
               <label class="field">Species<input name="species" maxlength="60" required placeholder="e.g. Lion's mane"></label>
               <label class="field">Inoculation date<input name="startDate" id="grow-start-date" type="date" required></label>
+              <label class="field full plan-first"><span><input name="planFirst" id="grow-plan-first" type="checkbox"> Plan this grow first <small>(I haven't inoculated yet. Capture your prep in the Academy and add the date later.)</small></span></label>
             </div>
             <div class="form-actions"><button class="button" type="submit">Add this grow</button></div>
             <p class="message" id="new-grow-message" role="status"></p>
@@ -512,6 +547,7 @@
               <label class="field">Dry substrate weight<input name="drySubstrateG" type="number" min="0.1" step="0.1" placeholder="grams"></label>
             </div>
             <label class="field full">Observation<textarea name="observation" maxlength="500" placeholder="What changed since your last check-in?"></textarea></label>
+            <label class="field full" id="incident-field" hidden>What happened, and why do you think so?<textarea name="incidentNote" maxlength="500" placeholder="Optional. Describe what you saw and what you think caused it. This becomes a field note on your map."></textarea></label>
           </div>
           <div class="form-actions"><button class="button" id="checkin-submit" type="submit">Save check-in</button><span class="form-note">+10 daily demo XP · up to +35 streak demo XP</span></div>
           <p class="message" id="checkin-message" role="status" aria-live="polite"></p>
@@ -611,6 +647,143 @@
         ["steady-keeper", "Steady Keeper", "✧", 250, "Log 30 check-ins in total"],
         ["condition-keeper", "Condition Keeper", "◌", 100, "Log 10 check-ins with both temperature and humidity"]
       ];
+      // @pure:begin media-rules
+      const VIDEO_MAX_SECONDS = 15;
+      const VIDEO_MAX_BYTES = 25 * 1024 * 1024;
+      const DOC_XP = 10;
+      function validateVideo({ size, duration }) {
+        if (!Number.isFinite(duration) || duration <= 0) return { ok: false, reason: "That video could not be read. Try an MP4 or MOV clip." };
+        if (duration > VIDEO_MAX_SECONDS) return { ok: false, reason: `Clips can be up to ${VIDEO_MAX_SECONDS} seconds. This one is ${Math.round(duration)} seconds.` };
+        if (!Number.isFinite(size) || size > VIDEO_MAX_BYTES) return { ok: false, reason: `Clips can be up to ${VIDEO_MAX_BYTES / 1024 / 1024} MB.` };
+        return { ok: true };
+      }
+      function documentationKey(questId, stepId) { return `${questId}:${stepId}`; }
+      function docXpFor(awards, key) { return awards && Object.prototype.hasOwnProperty.call(awards, key) ? 0 : DOC_XP; }
+      function totalDocXp(awards) {
+        return awards && typeof awards === "object" ? Object.values(awards).reduce((sum, xp) => sum + (Number(xp) || 0), 0) : 0;
+      }
+      // @exports VIDEO_MAX_SECONDS, VIDEO_MAX_BYTES, DOC_XP, validateVideo, documentationKey, docXpFor, totalDocXp
+      // @pure:end media-rules
+      // @pure:begin planning
+      function validateInoculationDate(date, today) {
+        const text = String(date || "");
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(text) || Number.isNaN(Date.parse(`${text}T00:00:00`))) return { ok: false, reason: "Choose a valid inoculation date." };
+        if (text > today) return { ok: false, reason: "The inoculation date cannot be in the future." };
+        return { ok: true };
+      }
+      function cleanPlanningDetail(raw) {
+        const source = raw && typeof raw === "object" ? raw : {};
+        const text = (value, max) => String(value == null ? "" : value).trim().slice(0, max);
+        const out = {};
+        ["substrate", "waterRatio"].forEach((key) => { const value = text(source[key], 80); if (value) out[key] = value; });
+        const minutes = Number(source.sterilizationMin);
+        if (String(source.sterilizationMin ?? "").trim() !== "" && Number.isFinite(minutes) && minutes >= 0 && minutes <= 1440) out.sterilizationMin = minutes;
+        const notes = text(source.notes, 500);
+        if (notes) out.notes = notes;
+        return out;
+      }
+      // @exports validateInoculationDate, cleanPlanningDetail
+      // @pure:end planning
+      // @pure:begin mushrooms
+      const MUSHROOM_FAMILIES = {
+        oyster: { label: "Oyster shelf", caps: ["#7d93b8", "#e8a0b5", "#e5c15d", "#a7a7a0"], sporePrint: "#d9cfe0" },
+        lionsmane: { label: "Lion's mane", caps: ["#f6f1e4", "#efe6d0", "#fff8e8"], sporePrint: "#f7f7f2" },
+        shiitake: { label: "Shiitake", caps: ["#8a5a3a", "#6d4328", "#a87650"], sporePrint: "#f4f1e8" },
+        reishi: { label: "Reishi conk", caps: ["#b8402c", "#d2602e", "#8c2f24"], sporePrint: "#a56b3f" },
+        kingoyster: { label: "King oyster", caps: ["#b59a78", "#9c8160", "#c9b08a"], sporePrint: "#f2efe6" },
+        chestnut: { label: "Chestnut", caps: ["#a8672f", "#c07a35", "#8f5a2b"], sporePrint: "#8a5a3a" },
+        enoki: { label: "Enoki bundle", caps: ["#f3e6c8", "#ede0bd", "#e2d2a4"], sporePrint: "#f7f4ea" },
+        button: { label: "Button", caps: ["#e9dfcf", "#c9b79c", "#d8c7aa"], sporePrint: "#4a3326" },
+        chanterelle: { label: "Chanterelle", caps: ["#e8a31f", "#f0b73a", "#d98f12"], sporePrint: "#f6e9c9" },
+        morel: { label: "Morel", caps: ["#8c7b5a", "#6f6048", "#a39066"], sporePrint: "#e0c68a" },
+        turkeytail: { label: "Turkey tail", caps: ["#6e8b9a", "#9a7b5c", "#7a6a8f"], sporePrint: "#f3f1ee" },
+        agaric: { label: "Red-and-white agaric", caps: ["#d63a2f", "#c92f2f", "#e04b35"], sporePrint: "#f5f5f0" }
+      };
+      const FAMILY_KEYWORDS = [
+        ["kingoyster", /king|eryngii/], ["lionsmane", /lion|hericium|erinaceus/], ["oyster", /oyster|pleurotus|ostreatus|pulmonarius|djamor/],
+        ["shiitake", /shiitake|lentinula|edodes/], ["reishi", /reishi|ganoderma|lingzhi|lucidum/], ["chestnut", /chestnut|pholiota|adiposa/],
+        ["enoki", /enoki|flammulina|velutipes/], ["chanterelle", /chanterelle|cantharellus/], ["morel", /morel|morchella/],
+        ["turkeytail", /turkey|trametes|versicolor/], ["agaric", /agaric|amanita|fly/], ["button", /button|agaricus|cremini|portobello|champignon/]
+      ];
+      function speciesFamily(species) {
+        const text = String(species || "").toLowerCase();
+        const hit = FAMILY_KEYWORDS.find(([, pattern]) => pattern.test(text));
+        return hit ? hit[0] : "button";
+      }
+      function mushroomRand(seed) {
+        let h = 2166136261;
+        for (const char of String(seed)) { h ^= char.charCodeAt(0); h = Math.imul(h, 16777619); }
+        return () => {
+          h += 0x6D2B79F5; let t = h;
+          t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+      function pickMushroom(species, seed) {
+        const family = speciesFamily(species);
+        const rand = mushroomRand(species + "|" + seed);
+        const info = MUSHROOM_FAMILIES[family];
+        return {
+          family, capColor: info.caps[Math.floor(rand() * info.caps.length)], sporeColor: info.sporePrint,
+          scale: Number((0.85 + rand() * 0.4).toFixed(2)), tilt: Math.round((rand() - 0.5) * 24),
+          stemLen: Number((0.85 + rand() * 0.35).toFixed(2)), count: 1 + Math.floor(rand() * 3)
+        };
+      }
+      // Hand-drawn, emoji-sized SVG glyphs. Origin is the base of the mushroom; up is negative y.
+      function glyphMarkup(family, form, pick) {
+        const cap = pick.capColor, stem = "#efe4cc", stemY = -8 * pick.stemLen;
+        if (form === "pin") return `<ellipse cx="0" cy="-2.2" rx="2.4" ry="3.2" fill="${cap}"/><rect x="-0.8" y="-1" width="1.6" height="1.4" fill="${stem}"/>`;
+        const dot = (x, y, r, c) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`;
+        switch (family) {
+          case "oyster": return `<path d="M-10 -3 Q-11 -14 -2 -13 Q6 -14 5 -4 Q-2 -7 -10 -3Z" fill="${cap}"/><path d="M-1 -2 Q-1 -12 7 -12 Q14 -11 11 -3 Q5 -6 -1 -2Z" fill="${cap}" opacity=".88"/><path d="M-7 -4 Q-3 -8 1 -5M3 -4 Q7 -8 10 -5" stroke="#fff" stroke-opacity=".35" fill="none" stroke-width=".8"/><rect x="-1.2" y="-3" width="2.4" height="3" fill="${stem}"/>`;
+          case "lionsmane": return `<path d="M-9 -9 Q-10 -17 0 -16 Q10 -17 9 -9 Q10 -3 0 -3 Q-10 -3 -9 -9Z" fill="${cap}"/><g stroke="${cap}" stroke-width="1.1" stroke-linecap="round" class="spines"><path d="M-7 -4V1M-4 -3V3M-1 -3V4M2 -3V3M5 -3V2M8 -4V0"/></g><path d="M-6 -12Q0 -14 6 -12" stroke="#d9cdb2" fill="none" stroke-width=".7"/>`;
+          case "shiitake": return `<rect x="-1.5" y="-7" width="3" height="7" rx="1" fill="${stem}"/><path d="M-10 -7 Q-10 -17 0 -17 Q10 -17 10 -7 Q0 -9.5 -10 -7Z" fill="${cap}"/><path d="M-5 -13 L-2 -10M2 -14 L5 -11M-1 -15 L0 -12" stroke="#f1e2cf" stroke-width="1" stroke-linecap="round"/>`;
+          case "reishi": return `<rect x="-1.2" y="-5" width="2.4" height="5" fill="#7a3d22"/><path d="M-11 -7 Q-9 -16 0 -15 Q10 -15 11 -7 Q0 -3 -11 -7Z" fill="${cap}"/><path d="M-8 -7 Q-6 -12 0 -12 Q7 -12 8 -7M-5 -7 Q-3 -9.5 0 -9.5 Q4 -9.5 5 -7" stroke="#f0b27a" fill="none" stroke-width=".8" opacity=".7"/><path d="M-7 -12 Q-3 -15 2 -14" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".55" fill="none" class="gleam"/>`;
+          case "kingoyster": return `<rect x="-3.2" y="${stemY - 3}" width="6.4" height="${-stemY + 3}" rx="2.4" fill="${stem}"/><path d="M-8 ${stemY - 1} Q-8 ${stemY - 8} 0 ${stemY - 8} Q8 ${stemY - 8} 8 ${stemY - 1} Q0 ${stemY - 3} -8 ${stemY - 1}Z" fill="${cap}"/>`;
+          case "chestnut": return [[-6, 0, .9], [1, 1, 1], [7, -1, .8]].map(([x, y, s]) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-1" y="-6" width="2" height="6" fill="${stem}"/><path d="M-5 -6 Q-5 -12 0 -12 Q5 -12 5 -6 Q0 -7.5 -5 -6Z" fill="${cap}"/></g>`).join("");
+          case "enoki": return [[-5, -12], [-2.5, -15], [0, -13], [2.5, -16], [5, -12]].map(([x, top]) => `<path d="M${x} 0 V${top}" stroke="${stem}" stroke-width="1.1" stroke-linecap="round"/><circle cx="${x}" cy="${top - 1}" r="1.9" fill="${cap}"/>`).join("");
+          case "chanterelle": return `<path d="M-1.5 0 Q-2.5 -6 -8 -10 Q0 -14 8 -10 Q2.5 -6 1.5 0Z" fill="${cap}"/><path d="M-6 -10 Q-4 -12 0 -12 Q4 -12 6 -10" stroke="#fff" stroke-opacity=".4" fill="none" stroke-width=".8"/><path d="M-2 -8 L-1 -2M2 -8 L1 -2" stroke="#b97510" stroke-width=".7" opacity=".7"/>`;
+          case "morel": return `<rect x="-2.6" y="-5" width="5.2" height="5" rx="1.6" fill="${stem}"/><path d="M-6 -5 Q-6 -17 0 -18 Q6 -17 6 -5Z" fill="${cap}"/>${dot(-2, -13, 1.1, "#4b3f2b")}${dot(2, -11, 1.1, "#4b3f2b")}${dot(-2.5, -8.5, 1.1, "#4b3f2b")}${dot(1.5, -7, 1, "#4b3f2b")}${dot(0, -15.5, .9, "#4b3f2b")}`;
+          case "turkeytail": return `<path d="M-11 -2 Q-11 -14 0 -14 Q11 -14 11 -2Z" fill="${cap}"/><path d="M-8 -2 Q-8 -11 0 -11 Q8 -11 8 -2" fill="none" stroke="#e8dcc4" stroke-width="1.3"/><path d="M-5 -2 Q-5 -8 0 -8 Q5 -8 5 -2" fill="none" stroke="#2f3b44" stroke-width="1.3"/><path d="M-2.5 -2 Q-2.5 -5 0 -5 Q2.5 -5 2.5 -2" fill="none" stroke="#c9a77a" stroke-width="1.2"/>`;
+          case "agaric": return `<rect x="-1.8" y="-8" width="3.6" height="8" rx="1.2" fill="#f7f1e3"/><path d="M-10 -8 Q-10 -18 0 -18 Q10 -18 10 -8 Q0 -10.5 -10 -8Z" fill="${cap}"/>${dot(-4.5, -13, 1.4, "#fff")}${dot(1, -15, 1.2, "#fff")}${dot(5, -11.5, 1.3, "#fff")}${dot(-1, -11, .9, "#fff")}`;
+          default: return `<rect x="-2" y="${stemY}" width="4" height="${-stemY}" rx="1.3" fill="${stem}"/><path d="M-8 ${stemY + 1} Q-8 ${stemY - 9} 0 ${stemY - 9} Q8 ${stemY - 9} 8 ${stemY + 1} Q0 ${stemY - 1.5} -8 ${stemY + 1}Z" fill="${cap}"/>`;
+        }
+      }
+      // @exports MUSHROOM_FAMILIES, speciesFamily, pickMushroom, glyphMarkup
+      // @pure:end mushrooms
+      // @pure:begin export-extras
+      function trailForExport(trail, growOf) {
+        return (Array.isArray(trail) ? trail : []).map((item) => {
+          const grow = growOf(item.growId) || {};
+          return {
+            id: item.id, growName: grow.name || "", species: grow.species || "", questId: item.questId || "", stepId: item.stepId || "",
+            kind: item.kind === "video" ? "video" : "photo", caption: String(item.caption || "").slice(0, 140), takenAt: item.takenAt || "",
+            hasVideo: item.kind === "video"
+          };
+        });
+      }
+      function mergeTrail(existing, incoming, growIdFor) {
+        const out = existing.map((item) => ({ ...item }));
+        const seen = new Set(out.map((item) => item.id));
+        (Array.isArray(incoming) ? incoming : []).forEach((item) => {
+          if (!item || typeof item !== "object" || typeof item.id !== "string" || seen.has(item.id)) return;
+          const growId = growIdFor(item.growName, item.species);
+          if (!growId) return;
+          seen.add(item.id);
+          out.push({
+            id: item.id, growId, questId: String(item.questId || ""), stepId: String(item.stepId || ""),
+            kind: item.kind === "video" ? "video" : "photo", caption: String(item.caption || "").slice(0, 140),
+            takenAt: String(item.takenAt || ""), hasMedia: false
+          });
+        });
+        return out;
+      }
+      // @exports trailForExport, mergeTrail
+      // @pure:end export-extras
+      // @pure:begin smoke
+      const smokeOk = true;
+      // @exports smokeOk
+      // @pure:end smoke
       const $ = (selector) => document.querySelector(selector);
       const uid = (prefix = "id") => `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
       const norm = (value) => String(value || "").trim().toLocaleLowerCase().replace(/\s+/g, " ");
@@ -620,7 +793,7 @@
       const PHOTO_MAX_DATA_URL_LENGTH = 700000;
       const STREAK_GRACE_MS = 48 * 60 * 60 * 1000;
 
-      function emptyState() { return { version: 3, grows: [], entries: [] }; }
+      function emptyState() { return { version: 3, grows: [], entries: [], trail: [], docAwards: {} }; }
       function loadState() {
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
@@ -631,6 +804,8 @@
             $("#storage-note").textContent = "Saved data was not in the expected format. A copy was kept in this browser's backup key.";
             return emptyState();
           }
+          if (!Array.isArray(parsed.trail)) parsed.trail = [];
+          if (!parsed.docAwards || typeof parsed.docAwards !== "object" || Array.isArray(parsed.docAwards)) parsed.docAwards = {};
           return parsed;
         } catch (error) {
           $("#storage-note").textContent = "Saved data could not be read. Import a JSON backup to restore your journal.";
@@ -645,6 +820,7 @@
       // A photo is only stripped from localStorage after IndexedDB confirms it was written.
       const PHOTO_DB_NAME = "mycoquest-grow-log-photos";
       const PHOTO_STORE = "photos";
+      const MEDIA_STORE = "media"; // process-trail photos (data URLs) and videos (Blobs), keyed by capture id
       const savedPhotos = new Map(); // entry id -> data URL confirmed in IndexedDB
       let photoDbPromise = null;
       let photosReady = false;
@@ -655,8 +831,12 @@
         if (!photoDbPromise) {
           photoDbPromise = new Promise((resolve, reject) => {
             if (!("indexedDB" in window)) { reject(new Error("IndexedDB unavailable")); return; }
-            const request = indexedDB.open(PHOTO_DB_NAME, 1);
-            request.onupgradeneeded = () => request.result.createObjectStore(PHOTO_STORE);
+            const request = indexedDB.open(PHOTO_DB_NAME, 2);
+            request.onupgradeneeded = () => {
+              const db = request.result;
+              if (!db.objectStoreNames.contains(PHOTO_STORE)) db.createObjectStore(PHOTO_STORE);
+              if (!db.objectStoreNames.contains(MEDIA_STORE)) db.createObjectStore(MEDIA_STORE);
+            };
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(request.error);
             request.onblocked = () => reject(new Error("Photo storage is blocked by another open tab."));
@@ -674,6 +854,18 @@
           tx.onabort = () => reject(tx.error || new Error("Photo storage transaction aborted."));
         }));
       }
+      function mediaTx(mode, work) {
+        return photoDb().then((db) => new Promise((resolve, reject) => {
+          const tx = db.transaction(MEDIA_STORE, mode);
+          const request = work(tx.objectStore(MEDIA_STORE));
+          tx.oncomplete = () => { resolve(request ? request.result : undefined); };
+          tx.onerror = () => { reject(tx.error); };
+          tx.onabort = () => { reject(tx.error || new Error("Media storage transaction aborted.")); };
+        }));
+      }
+      function putMedia(id, value) { return mediaTx("readwrite", (store) => store.put(value, id)).then(() => undefined); }
+      function getMedia(id) { return mediaTx("readonly", (store) => store.get(id)); }
+      function deleteMedia(id) { return mediaTx("readwrite", (store) => store.delete(id)).then(() => undefined); }
       function serializeState() {
         return JSON.stringify({
           ...state,
@@ -785,7 +977,7 @@
         for (let current = 1; current < level; current += 1) total += levelUpCost(current);
         return total;
       }
-      function totalXp() { return state.entries.reduce((sum, entry) => sum + (entry.xpAwarded || 0), 0) + academyXp() + trophyXp(); }
+      function totalXp() { return state.entries.reduce((sum, entry) => sum + (entry.xpAwarded || 0), 0) + academyXp() + trophyXp() + totalDocXp(state.docAwards); }
       function dateDaysBefore(date, amount) {
         const day = new Date(`${date}T12:00:00`);
         day.setDate(day.getDate() - amount);
@@ -826,7 +1018,7 @@
       }
       function currentStage(growId) {
         const entries = growEntries(growId);
-        return entries.length ? entries[entries.length - 1].stage : "Inoculation";
+        return entries.length ? entries[entries.length - 1].stage : (growById(growId) && growById(growId).planning ? "Planning" : "Inoculation");
       }
       function stagesReached(growId) {
         return new Set(growEntries(growId).flatMap((entry) =>
@@ -897,6 +1089,11 @@
           image.src = objectUrl;
         });
       }
+      function syncIncidentField() {
+        const form = $("#checkin-form");
+        const flagged = ["Possible contamination", "Needs attention"].includes(form.elements.appearance.value);
+        $("#incident-field").hidden = !flagged;
+      }
       function prepareCheckinForm(growId) {
         const form = $("#checkin-form");
         const grow = growById(growId);
@@ -911,6 +1108,7 @@
           form.elements.humidity.value = Number.isFinite(todayEntry.humidity) ? todayEntry.humidity : "";
           form.elements.appearance.value = todayEntry.appearance || "Not sure yet";
           form.elements.observation.value = todayEntry.observation || "";
+          form.elements.incidentNote.value = todayEntry.incidentNote || "";
           form.elements.flushNumber.value = Number.isInteger(todayEntry.flushNumber) ? todayEntry.flushNumber : "";
           form.elements.freshYieldG.value = Number.isFinite(todayEntry.freshYieldG) ? todayEntry.freshYieldG : "";
           form.elements.dryYieldG.value = Number.isFinite(todayEntry.dryYieldG) ? todayEntry.dryYieldG : "";
@@ -923,6 +1121,7 @@
           form.elements.humidity.value = "";
           form.elements.appearance.value = "Looking good";
           form.elements.observation.value = "";
+          form.elements.incidentNote.value = "";
           form.elements.flushNumber.value = "";
           form.elements.freshYieldG.value = "";
           form.elements.dryYieldG.value = "";
@@ -931,6 +1130,7 @@
           setHarvestFields(currentStage(growId));
           setPhotoPreview("");
         }
+        syncIncidentField();
       }
       function renderStats() {
         const xp = totalXp();
@@ -964,6 +1164,45 @@
         button.addEventListener("click", action);
         return button;
       }
+      function inoculateControl(grow) {
+        const wrap = document.createElement("span"); wrap.className = "inoculate-control";
+        const input = document.createElement("input"); input.type = "date"; input.value = todayKey(); input.max = todayKey();
+        input.setAttribute("aria-label", "Inoculation date for " + grow.name);
+        const message = document.createElement("small"); message.setAttribute("role", "status");
+        const go = activeGrowButton(grow, "Start inoculation", () => {
+          const result = startInoculation(grow.id, input.value);
+          if (!result.ok) message.textContent = result.reason;
+        });
+        wrap.append(input, go, message);
+        return wrap;
+      }
+      // Optional "log in full detail" panel: substrate recipe, water ratio, sterilization, notes.
+      function planningPanel(grow) {
+        const details = document.createElement("details"); details.className = "plan-detail";
+        const summary = document.createElement("summary");
+        summary.textContent = grow.planningDetail && Object.keys(grow.planningDetail).length ? "Full detail log ✓" : "Log in full detail";
+        const form = document.createElement("form"); form.className = "plan-detail-form";
+        const saved = grow.planningDetail || {};
+        const field = (label, name, type, placeholder) => {
+          const wrap = document.createElement("label"); wrap.className = "field"; wrap.append(document.createTextNode(label));
+          const input = document.createElement(name === "notes" ? "textarea" : "input");
+          if (name !== "notes") input.type = type || "text";
+          input.name = name; input.placeholder = placeholder || ""; input.value = saved[name] ?? "";
+          wrap.append(input); return wrap;
+        };
+        const note = document.createElement("span"); note.className = "form-note"; note.setAttribute("role", "status");
+        const save = document.createElement("button"); save.type = "submit"; save.className = "button small"; save.textContent = "Save details";
+        form.append(field("Substrate recipe", "substrate", "text", "e.g. BRF + vermiculite"), field("Water ratio", "waterRatio", "text", "e.g. 1:1"),
+          field("Sterilization (minutes)", "sterilizationMin", "number", "e.g. 45"), field("Notes", "notes"), save, note);
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const clean = cleanPlanningDetail(Object.fromEntries(new FormData(form).entries()));
+          if (Object.keys(clean).length) grow.planningDetail = clean; else delete grow.planningDetail;
+          saveState(); note.textContent = "Saved.";
+        });
+        details.append(summary, form);
+        return details;
+      }
       function growCard(grow, archived) {
         const row = document.createElement("div"); row.className = "grow-row";
         const text = document.createElement("div"); text.className = "grow-row-main";
@@ -973,8 +1212,9 @@
         const started = escapeDate(grow.startDate) ? grow.startDate :
           growEntries(grow.id)[0]?.date || String(grow.createdAt || "").slice(0, 10) || todayKey();
         const meta = document.createElement("span"); meta.className = "grow-row-meta";
-        meta.textContent = `${current} · Day ${daysSince(started, todayKey())}`;
+        meta.textContent = grow.planning ? "Planning · not inoculated yet" : `${current} · Day ${daysSince(started, todayKey())}`;
         text.append(name, species, meta);
+        if (!archived) text.append(planningPanel(grow));
         const actions = document.createElement("div"); actions.className = "grow-row-actions";
         const tag = document.createElement("span"); tag.className = "stage-tag";
         const dot = document.createElement("span"); dot.className = "stage-dot"; dot.style.backgroundColor = stageColor(current);
@@ -982,6 +1222,7 @@
         if (archived) {
           actions.append(tag, activeGrowButton(grow, "Reactivate", () => reactivateGrow(grow.id)));
         } else {
+          if (grow.planning) actions.append(inoculateControl(grow));
           const checkin = activeGrowButton(grow, "Today's check-in", () => openCheckin(grow.id));
           const complete = activeGrowButton(grow, "Mark complete & archive", () => markGrowComplete(grow.id));
           complete.disabled = !growEntries(grow.id).length;
@@ -1084,6 +1325,12 @@
           : "";
         note.textContent = ` — ${entry.observation || entry.appearance || "No note recorded."}${conditions ? ` · ${conditions}` : ""}${deltas.length ? ` · Δ ${deltas.join(", ")}` : ""}${harvest ? ` · ${harvest}` : ""}${entry.appearance === "Possible contamination" ? " · Possible contamination flag" : ""}`;
         detail.append(title, note);
+        if (entry.incidentNote) {
+          const incident = document.createElement("p"); incident.className = "map-incident";
+          const label = document.createElement("strong"); label.textContent = "What you noticed: ";
+          incident.append(label, document.createTextNode(entry.incidentNote));
+          detail.append(incident);
+        }
         if (entry.photoDataUrl && /^data:image\/(?:jpeg|png|webp);base64,/i.test(entry.photoDataUrl)) {
           const image = document.createElement("img");
           image.className = "map-detail-photo"; image.src = entry.photoDataUrl; image.alt = `Check-in photo for ${grow ? grow.name : entry.growName}, ${dateLabel(entry.date)}`;
@@ -1168,6 +1415,40 @@
         );
         return group;
       }
+      // Emoji-style mushroom sprite: a positioned wrapper, with an inner group that spawns and reacts.
+      function mushroomSprite(pick, form, x, y, extra) {
+        const outer = svgEl("g", { transform: "translate(" + x.toFixed(1) + " " + y.toFixed(1) + ") rotate(" + pick.tilt + ") scale(" + (pick.scale * 1.8 * (form === "young" ? .78 : 1)).toFixed(2) + ")" });
+        const inner = svgEl("g", { class: "mush fx-" + pick.family + (extra && extra.spawn ? " spawn" : "") });
+        inner.innerHTML = glyphMarkup(pick.family, form, pick);
+        outer.append(inner);
+        return outer;
+      }
+      // Branching rhizomorph: a rope near the base that fans into fine white-to-cream hyphae.
+      function rhizomorph(rand, x, y, angle, length) {
+        const group = svgEl("g", { class: "rhizo", "aria-hidden": "true" });
+        const main = twigWalk(rand, x, y, angle, length, 5);
+        group.append(svgEl("path", { d: smoothPath(main), class: "rhizo-rope" }));
+        const branches = 3 + Math.floor(rand() * 3);
+        for (let i = 0; i < branches; i += 1) {
+          const at = main[1 + Math.floor(rand() * (main.length - 1))];
+          group.append(svgEl("path", { d: smoothPath(twigWalk(rand, at.x, at.y, angle + (rand() - .5) * 2.2, 8 + rand() * 14, 4)), class: "rhizo-fine" }));
+        }
+        return group;
+      }
+      function sporeCloud(x, y, color) {
+        if (prefersReducedMotion()) return;
+        const svg = $("#mycelial-map");
+        const dots = [];
+        for (let i = 0; i < 9; i += 1) {
+          const dot = svgEl("circle", { cx: x, cy: y, r: (.8 + Math.random() * 1.3).toFixed(2), class: "map-spore", fill: color, stroke: "rgba(0,0,0,.25)", "stroke-width": ".3" });
+          dot.style.setProperty("--dx", ((Math.random() - .5) * 26).toFixed(1) + "px");
+          dot.style.setProperty("--dy", (-12 - Math.random() * 24).toFixed(1) + "px");
+          dot.style.animationDelay = Math.round(Math.random() * 160) + "ms";
+          dots.push(dot);
+        }
+        svg.append(...dots);
+        window.setTimeout(() => dots.forEach((dot) => dot.remove()), 1300);
+      }
       function sporeBurst(x, y, color, count = 10) {
         if (prefersReducedMotion()) return;
         const svg = $("#mycelial-map");
@@ -1196,7 +1477,8 @@
         mapUi.selected = node;
         node.g.classList.add("is-selected");
         showMapDetail(node.entry, node.index);
-        if (burst) sporeBurst(node.x, node.y, node.color);
+        node.g.querySelectorAll(".mush, .map-emoji").forEach((item) => { item.classList.remove("react"); void item.getBoundingClientRect(); item.classList.add("react"); });
+        if (burst) { sporeBurst(node.x, node.y, node.color); if (node.pick && node.g.querySelector(".mush")) sporeCloud(node.x, node.y - 6, node.pick.sporeColor); }
       }
       function applyMapReveal(index, animate = false) {
         const total = mapUi.nodes.length;
@@ -1320,17 +1602,28 @@
               const side = (t % 2 ? 1 : -1) * (.7 + twigRand() * .8);
               nodeGroup.append(svgEl("path", { d: smoothPath(twigWalk(twigRand, point.x, point.y, angle + side, 12 + twigRand() * 16 + stage * 3, 5)), class: "map-side" }));
             }
+            const pick = pickMushroom(grow.species, entry.id);
+            const sprites = [];
+            if (days.length <= 120) nodeGroup.append(rhizomorph(twigRand, point.x, point.y, angle + (twigRand() - .5) * 1.4, 10 + stage * 4));
             if (stage >= STAGES.indexOf("Fruiting") && !hasHarvestRecord(entry)) {
-              [-1, 1].forEach((dir, pinIndex) => nodeGroup.append(mushroomGlyph(point.x + Math.cos(angle + dir * 1.3) * 13, point.y + Math.sin(angle + dir * 1.3) * 13 + 2, .42 + pinIndex * .08, "#d4aa70")));
+              [-1, 1].forEach((dir, pinIndex) => {
+                const sprite = mushroomSprite(pick, pinIndex ? "young" : "pin", point.x + Math.cos(angle + dir * 1.3) * 14, point.y + Math.sin(angle + dir * 1.3) * 14 + 4, { spawn: animate });
+                nodeGroup.append(sprite); sprites.push(sprite);
+              });
             }
             if (hasHarvestRecord(entry) && Number.isInteger(entry.flushNumber) && entry.flushNumber > 0) {
               const fx = point.x + Math.cos(angle - 1.2) * 24, fy = point.y + Math.sin(angle - 1.2) * 24;
               nodeGroup.append(svgEl("path", { d: `M ${point.x.toFixed(1)} ${point.y.toFixed(1)} L ${fx.toFixed(1)} ${fy.toFixed(1)}`, class: "map-side map-side-gold" }));
-              nodeGroup.append(mushroomGlyph(fx, fy + 4, .95, "#c5a36d"));
+              const harvestSprite = mushroomSprite(pick, "mature", fx, fy + 6, { spawn: animate });
+              nodeGroup.append(harvestSprite); sprites.push(harvestSprite);
               const flushLabel = svgEl("text", { x: (fx + 8).toFixed(1), y: (fy + 2).toFixed(1), class: "map-flush" });
               flushLabel.textContent = `F${entry.flushNumber}`; nodeGroup.append(flushLabel);
             }
-            if (contaminated) nodeGroup.append(svgEl("circle", { cx: point.x, cy: point.y, r: 9, class: "map-alert-ring" }));
+            if (contaminated) {
+              nodeGroup.append(svgEl("circle", { cx: point.x, cy: point.y, r: 9, class: "map-alert-ring" }));
+              const germ = svgEl("text", { x: (point.x + 10).toFixed(1), y: (point.y - 8).toFixed(1), class: "map-emoji", "font-size": "13" });
+              germ.textContent = "🦠"; nodeGroup.append(germ); sprites.push(germ);
+            }
             const index = timelineIndex.get(entry.id);
             const circle = svgEl("circle", {
               cx: point.x.toFixed(1), cy: point.y.toFixed(1), r: contaminated ? 8 : 6.5, fill: color,
@@ -1338,7 +1631,13 @@
               "aria-label": `${grow.name}, ${dateLabel(entry.date)}, ${entry.stage} check-in${contaminated ? ", possible contamination flagged" : ""}${entry.flushNumber ? `, flush ${entry.flushNumber}` : ""}`
             });
             nodeGroup.append(circle);
-            const node = { g: nodeGroup, entry, index, s, x: point.x, y: point.y, color, branch };
+            const node = { g: nodeGroup, entry, index, s, x: point.x, y: point.y, color, branch, pick };
+            sprites.forEach((sprite) => {
+              sprite.setAttribute("tabindex", "0"); sprite.setAttribute("role", "button");
+              sprite.setAttribute("aria-label", `${sprite.classList && sprite.tagName === "text" ? "Contamination flag" : pick.family + " mushroom"}, ${dateLabel(entry.date)}, open field note`);
+              sprite.addEventListener("click", () => { stopReplay(); applyMapReveal(mapUi.nodes.length - 1); selectMapNode(node); });
+              sprite.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); stopReplay(); applyMapReveal(mapUi.nodes.length - 1); selectMapNode(node); } });
+            });
             circle.addEventListener("click", () => { stopReplay(); applyMapReveal(mapUi.nodes.length - 1); selectMapNode(node); });
             circle.addEventListener("keydown", (event) => {
               if (event.key === "Enter" || event.key === " ") { event.preventDefault(); stopReplay(); applyMapReveal(mapUi.nodes.length - 1); selectMapNode(node); }
@@ -2010,6 +2309,107 @@
           el("ol", { class: "step-list" }, quest.steps.map((step, index) => renderStep(quest, step, index, index === current, ctx)))
         ].filter(Boolean));
       }
+      // ---------- Process trail: captures (photos / short videos) attached to Academy steps ----------
+      const mediaUrls = new Map(); // capture id -> object URL for videos
+      function capturesForStep(questId, stepId, growId) {
+        return state.trail.filter((item) => item.questId === questId && item.stepId === stepId && (!growId || !item.growId || item.growId === growId));
+      }
+      function awardDocumentation(questId, stepId) {
+        const key = documentationKey(questId, stepId);
+        const xp = docXpFor(state.docAwards, key);
+        if (xp) state.docAwards[key] = xp;
+        return xp;
+      }
+      function readVideoMeta(file) {
+        return new Promise((resolve) => {
+          const video = document.createElement("video");
+          const url = URL.createObjectURL(file);
+          const done = (duration) => { URL.revokeObjectURL(url); resolve(duration); };
+          video.preload = "metadata";
+          video.onloadedmetadata = () => done(video.duration);
+          video.onerror = () => done(NaN);
+          window.setTimeout(() => done(NaN), 5000);
+          video.src = url;
+        });
+      }
+      async function addCapture({ growId, questId, stepId, kind, file, caption }) {
+        const id = uid("cap");
+        let value;
+        if (kind === "video") {
+          if (!file || !/^video\//.test(file.type || "")) throw new Error("Choose a video file.");
+          const check = validateVideo({ size: file.size, duration: await readVideoMeta(file) });
+          if (!check.ok) throw new Error(check.reason);
+          value = file;
+        } else {
+          if (!file || !/^image\//.test(file.type || "")) throw new Error("Choose an image file.");
+          value = await compressPhoto(file);
+        }
+        try { await putMedia(id, value); }
+        catch (error) { throw new Error("This browser could not store that file, so nothing was saved. Export a backup and try again."); }
+        const capture = { id, growId: growId || null, questId, stepId, kind, caption: String(caption || "").trim().slice(0, 140), takenAt: new Date().toISOString(), hasMedia: true };
+        state.trail.push(capture);
+        const xp = awardDocumentation(questId, stepId);
+        saveState();
+        if (xp) { renderStats(); showToast("+" + xp + " XP · documented " + (QUESTS.find((q) => q.id === questId)?.steps.find((s) => s.id === stepId)?.title || "step")); }
+        return capture;
+      }
+      async function removeCapture(id) {
+        state.trail = state.trail.filter((item) => item.id !== id);
+        const url = mediaUrls.get(id); if (url) { URL.revokeObjectURL(url); mediaUrls.delete(id); }
+        saveState();
+        try { await deleteMedia(id); } catch (error) { /* orphaned media is harmless */ }
+      }
+      async function captureSource(capture) {
+        const value = await getMedia(capture.id);
+        if (!value) return "";
+        if (typeof value === "string") return value;
+        if (!mediaUrls.has(capture.id)) mediaUrls.set(capture.id, URL.createObjectURL(value));
+        return mediaUrls.get(capture.id);
+      }
+      function renderCaptureSlot(quest, step, ctx) {
+        const slot = el("div", { class: "capture-slot" });
+        const thumbs = el("div", { class: "capture-thumbs" });
+        const note = el("p", { class: "form-note", role: "status" });
+        const caption = el("input", { class: "capture-caption", type: "text", maxlength: "140", placeholder: "Caption (optional), e.g. kernels after the soak", "aria-label": "Caption for your next photo or video" });
+        const growId = ctx.grow ? ctx.grow.id : null;
+        const refresh = () => {
+          const items = capturesForStep(quest.id, step.id, growId);
+          thumbs.replaceChildren(...items.map((capture) => {
+            const holder = el("div", { class: "capture-thumb" });
+            captureSource(capture).then((src) => {
+              if (!src) { holder.prepend(el("span", { class: "capture-missing", text: "Media not available" })); return; }
+              const media = capture.kind === "video" ? el("video", { src, controls: "", preload: "metadata", muted: "" }) : el("img", { src, alt: capture.caption || step.title + " photo" });
+              holder.prepend(media);
+            });
+            holder.append(el("small", { text: capture.caption || (capture.kind === "video" ? "Video" : "Photo") }),
+              el("button", { class: "button small secondary capture-remove", type: "button", "aria-label": "Remove this capture", text: "Remove", onclick: async () => { await removeCapture(capture.id); refresh(); } }));
+            return holder;
+          }));
+        };
+        const picker = (kind, label, accept) => {
+          const input = el("input", { type: "file", accept, class: "sr-file" });
+          input.dataset.capture = kind;
+          if (kind === "photo") input.setAttribute("capture", "environment");
+          input.addEventListener("change", async () => {
+            const file = input.files && input.files[0]; input.value = "";
+            if (!file) return;
+            note.textContent = kind === "video" ? "Checking your clip…" : "Saving your photo…";
+            try {
+              await addCapture({ growId, questId: quest.id, stepId: step.id, kind, file, caption: caption.value });
+              caption.value = ""; note.textContent = "Saved to your process trail.";
+            } catch (error) { note.textContent = error.message || "That file could not be saved."; }
+            refresh();
+          });
+          return el("label", { class: "button small secondary capture-add" }, label, input);
+        };
+        slot.append(
+          el("div", { class: "capture-head" }, el("strong", { text: "Capture this step" }), el("small", { text: " Optional. +" + DOC_XP + " XP the first time you document a step." })),
+          thumbs, caption,
+          el("div", { class: "capture-actions" }, picker("photo", "Add photo", "image/*"), picker("video", "Add video (up to " + VIDEO_MAX_SECONDS + " s)", "video/*")),
+          note);
+        refresh();
+        return slot;
+      }
       function renderStep(quest, step, index, isCurrent, ctx) {
         const saved = questState(quest.id);
         const status = stepStatus(quest, index);
@@ -2063,6 +2463,7 @@
         if (step.warning) body.append(el("div", { class: "callout warn" }, el("b", { text: "Watch out" }), step.warning));
         if (linkForm) { body.append(linkForm.node); linkForm.onChange(refresh); }
         if (step.kind === "inoculate" && ctx.grow) body.append(el("p", { text: `Linked grow: ${ctx.grow.name} (${ctx.grow.species}), inoculated ${dateLabel(ctx.grow.startDate)}.` }));
+        body.append(renderCaptureSlot(quest, step, ctx));
         button.addEventListener("click", () => completeStep(quest, step, linkForm));
         body.append(el("div", { class: "step-actions" }, button, note));
         refresh();
@@ -2173,6 +2574,7 @@
           if (!linkForm || !linkForm.ready()) return;
           const grow = linkForm.link();
           saved.growId = grow.id; saved.growName = grow.name; saved.growSpecies = grow.species;
+          state.trail.forEach((item) => { if (item.questId === quest.id && !item.growId) item.growId = grow.id; });
         }
         const ctx = questContext(quest.id);
         if (!(step.verify || []).every((rule) => verifyRules[rule](ctx).ok)) return;
@@ -2262,13 +2664,29 @@
       function findGrow(name, species, grows = state.grows) {
         return grows.find((grow) => norm(grow.name) === norm(name) && norm(grow.species) === norm(species));
       }
-      function addGrow(name, species, grows = state.grows, startDate = todayKey()) {
+      function addGrow(name, species, grows = state.grows, startDate = todayKey(), planning = false) {
         let grow = findGrow(name, species, grows);
         if (!grow) {
-          grow = { id: uid("grow"), name: name.trim(), species: species.trim(), startDate, archived: false, createdAt: new Date().toISOString() };
+          grow = { id: uid("grow"), name: name.trim(), species: species.trim(), startDate: planning ? "" : startDate, archived: false, createdAt: new Date().toISOString() };
+          if (planning) grow.planning = true;
           grows.push(grow);
         }
         return grow;
+      }
+      function syncPlanFirst() {
+        const planning = $("#grow-plan-first").checked;
+        const date = $("#grow-start-date");
+        date.required = !planning; date.disabled = planning;
+      }
+      function startInoculation(growId, date) {
+        const grow = growById(growId);
+        if (!grow || !grow.planning) return { ok: false, reason: "That grow is already inoculated." };
+        const check = validateInoculationDate(date, todayKey());
+        if (!check.ok) return check;
+        grow.startDate = date; delete grow.planning;
+        saveState(); renderAll();
+        showToast(grow.name + " is inoculated. Daily check-ins start now.");
+        return { ok: true };
       }
       function handleNewGrow(event) {
         event.preventDefault();
@@ -2276,14 +2694,21 @@
         const name = String(data.get("name") || "").trim();
         const species = String(data.get("species") || "").trim();
         const startDate = String(data.get("startDate") || "");
-        if (!name || !species || !escapeDate(startDate)) { $("#new-grow-message").textContent = "Add a grow name, species, and valid inoculation date."; return; }
-        if (startDate > todayKey()) { $("#new-grow-message").textContent = "The inoculation date cannot be in the future."; return; }
+        const planning = data.get("planFirst") === "on";
+        if (!name || !species) { $("#new-grow-message").textContent = "Add a grow name and species."; return; }
+        if (!planning) {
+          const check = validateInoculationDate(startDate, todayKey());
+          if (!check.ok) { $("#new-grow-message").textContent = check.reason; return; }
+        }
         if (findGrow(name, species)) { $("#new-grow-message").textContent = "A grow with that name and species is already in your list."; return; }
-        const grow = addGrow(name, species, state.grows, startDate);
+        const grow = addGrow(name, species, state.grows, startDate, planning);
         saveState(); renderAll();
         event.currentTarget.reset();
         event.currentTarget.elements.startDate.value = todayKey();
-        $("#new-grow-message").textContent = `${grow.name} was added. Add its first check-in whenever you're ready.`;
+        syncPlanFirst();
+        $("#new-grow-message").textContent = planning
+          ? `${grow.name} is in Planning. Follow an Academy quest and capture your prep, then start inoculation when you're ready.`
+          : `${grow.name} was added. Add its first check-in whenever you're ready.`;
       }
       function dateStreakBonus() {
         return Math.min((currentStreak() + 1) * 5, 35);
@@ -2340,8 +2765,10 @@
           }
         }
         const date = todayKey();
+        if (grow.planning && stage !== "Planning") { grow.startDate = date; delete grow.planning; }
         const observation = String(data.get("observation") || "").trim();
         const appearance = String(data.get("appearance") || "Not sure yet");
+        const incidentNote = ["Possible contamination", "Needs attention"].includes(appearance) ? String(data.get("incidentNote") || "").trim().slice(0, 500) : "";
         const matches = state.entries.filter((entry) => entry.growId === grow.id && entry.date === date);
         let entry = matches[matches.length - 1];
         let earned = 0;
@@ -2356,7 +2783,7 @@
           const flushXp = stage === "Harvest" ? flushBonusFor(grow.id, flushNumber, freshYieldG, null) : 0;
           entry = {
             id: uid("checkin"), growId: grow.id, growName: grow.name, species: grow.species,
-            date, stage, stageHistory: [stage], temperature, humidity, appearance, observation,
+            date, stage, stageHistory: [stage], temperature, humidity, appearance, observation, incidentNote,
             flushNumber, freshYieldG, dryYieldG, drySubstrateG, photoName: selectedPhoto ? selectedPhoto.name : "",
             photoDataUrl: photoDataUrl || "", firstGrowXp, stageXp, dailyXp, streakXp, flushXp, legacyXp: 0,
             xpAwarded: firstGrowXp + stageXp + dailyXp + streakXp + flushXp,
@@ -2374,6 +2801,7 @@
           entry.humidity = humidity;
           entry.appearance = appearance;
           entry.observation = observation;
+          entry.incidentNote = incidentNote;
           entry.flushNumber = flushNumber;
           entry.freshYieldG = freshYieldG;
           entry.dryYieldG = dryYieldG;
@@ -2401,6 +2829,7 @@
         showToast(earned ? `+${fmt(earned)} demo-only XP added locally` : "Today's check-in updated");
         form.reset();
         setPhotoPreview("");
+        syncIncidentField();
         $("#checkin-dialog").close();
       }
       function markGrowComplete(growId) {
@@ -2467,13 +2896,16 @@
           dailyXp: entry.dailyXp || 0,
           streakXp: entry.streakXp || 0,
           flushXp: entry.flushXp || 0,
-          legacyXp: entry.legacyXp || 0
+          legacyXp: entry.legacyXp || 0,
+          incidentNote: entry.incidentNote || ""
         }));
         const grows = state.grows.map((grow) => ({
           name: grow.name, species: grow.species, startDate: grow.startDate || "",
-          archived: Boolean(grow.archived), completedAt: grow.completedAt || ""
+          archived: Boolean(grow.archived), completedAt: grow.completedAt || "",
+          planning: Boolean(grow.planning), planningDetail: grow.planningDetail || undefined
         }));
-        const payload = { app: "MycoQuest grow log", version: 2, grows, entries, recipes: [], academy: exportAcademy() };
+        const payload = { app: "MycoQuest grow log", version: 2, grows, entries, recipes: [], academy: exportAcademy(),
+          trail: trailForExport(state.trail, growById), docAwards: state.docAwards };
         const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -2499,7 +2931,8 @@
           throw new Error("Choose a MycoQuest storefront progress file or a standalone grow log v2 JSON file.");
         }
         const next = $("#import-mode").value === "replace" ? emptyState() : {
-          ...state, grows: state.grows.map((grow) => ({ ...grow })), entries: state.entries.map((entry) => ({ ...entry }))
+          ...state, grows: state.grows.map((grow) => ({ ...grow })), entries: state.entries.map((entry) => ({ ...entry })),
+          trail: state.trail.map((item) => ({ ...item })), docAwards: { ...state.docAwards }
         };
         importedGrows.forEach((item, index) => {
           if (!item || typeof item !== "object" || Array.isArray(item)) throw new Error(`Grow ${index + 1} must be an object.`);
@@ -2510,7 +2943,12 @@
           const matchingEntryDate = entries.filter((entry) =>
             entry && norm(entry.growName || entry.growId) === norm(name) && norm(entry.species) === norm(species) && escapeDate(entry.date)
           ).map((entry) => entry.date).sort()[0];
-          const grow = addGrow(name, species, next.grows, startDate || matchingEntryDate || todayKey());
+          const planning = item.planning === true && !startDate && !matchingEntryDate;
+          const grow = addGrow(name, species, next.grows, startDate || matchingEntryDate || todayKey(), planning);
+          if (item.planningDetail && typeof item.planningDetail === "object") {
+            const detail = cleanPlanningDetail(item.planningDetail);
+            if (Object.keys(detail).length) grow.planningDetail = detail;
+          }
           if (item.archived === true) {
             grow.archived = true;
             if (typeof item.completedAt === "string" && item.completedAt) grow.completedAt = item.completedAt;
@@ -2582,6 +3020,7 @@
             growId: grow.id, growName: grow.name, species: grow.species, date, stage,
             stageHistory: importedStageHistory.length ? [...new Set([...importedStageHistory, stage])] : [stage],
             temperature, humidity, appearance, observation,
+            incidentNote: typeof item.incidentNote === "string" ? item.incidentNote.slice(0, 500) : "",
             flushNumber: Number.isInteger(item.flushNumber) ? item.flushNumber : null,
             freshYieldG: Number.isFinite(item.freshYieldG) ? item.freshYieldG : null,
             dryYieldG: Number.isFinite(item.dryYieldG) ? item.dryYieldG : null,
@@ -2600,6 +3039,12 @@
         });
         if (source === "standalone" && parsed.academy) {
           next.academy = $("#import-mode").value === "replace" ? sanitizeAcademy(parsed.academy) : mergeAcademy(next.academy, parsed.academy);
+        }
+        if (source === "standalone") {
+          next.trail = mergeTrail(next.trail || [], parsed.trail, (name, species) => (findGrow(name, species, next.grows) || {}).id || null);
+          if (parsed.docAwards && typeof parsed.docAwards === "object" && !Array.isArray(parsed.docAwards)) {
+            Object.entries(parsed.docAwards).forEach(([key, xp]) => { if (!(key in next.docAwards) && Number.isFinite(Number(xp))) next.docAwards[key] = Math.min(DOC_XP, Math.max(0, Number(xp))); });
+          }
         }
         state = next;
         saveState(); renderAll();
@@ -2678,7 +3123,7 @@
         const fruitSteps = ["link", "chamber", "birth", "conditions", "pins", "harvest"];
         const popSteps = ["kit", "soak", "simmer", "dry", "fill", "sterilize", "inoculate", "incubate", "colonize", "shake"];
         return {
-          version: 3, sample: true, grows, entries,
+          version: 3, sample: true, grows, entries, trail: [], docAwards: {},
           academy: {
             active: "fruiting", jars: 6,
             quests: {
@@ -2728,6 +3173,8 @@
         $("#checkin-message").textContent = "";
       }
       $("#new-grow-form").addEventListener("submit", handleNewGrow);
+      $("#grow-plan-first").addEventListener("change", syncPlanFirst);
+      $("#checkin-form").elements.appearance.addEventListener("change", syncIncidentField);
       $("#checkin-form").addEventListener("submit", handleCheckin);
       $("#checkin-stage").addEventListener("change", (event) => setHarvestFields(event.currentTarget.value));
       $("#checkin-photo").addEventListener("change", (event) => {

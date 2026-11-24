@@ -1,0 +1,35 @@
+async function scenario(h) {
+  const KEY = "mycoquest-standalone-grow-log-v3";
+  const plan = h.$("#grow-plan-first");
+  h.check("plan checkbox exists", !!plan);
+  plan.click();
+  h.check("date disabled when planning", h.$("#grow-start-date").disabled === true);
+  const form = h.$("#new-grow-form");
+  h.fill(form.elements.name, "Popcorn prep");
+  h.fill(form.elements.species, "Blue oyster");
+  h.submit(form);
+  await h.sleep(100);
+  const list = h.$("#grow-list").textContent;
+  h.check("planning grow shown as Planning", list.includes("Planning · not inoculated yet"), list);
+  const start = h.$$("#grow-list button").find((b) => b.textContent === "Start inoculation");
+  h.check("start inoculation button present", !!start);
+  h.check("full detail panel present", h.$("#grow-list .plan-detail summary").textContent.includes("full detail"));
+  const dateInput = h.$("#grow-list .inoculate-control input");
+  h.fill(dateInput, "2999-01-01");
+  start.click();
+  await h.sleep(50);
+  h.check("future date refused", h.$("#grow-list .inoculate-control small").textContent.includes("future"));
+  const df = h.$("#grow-list .plan-detail-form");
+  h.fill(df.elements.substrate, "BRF");
+  h.submit(df);
+  await h.sleep(50);
+  const saved = JSON.parse(localStorage.getItem(KEY));
+  h.check("planning detail persisted", !!(saved.grows[0].planningDetail && saved.grows[0].planningDetail.substrate === "BRF"));
+  h.check("planning flag persisted", saved.grows[0].planning === true && saved.grows[0].startDate === "");
+  h.fill(h.$("#grow-list .inoculate-control input"), new Date().toISOString().slice(0, 10));
+  h.click(h.$$("#grow-list button").find((b) => b.textContent === "Start inoculation"));
+  await h.sleep(50);
+  const after = JSON.parse(localStorage.getItem(KEY));
+  h.check("inoculation clears planning", !after.grows[0].planning && !!after.grows[0].startDate);
+  h.check("card no longer says Planning", !h.$("#grow-list").textContent.includes("not inoculated yet"));
+}

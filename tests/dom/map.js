@@ -1,0 +1,40 @@
+async function scenario(h) {
+  const KEY = "mycoquest-standalone-grow-log-v3";
+  // build a grow with a fruiting check-in and a contamination check-in via the real UI
+  const form = h.$("#new-grow-form");
+  h.fill(form.elements.name, "Oyster batch");
+  h.fill(form.elements.species, "Blue oyster");
+  h.submit(form);
+  await h.sleep(150);
+  const checkinBtn = h.$$("#grow-list button").find((b) => /check-in/i.test(b.textContent));
+  h.click(checkinBtn);
+  await h.sleep(150);
+  const cf = h.$("#checkin-form");
+  h.fill(cf.elements.stage, "Fruiting");
+  h.check("incident field hidden for healthy grow", h.$("#incident-field").hidden === true);
+  h.fill(cf.elements.appearance, "Possible contamination");
+  h.check("incident field appears when flagged", h.$("#incident-field").hidden === false);
+  h.fill(cf.elements.observation, "Green patch near the edge");
+  h.fill(cf.elements.incidentNote, "Opened the lid too long. <img src=x onerror=window.__xss=1>");
+  h.submit(cf);
+  await h.sleep(500);
+  const saved = JSON.parse(localStorage.getItem(KEY));
+  h.check("incidentNote saved on entry", saved.entries.length === 1 && saved.entries[0].incidentNote.startsWith("Opened the lid"), JSON.stringify(saved.entries[0] && saved.entries[0].incidentNote));
+  location.hash = "map";
+  await h.sleep(600);
+  const svg = h.$("#mycelial-map");
+  h.check("map renders mushroom sprites", h.$$(".mush", svg).length >= 2, String(h.$$(".mush", svg).length));
+  h.check("contamination emoji node exists", !!h.$(".map-emoji", svg));
+  const sprite = h.$(".mush", svg).parentElement;
+  h.check("sprite is focusable and named", sprite.getAttribute("tabindex") === "0" && /mushroom/.test(sprite.getAttribute("aria-label")), sprite.getAttribute("aria-label"));
+  h.click(sprite);
+  await h.sleep(150);
+  const detail = h.$("#map-detail");
+  h.check("popup shows the incident note as text", detail.textContent.includes("What you noticed") && detail.textContent.includes("Opened the lid"), detail.textContent);
+  h.check("popup does not render hostile markup", !detail.querySelector("img[src='x']") && !window.__xss);
+  h.check("clicking a mushroom plays its reaction", h.$$(".mush.react", svg).length >= 1);
+  h.click(h.$(".map-emoji", svg));
+  await h.sleep(150);
+  h.check("emoji click opens the same field note", detail.textContent.includes("Opened the lid"));
+  h.$("#map").scrollIntoView();
+}

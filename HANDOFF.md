@@ -26,6 +26,16 @@ Single-file app (grow-log.html), plain HTML/CSS/JS, localStorage only.
   only while the journal is empty (`journalIsEmpty()`), flagged with `state.sample`, and cleared
   with the banner button. It can never overwrite real data.
 
+## Planning phase / process trail / living map (in progress, uncommitted)
+Spec: `docs/superpowers/specs/2026-11-24-planning-phase-living-map-design.md`; plan: `docs/superpowers/plans/2026-11-24-planning-phase-living-map.md`.
+- Done: Planning phase (`grow.planning`, "Plan this grow first", Start inoculation, full-detail panel);
+  Academy capture slots (photo / 15 s video, IndexedDB `media` store, `state.trail`, +10 XP once per step in `state.docAwards`);
+  12-family SVG mushroom glyphs + rhizomorph + spore clouds + hover/tap reactions on the map;
+  contamination 🦠 node and `incidentNote` field/popup; v2 export extras (`trail`, `incidentNote`, `planning`, `docAwards`; no media bytes).
+- Not done yet: replay plan/controller + harvest-photo finale (plan Tasks 6, 9), "Documented" trophy + sample trail (Task 10),
+  separate media backup file (videos/photos in the trail are not carried by export or import yet), trail props as map nodes.
+- Tests: `node tests/run.mjs` (pure logic), `sh tests/smoke.sh` (console errors), `node tests/dom.mjs tests/dom/<scenario>.js` (real UI in headless Chrome).
+
 ## Next up
 - [x] Move `const $` above `let state = load()` (crash on bad saved data)
 - [x] Mycelial Map (SVG, one branch per grow, nodes colored by stage)
