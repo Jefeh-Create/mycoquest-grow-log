@@ -2,6 +2,8 @@
 
 A standalone mushroom grow journal built as a plain HTML/CSS/JS single-file app.
 
+**Live demo:** https://jefeh-create.github.io/mycoquest-grow-log/ (choose "Try a sample journal" to see a month of growing).
+
 ## Run locally
 
 Open `grow-log.html` in a browser, or serve the folder with a simple local server:
@@ -18,6 +20,7 @@ http://127.0.0.1:8765/grow-log.html
 
 ## Features
 
+- Tabbed layout with one clear first action; the map and stories unfold once you add a grow
 - Leveling and XP progress
 - First Grow Academy: guided BRF cake, popcorn grain spawn, and fruiting quests with timers, a jar calculator, and XP verified by real check-ins
 - Living mycelial map: organic hyphae per grow, nutrient-flow animation, growth replay, and spore bursts
