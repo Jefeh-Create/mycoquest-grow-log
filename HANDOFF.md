@@ -26,7 +26,7 @@ Single-file app (grow-log.html), plain HTML/CSS/JS, localStorage only.
   only while the journal is empty (`journalIsEmpty()`), flagged with `state.sample`, and cleared
   with the banner button. It can never overwrite real data.
 
-## Planning phase / process trail / living map (in progress, uncommitted)
+## Planning phase / process trail / living map / trophies
 Spec: `docs/superpowers/specs/2026-11-24-planning-phase-living-map-design.md`; plan: `docs/superpowers/plans/2026-11-24-planning-phase-living-map.md`.
 - Done: Planning phase (`grow.planning`, "Plan this grow first", Start inoculation, full-detail panel);
   Academy capture slots (photo / 15 s video, IndexedDB `media` store, `state.trail`, +10 XP once per step in `state.docAwards`);
@@ -36,7 +36,11 @@ Spec: `docs/superpowers/specs/2026-11-24-planning-phase-living-map-design.md`; p
   replay paced by real elapsed days (`replayTimes`, 12-40 s) with play/pause/scrub/0.5x-1x-2x; "Documented" trophy (5 documented steps);
   sample journal ships a 5-step process trail with generated photos; separate media backup file
   (`MycoQuest media backup` v1: export/import photos and videos, import the journal first, then the media).
-- Still open: pop-up polish for tiny phones, a way to move captures between grows, trimming videos in-app.
+- Trophies/rewards: ten trophies (incl. Documented and Master Mycologist) drawn as mushroom trophies (`trophyFigure`: cap = cup, mycelium handles,
+  plinth with progress bar, hand-drawn pin/hypha emblem per trophy via `emblemMarkup`); rarities Spore/Pin/Cap/Flush/Legend by XP (pure `rewards` block);
+  unlock celebration dialog queue (`celebrate`, spawns from soil, XP count-up, >2 unlocks collapse to a summary); shelf summary, filters, next-up card,
+  detail dialog with "Replay unlock"; mushroom ranks by level (`RANKS`, level-up + quest-complete celebrations). Round `medallion()` is only used for ranks.
+- Still open: finale label slightly overlaps side mushrooms; pop-up polish for tiny phones, a way to move captures between grows, trimming videos in-app.
 - Tests: `node tests/run.mjs` (pure logic), `sh tests/smoke.sh` (console errors), `node tests/dom.mjs tests/dom/<scenario>.js` (real UI in headless Chrome).
 
 ## Next up

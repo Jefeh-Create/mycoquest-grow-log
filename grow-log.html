@@ -254,6 +254,85 @@
     .process-node .map-emoji { font-size: 13px; }
     .map-emoji:hover { animation: mush-bob .55s ease; }
     .capture-grow { font-size: .8rem; color: var(--muted); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    /* ---------- Trophy shelf, medallions, celebrations ---------- */
+    .trophy-shelf { display: grid; grid-template-columns: auto 1fr minmax(240px, 1.1fr); gap: 18px; align-items: center; padding: 16px 18px; margin-bottom: 14px; border: 1px solid var(--line); border-radius: 16px; background: radial-gradient(120% 140% at 0% 0%, rgba(169,185,134,.12), transparent 60%), rgba(23,24,18,.5); }
+    .shelf-ring { filter: drop-shadow(0 0 14px rgba(169,185,134,.25)); }
+    .shelf-ring-count { fill: var(--ink, #f4ecd8); font: 600 15px Georgia, serif; }
+    .shelf-facts h3 { margin: 0 0 4px; font-family: Georgia, serif; font-weight: 500; }
+    .shelf-line { margin: 2px 0; color: var(--muted); font-size: .78rem; }
+    .shelf-next { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; border: 1px dashed rgba(226,189,120,.4); background: rgba(226,189,120,.06); }
+    .shelf-next > div { display: grid; flex: 1; gap: 1px; min-width: 0; }
+    .shelf-next small { color: var(--muted); font-size: .66rem; }
+    .shelf-next strong { font-size: .86rem; }
+    .trophy-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .filter-chip { font: inherit; font-size: .74rem; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; transition: transform .18s ease, background .18s ease, color .18s ease; }
+    .filter-chip:hover { transform: translateY(-2px); color: var(--ink, #f4ecd8); }
+    .filter-chip[aria-pressed="true"] { background: rgba(169,185,134,.2); border-color: var(--moss); color: var(--ink, #f4ecd8); }
+    .trophy-card { position: relative; display: grid; justify-items: center; gap: 4px; padding: 14px 10px 12px; text-align: center; font: inherit; color: inherit; cursor: pointer; border: 1px solid var(--line); border-radius: 16px; background: rgba(23,24,18,.5); transition: transform .22s cubic-bezier(.3,1.5,.5,1), box-shadow .22s ease, border-color .22s ease; overflow: hidden; }
+    .trophy-card strong { font-size: .8rem; }
+    .trophy-card small { color: var(--muted); font-size: .64rem; line-height: 1.35; }
+    .trophy-card:hover, .trophy-card:focus-visible { transform: translateY(-5px) rotate(-.6deg); border-color: var(--rarity); box-shadow: 0 14px 28px -14px var(--rarity); }
+    .trophy-card:not(.unlocked) .medal { opacity: .85; }
+    .trophy-card.unlocked { border-color: color-mix(in srgb, var(--rarity) 55%, transparent); background: linear-gradient(160deg, color-mix(in srgb, var(--rarity) 14%, transparent), rgba(23,24,18,.5) 70%); }
+    .trophy-card.unlocked::before { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 40%, rgba(255,246,216,.14) 50%, transparent 60%); transform: translateX(-120%); animation: card-shine 5s ease-in-out infinite; pointer-events: none; }
+    @keyframes card-shine { 0%, 70% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+    .trophy-card .trophy-track { width: 70%; margin: 4px auto 0; }
+    .trophy-card.unlocked .trophy-track span { background: linear-gradient(90deg, #a5824a, var(--rarity)); }
+    .trophy-card.just-unlocked { animation: trophy-pop .8s cubic-bezier(.2,1.4,.4,1); }
+    .rarity-pill { padding: 1px 9px; border-radius: 999px; font-size: .6rem; letter-spacing: .08em; text-transform: uppercase; color: var(--rarity); border: 1px solid color-mix(in srgb, var(--rarity) 55%, transparent); background: color-mix(in srgb, var(--rarity) 10%, transparent); }
+    .medal { overflow: visible; display: block; }
+    .medal-glow { opacity: 0; }
+    .medal.is-earned .medal-glow { opacity: .35; filter: blur(3px); animation: medal-breathe 3.2s ease-in-out infinite; }
+    .medal.is-locked .medal-glyph { filter: brightness(0) opacity(.5); }
+    .trophy-fig.is-locked .medal-glyph { filter: grayscale(1) brightness(.62) contrast(1.05); }
+    .medal.is-earned .medal-glyph { transform-box: fill-box; transform-origin: 50% 100%; animation: medal-float 3.6s ease-in-out infinite; filter: drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
+    .trophy-card:hover .medal-glyph, .trophy-card:focus-visible .medal-glyph { animation: mush-bob .6s ease; }
+    .medal-spark { opacity: 0; animation: medal-twinkle 2.8s ease-in-out infinite; }
+    .medal-progress { transition: stroke-dasharray .8s ease; }
+    @keyframes medal-breathe { 0%, 100% { opacity: .22; } 50% { opacity: .55; } }
+    @keyframes medal-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.6px); } }
+    @keyframes medal-twinkle { 0%, 70%, 100% { opacity: 0; transform: scale(.4); } 85% { opacity: 1; transform: scale(1.4); } }
+    #level-value { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 10px; }
+    .rank-title { font: 500 .78rem system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
+    .rank-badge { display: inline-grid; place-items: center; margin-right: 10px; vertical-align: middle; }
+    .rank-badge .medal { filter: drop-shadow(0 0 8px color-mix(in srgb, var(--rarity) 55%, transparent)); }
+    .level-head { align-items: center; }
+    .stat-emoji { display: inline-block; margin-right: 4px; transition: transform .25s cubic-bezier(.3,1.6,.5,1); }
+    .stat-card:hover .stat-emoji { transform: scale(1.3) rotate(-12deg); }
+    .stat-card.hot .stat-emoji { animation: flame-flicker 1.3s ease-in-out infinite; transform-origin: 50% 100%; }
+    @keyframes flame-flicker { 0%, 100% { transform: scale(1) rotate(-2deg); } 35% { transform: scale(1.14, .94) rotate(3deg); } 70% { transform: scale(.96, 1.1) rotate(-3deg); } }
+
+    dialog.celebrate { border: 0; padding: 0; background: transparent; color: var(--ink, #f4ecd8); max-width: min(94vw, 520px); width: 100%; overflow: visible; }
+    dialog.celebrate::backdrop { background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--glow, #a9b986) 30%, #0b0c07), rgba(6,7,4,.92)); backdrop-filter: blur(3px); animation: fade-in .35s ease; }
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    .celebrate-stage { --glow: #a9b986; position: relative; display: grid; justify-items: center; gap: 6px; padding: 34px 26px 28px; text-align: center; border: 1px solid color-mix(in srgb, var(--glow) 45%, transparent); border-radius: 24px; background: linear-gradient(170deg, #22251a, #14160e); box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 30px 80px -20px var(--glow); overflow: hidden; }
+    .celebrate-rays { position: absolute; left: 50%; top: 150px; width: 640px; height: 640px; margin: -320px 0 0 -320px; background: repeating-conic-gradient(from 0deg, color-mix(in srgb, var(--glow) 24%, transparent) 0 8deg, transparent 8deg 22deg); -webkit-mask-image: radial-gradient(circle, #000 0, transparent 62%); mask-image: radial-gradient(circle, #000 0, transparent 62%); animation: rays-spin 24s linear infinite; pointer-events: none; }
+    @keyframes rays-spin { to { transform: rotate(360deg); } }
+    .celebrate-medal { position: relative; z-index: 1; display: flex; gap: 6px; justify-content: center; min-height: 170px; align-items: flex-end; }
+    .celebrate-medal.spawn-up { animation: spawn-up 1.1s cubic-bezier(.2,.9,.3,1.25) both; transform-origin: 50% 100%; }
+    @keyframes spawn-up { 0% { transform: translateY(70px) scale(.15, 0); opacity: 0; } 45% { opacity: 1; } 65% { transform: translateY(-10px) scale(1.12, .9); } 82% { transform: translateY(2px) scale(.97, 1.06); } 100% { transform: none; } }
+    .soil { position: relative; z-index: 2; width: 220px; height: 26px; margin-top: -26px; border-radius: 50%; background: radial-gradient(ellipse at 50% 30%, #4a3a26, #2b2216 70%); box-shadow: 0 6px 18px rgba(0,0,0,.5), inset 0 3px 6px rgba(0,0,0,.4); }
+    .celebrate-spores { position: absolute; left: 50%; top: 150px; width: 0; height: 0; pointer-events: none; z-index: 3; }
+    .spore-particle { position: absolute; width: 6px; height: 6px; border-radius: 50%; opacity: 0; animation: spore-burst 1.7s cubic-bezier(.15,.7,.3,1) forwards; }
+    @keyframes spore-burst { 0% { transform: translate(0, 0) scale(.3); opacity: 0; } 12% { opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(1); opacity: 0; } }
+    .celebrate-eyebrow { margin: 8px 0 0; font-size: .7rem; letter-spacing: .18em; text-transform: uppercase; color: var(--glow); }
+    .celebrate-stage h2 { margin: 0; font-family: Georgia, serif; font-weight: 500; font-size: 1.9rem; letter-spacing: -.02em; animation: title-in .7s .6s ease both; }
+    @keyframes title-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    .celebrate-rarity { margin: 0; font-size: .74rem; color: var(--glow); }
+    .celebrate-sub { margin: 2px 0 0; color: var(--ink, #f4ecd8); font-size: .9rem; }
+    .celebrate-flavor { margin: 0 auto; max-width: 36ch; color: var(--muted); font-style: italic; font-size: .82rem; }
+    .celebrate-xp { margin: 8px 0 0; min-height: 1.5em; font: 600 1.5rem Georgia, serif; color: #f2d9a0; text-shadow: 0 0 18px color-mix(in srgb, var(--glow) 60%, transparent); }
+    .celebrate-stage .button { margin-top: 6px; min-width: 150px; }
+    .trophy-detail .celebrate-stage { padding-top: 28px; }
+    .detail-meter { width: 60%; height: 6px; border-radius: 99px; background: rgba(255,255,255,.1); overflow: hidden; }
+    .detail-meter span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--moss-dark), var(--glow)); transition: width .6s ease; }
+    .detail-status { font-size: 1.05rem; }
+    .detail-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+    @media (max-width: 760px) { .trophy-shelf { grid-template-columns: auto 1fr; } .shelf-next { grid-column: 1 / -1; } }
+    @media (prefers-reduced-motion: reduce) {
+      .trophy-card.unlocked::before, .medal-glow, .medal.is-earned .medal-glyph, .medal-spark, .celebrate-rays, .celebrate-medal.spawn-up, .spore-particle, .celebrate-stage h2, .stat-card.hot .stat-emoji, dialog.celebrate::backdrop { animation: none !important; }
+      .spore-particle { display: none; }
+    }
     .stage-tag { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: .7rem; white-space: nowrap; }
     .stage-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--moss); }
     .empty { color: var(--muted); font-size: .82rem; padding: 14px 0; }
@@ -521,13 +600,13 @@
 
     <section class="stats" aria-label="Grow progress">
       <article class="stat-card level-card">
-        <div class="level-head"><div><span class="stat-label">Your journey</span><span class="stat-value" id="level-value">Level 1</span></div><span class="xp-total" id="xp-total">0 demo-only XP total · local</span></div>
+        <div class="level-head"><span class="rank-badge" id="rank-badge"></span><div><span class="stat-label">Your journey</span><span class="stat-value" id="level-value">Level 1</span></div><span class="xp-total" id="xp-total">0 demo-only XP total · local</span></div>
         <div class="progress-track" id="level-bar" role="progressbar" aria-label="Progress to next level" aria-valuemin="0" aria-valuemax="200" aria-valuenow="0"><div class="progress-fill" id="level-fill"></div></div>
         <div class="level-foot"><span id="level-progress-copy">0 / 200 demo-only XP</span><span id="level-next-copy">200 demo-only XP to next level</span></div>
       </article>
-      <article class="stat-card"><span class="stat-label">Current streak</span><span class="stat-value" id="streak-value">0 days</span><div class="stat-detail" id="streak-detail">Check in today to begin</div></article>
-      <article class="stat-card"><span class="stat-label">Growing now</span><span class="stat-value" id="grow-count">0</span><div class="stat-detail">Your grow journeys</div></article>
-      <article class="stat-card"><span class="stat-label">Check-ins</span><span class="stat-value" id="checkin-count">0</span><div class="stat-detail">Notes added to your log</div></article>
+      <article class="stat-card"><span class="stat-label"><span class="stat-emoji" aria-hidden="true">🔥</span>Current streak</span><span class="stat-value" id="streak-value">0 days</span><div class="stat-detail" id="streak-detail">Check in today to begin</div></article>
+      <article class="stat-card"><span class="stat-label"><span class="stat-emoji" aria-hidden="true">🧫</span>Growing now</span><span class="stat-value" id="grow-count">0</span><div class="stat-detail">Your grow journeys</div></article>
+      <article class="stat-card"><span class="stat-label"><span class="stat-emoji" aria-hidden="true">📝</span>Check-ins</span><span class="stat-value" id="checkin-count">0</span><div class="stat-detail">Notes added to your log</div></article>
     </section>
 
     <section class="section" id="grows" aria-labelledby="grows-title">
@@ -637,6 +716,8 @@
 
     <section class="section" id="trophies" aria-labelledby="trophies-title">
       <div class="section-heading"><div><span class="eyebrow">Milestones from the mycelium</span><h2 id="trophies-title">Trophies</h2></div><p><span id="trophy-count">0 of 8 unlocked</span>. Each one is earned from your real grow log and adds XP to your level.</p></div>
+      <div class="trophy-shelf" id="trophy-shelf"></div>
+      <div class="trophy-filters" id="trophy-filters" role="group" aria-label="Filter trophies"></div>
       <div class="trophy-grid" id="trophy-grid"></div>
     </section>
 
@@ -681,7 +762,8 @@
         ["network", "Mycelial Network", "⌘", 150, "Have 3 grows with check-ins"],
         ["steady-keeper", "Steady Keeper", "✧", 250, "Log 30 check-ins in total"],
         ["condition-keeper", "Condition Keeper", "◌", 100, "Log 10 check-ins with both temperature and humidity"],
-        ["documented", "Documented", "◈", 150, "Document 5 Academy steps with a photo or video"]
+        ["documented", "Documented", "◈", 150, "Document 5 Academy steps with a photo or video"],
+        ["mycologist", "Master Mycologist", "❖", 500, "Collect every other trophy"]
       ];
       // @pure:begin media-rules
       const VIDEO_MAX_SECONDS = 15;
@@ -851,6 +933,42 @@
       }
       // @exports parseMediaBackup
       // @pure:end media-backup
+      // @pure:begin rewards
+      const RARITIES = [
+        { name: "Spore", min: 0, color: "#9da98b" },
+        { name: "Pin", min: 150, color: "#81a789" },
+        { name: "Cap", min: 200, color: "#d4aa70" },
+        { name: "Flush", min: 300, color: "#ce876b" },
+        { name: "Legend", min: 500, color: "#c9a4e8" }
+      ];
+      function rarityFor(xp) {
+        let pick = RARITIES[0];
+        RARITIES.forEach((rarity) => { if (xp >= rarity.min) pick = rarity; });
+        return pick;
+      }
+      const RANKS = [[1, "Spore", "spore"], [5, "Pinhead", "pin"], [10, "Button", "button"], [15, "Fruiting Body", "oyster"],
+        [25, "Flush Master", "shiitake"], [35, "Mycelial Elder", "reishi"], [45, "Forest Sage", "lionsmane"], [50, "Archmycologist", "agaric"]];
+      function rankForLevel(level) {
+        let index = 0;
+        RANKS.forEach((rank, i) => { if (level >= rank[0]) index = i; });
+        return { title: RANKS[index][1], art: RANKS[index][2], index };
+      }
+      function nextUpTrophy(ids, progress, unlocked) {
+        let best = null, bestRatio = -1;
+        ids.forEach((id) => {
+          if (unlocked && unlocked[id]) return;
+          const [current, target] = progress[id];
+          const ratio = target ? current / target : 0;
+          if (ratio > bestRatio) { best = id; bestRatio = ratio; }
+        });
+        return best;
+      }
+      function celebrationPlan(ids) {
+        if (!ids.length) return { mode: "none", ids: [] };
+        return { mode: ids.length > 2 ? "summary" : "single", ids };
+      }
+      // @exports RARITIES, rarityFor, rankForLevel, nextUpTrophy, celebrationPlan
+      // @pure:end rewards
       // @pure:begin smoke
       const smokeOk = true;
       // @exports smokeOk
@@ -1212,7 +1330,7 @@
         const required = cap ? 0 : levelUpCost(level);
         const into = Math.max(0, xp - start);
         const progress = cap ? 100 : Math.min(100, required ? into / required * 100 : 0);
-        $("#level-value").textContent = `Level ${level}`;
+        renderRank(level);
         $("#top-level").textContent = `Level ${level}`;
         $("#xp-total").textContent = `${fmt(xp)} demo-only XP total · local`;
         $("#level-fill").style.width = `${progress}%`;
@@ -1224,6 +1342,7 @@
         $("#level-next-copy").textContent = cap ? "Level 50 reached" : `${fmt(required - into)} demo-only XP to next level`;
         const streak = currentStreak();
         $("#streak-value").textContent = `${streak} ${streak === 1 ? "check-in" : "check-ins"}`;
+        $("#streak-value").closest(".stat-card").classList.toggle("hot", streak > 0);
         $("#streak-detail").textContent = streak ? `48-hour grace · up to ${Math.min((streak + 1) * 5, 35)} demo XP next` : "Check in to begin a 48-hour streak";
         $("#grow-count").textContent = String(state.grows.filter((grow) => !grow.archived).length);
         $("#grow-count").nextElementSibling.textContent = "Active grow journeys";
@@ -2234,48 +2353,289 @@
           "network": [Math.min(growsWithEntries.length, 3), 3],
           "steady-keeper": [Math.min(state.entries.length, 30), 30],
           "documented": [Math.min(Object.keys(state.docAwards || {}).length, 5), 5],
+          "mycologist": [TROPHIES.filter(([id]) => id !== "mycologist" && state.trophies && state.trophies[id]).length, TROPHIES.length - 1],
           "condition-keeper": [Math.min(state.entries.filter((entry) => Number.isFinite(entry.temperature) && Number.isFinite(entry.humidity)).length, 10), 10]
         };
       }
-      const trophyUi = { justUnlocked: new Set() };
       function trophyXp() {
         if (!state.trophies || typeof state.trophies !== "object") return 0;
         return TROPHIES.reduce((sum, [id, , , xp]) => sum + (state.trophies[id] ? xp : 0), 0);
       }
+      const TROPHY_META = {
+        "first-root": { family: "button", flavor: "Every forest begins with a single spore.", go: ["Log a check-in", "grows"] },
+        "stage-seeker": { family: "chestnut", flavor: "You have watched one grow change its whole life.", go: ["Tend a grow", "grows"] },
+        "pin-party": { family: "oyster", flavor: "Tiny pins pushing through the substrate. The party has begun.", go: ["Tend a grow", "grows"] },
+        "week-warrior": { family: "enoki", flavor: "Seven check-ins in a row. Mycelium rewards patience.", go: ["Check in today", "grows"] },
+        "full-cycle": { family: "reishi", flavor: "Spore to harvest to rest. You closed the loop.", go: ["Tend a grow", "grows"] },
+        "network": { family: "turkeytail", flavor: "Three grows, one living network beneath your feet.", go: ["Start a grow", "grows"] },
+        "steady-keeper": { family: "shiitake", flavor: "Thirty notes deep. Your log is now a field guide.", go: ["Check in today", "grows"] },
+        "condition-keeper": { family: "morel", flavor: "Temperature and humidity, tracked like a true cultivator.", go: ["Open a check-in", "grows"] },
+        "documented": { family: "chanterelle", flavor: "Your process, captured. Future you says thanks.", go: ["Open the Academy", "academy"] },
+        "mycologist": { family: "agaric", flavor: "The whole shelf is yours. The forest knows your name.", go: ["Back to the shelf", "trophies"] }
+      };
+      const RANK_FLAVOR = { "Spore": "Drifting on the breeze, looking for a home.", "Pinhead": "The first tiny caps break the surface.", "Button": "Firm, round and full of promise.",
+        "Fruiting Body": "Your cultivation is bearing fruit.", "Flush Master": "Wave after wave, right on schedule.", "Mycelial Elder": "The network answers to you.",
+        "Forest Sage": "You read the forest like an open book.", "Archmycologist": "There is nothing left to prove to the fungi." };
+      const QUEST_ART = { brf: "oyster", popcorn: "enoki", fruiting: "shiitake" };
+      const trophyUi = { justUnlocked: new Set(), filter: "all", lastLevel: null };
+      const celebrateUi = { queue: [], open: false, dialog: null };
+
+      // A round mushroom medallion: rarity-coloured ring that fills with progress, a glyph that is a silhouette until earned.
+      function medallion({ family, rarity, locked = false, ratio = 0, size = 96, emoji = "", form = "mature" }) {
+        const circumference = 2 * Math.PI * 46;
+        const svg = svgEl("svg", { viewBox: "0 0 100 100", width: size, height: size, class: "medal " + (locked ? "is-locked" : "is-earned"), "aria-hidden": "true", focusable: "false" });
+        svg.style.setProperty("--rarity", rarity.color);
+        const gradient = "mg" + Math.random().toString(36).slice(2, 8);
+        const filled = locked ? Math.min(1, ratio) * circumference : circumference;
+        svg.innerHTML = '<defs><radialGradient id="' + gradient + '" cx="36%" cy="28%" r="85%"><stop offset="0" stop-color="' + rarity.color + '" stop-opacity=".6"/><stop offset=".65" stop-color="#262a1c"/><stop offset="1" stop-color="#12140d"/></radialGradient></defs>' +
+          '<circle class="medal-glow" cx="50" cy="50" r="47" fill="none" stroke="' + rarity.color + '" stroke-width="6"/>' +
+          '<circle cx="50" cy="50" r="44" fill="url(#' + gradient + ')"/>' +
+          '<circle class="medal-track" cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="3"/>' +
+          '<circle class="medal-progress" cx="50" cy="50" r="46" fill="none" stroke="' + rarity.color + '" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="' + filled.toFixed(1) + " " + circumference.toFixed(1) + '" transform="rotate(-90 50 50)"/>';
+        const place = svgEl("g", { transform: emoji ? "translate(50 62)" : "translate(50 80) scale(3.1)" });
+        const glyph = svgEl("g", { class: "medal-glyph" });
+        place.append(glyph);
+        if (emoji) { const text = svgEl("text", { "text-anchor": "middle", "font-size": "38", class: "medal-emoji" }); text.textContent = emoji; glyph.append(text); }
+        else glyph.innerHTML = glyphMarkup(family, form, { capColor: MUSHROOM_FAMILIES[family].caps[0], stemLen: 1 });
+        svg.append(place);
+        if (!locked) [[22, 26, 0], [80, 30, .5], [74, 74, 1]].forEach(([x, y, delay]) => {
+          const spark = svgEl("circle", { cx: x, cy: y, r: 1.8, class: "medal-spark", fill: "#fff6d8" }); spark.style.animationDelay = delay + "s"; svg.append(spark);
+        });
+        return svg;
+      }
+      function trophyRow(id) { return TROPHIES.find((item) => item[0] === id); }
+      // Each trophy is a mushroom shaped like a real trophy: the cap is the cup, mycelium curls are the handles,
+      // the stem is the trophy stem, and an achievement emblem sits on the cap. A bar on the plinth shows progress.
+      // Hand-drawn mushroom emblems: every badge is a pin, hypha or mycelium wearing its achievement.
+      function emblemMarkup(id, c) {
+        const cream = "#f2e6c8", pin = (x, base, s) => '<path d="M' + (x - 3 * s) + " " + (base - 4 * s) + " a" + 3 * s + " " + 2.6 * s + " 0 0 1 " + 6 * s + ' 0z" fill="' + c + '"/><path d="M' + x + " " + (base - 4 * s) + " V" + base + '" stroke="' + cream + '" stroke-width="' + 1.3 * s + '" stroke-linecap="round"/>';
+        if (id === "first-root") return '<g transform="translate(50 36)" fill="none" stroke="' + cream + '" stroke-linecap="round" stroke-width="1.3"><circle cx="-8" cy="7" r="2" fill="' + cream + '" stroke="none"/><path d="M-8 7 C-5 3 -2 5 1 1 C3 -1 4 -3 4 -5"/><path d="M-3 4 C-2 7 1 8 5 6"/>' + pin(4, -2, 1.15).replace("V-2", "V-1") + '<circle cx="6" cy="6" r="1" fill="' + cream + '" stroke="none"/></g>';
+        const stroke = '" fill="none" stroke="' + cream + '" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"';
+        if (id === "week-warrior") return '<g transform="translate(50 36)">' + pin(0, 9, 1.2) + '<path d="M0 -10 C5 -5 6 -1 3 2 C2 .5 1 0 0 1 C-2 0 -3 2 -3 2 C-6 -2 -2 -6 0 -10Z" fill="#f59f3a"/><path d="M0 -5 C2 -2 2 0 0 1.5 C-1.5 0 -1 -2 0 -5Z" fill="#ffe08a"/></g>';
+        if (id === "full-cycle") return '<g transform="translate(50 36)"><path d="M-8 -2 A8 8 0 0 1 6 -6 M8 2 A8 8 0 0 1 -6 6' + stroke + '/><path d="M6 -9 V-5 H2 M-6 9 V5 H-2' + stroke + '/>' + pin(0, 4, .85) + '</g>';
+        if (id === "steady-keeper") return '<g transform="translate(50 36)"><path d="M-9 7 L0 9 L9 7 V-5 L0 -3 L-9 -5Z M0 -3 V9' + stroke + '/>' + pin(4.5, 4, .8) + '<path d="M-6 -1 H-3 M-6 2 H-3 M-6 5 H-3' + stroke + ' opacity=".7"/></g>';
+        if (id === "condition-keeper") return '<g transform="translate(50 36)"><path d="M-5 5 V-7 a2 2 0 0 1 4 0 V5' + stroke + '/><circle cx="-3" cy="7" r="3.2" fill="' + c + '"/><path d="M6 -6 C9 -1 10 1 10 3.5 a4 4 0 0 1 -8 0 C2 1 3 -1 6 -6Z" fill="#7fc4e8"/></g>';
+        if (id === "documented") return '<g transform="translate(50 36)"><path d="M-10 -4 H-5 L-3 -7 H3 L5 -4 H10 V8 H-10Z' + stroke + '/><circle cx="0" cy="2" r="5" fill="#1a1d12" stroke="' + cream + '" stroke-width="1.1"/>' + pin(0, 4.4, .6) + '</g>';
+        if (id === "mycologist") return '<g transform="translate(50 36)">' + pin(0, 10, 1.7) + '<path d="M-5 -3 L-6 -9 L-2.5 -6 L0 -10 L2.5 -6 L6 -9 L5 -3Z" fill="#f0c75e" stroke="#9a7420" stroke-width=".6" stroke-linejoin="round"/></g>';
+        if (id === "pin-party") return '<g transform="translate(50 36)">' + pin(-8, 8, .7) + pin(-3, 8, 1.1) + pin(3, 8, .9) + pin(8, 8, 1.25) + pin(0, 8, 1.6) + '<path d="M-10 8.6 H10" stroke="' + cream + '" stroke-width="1.2" stroke-linecap="round" opacity=".6"/></g>';
+        if (id === "stage-seeker") return '<g transform="translate(50 36)">' + pin(-7, 8, .8) + pin(0, 8, 1.35) + pin(8, 8, 1.9) + "</g>";
+        if (id === "network") return '<g transform="translate(50 36)" fill="none" stroke="' + cream + '" stroke-linecap="round" stroke-width="1.1"><path d="M-9 7 L-3 1 L3 3 L9 -5 M-3 1 L-4 -7 M3 3 L7 9 M-9 7 L-9 -1"/><g fill="' + c + '" stroke="none"><circle cx="-9" cy="7" r="1.8"/><circle cx="-3" cy="1" r="2"/><circle cx="3" cy="3" r="1.8"/><circle cx="9" cy="-5" r="1.8"/><circle cx="-4" cy="-7" r="1.6"/><circle cx="7" cy="9" r="1.6"/><circle cx="-9" cy="-1" r="1.5"/></g></g>';
+        return "";
+      }
+      function trophyFigure(id, { locked = false, ratio = 0, size = 96 } = {}) {
+        const meta = TROPHY_META[id], rarity = rarityFor(trophyRow(id)[3]), cap = MUSHROOM_FAMILIES[meta.family].caps[0];
+        const svg = svgEl("svg", { viewBox: "0 0 100 100", width: size, height: size, class: "medal trophy-fig " + (locked ? "is-locked" : "is-earned"), "aria-hidden": "true", focusable: "false" });
+        svg.style.setProperty("--rarity", rarity.color);
+        const bar = locked ? Math.max(0, Math.min(1, ratio)) * 48 : 48, c = rarity.color;
+        svg.innerHTML = '<ellipse class="medal-glow" cx="50" cy="52" rx="46" ry="42" fill="' + c + '"/>' +
+          '<g class="medal-glyph">' +
+          '<path d="M14 46 C-8 38 -6 76 36 72 M86 46 C108 38 106 76 64 72" fill="none" stroke="' + c + '" stroke-width="3.6" stroke-linecap="round"/>' +
+          '<path d="M39 56 C45 62 44 72 38 80 L62 80 C56 72 55 62 61 56 Z" fill="#efe3c6" stroke="rgba(0,0,0,.25)" stroke-width=".8"/>' +
+          '<path d="M43 64 L43 78 M50 62 L50 78 M57 64 L57 78" stroke="rgba(120,90,50,.28)" stroke-width="1" fill="none"/>' +
+          '<path d="M10 54 C8 25 30 12 50 12 C70 12 92 25 90 54 C70 61 30 61 10 54 Z" fill="' + cap + '" stroke="rgba(0,0,0,.3)" stroke-width="1"/>' +
+          '<path d="M10 54 C30 61 70 61 90 54 C70 49 30 49 10 54 Z" fill="rgba(35,22,10,.55)"/>' +
+          '<path d="M24 53 L24 57 M34 52 L34 58 M44 52 L44 59 M56 52 L56 59 M66 52 L66 58 M76 53 L76 57" stroke="rgba(255,235,200,.45)" stroke-width=".9"/>' +
+          '<path d="M24 24 C34 15 46 14 54 14" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="3" stroke-linecap="round"/>' +
+          '<circle cx="21" cy="40" r="3.2" fill="rgba(255,255,255,.55)"/><circle cx="79" cy="36" r="2.6" fill="rgba(255,255,255,.55)"/><circle cx="68" cy="22" r="2" fill="rgba(255,255,255,.5)"/>' +
+          '<circle cx="50" cy="36" r="13" fill="rgba(20,14,6,.55)" stroke="' + c + '" stroke-width="1.6"/>' +
+          emblemMarkup(id, c) +
+          '<rect x="22" y="80" width="56" height="6" rx="2" fill="' + c + '" stroke="rgba(0,0,0,.3)" stroke-width=".8"/>' +
+          '<rect x="16" y="86" width="68" height="9" rx="3" fill="#3a2e1d" stroke="rgba(0,0,0,.4)" stroke-width=".8"/>' +
+          '<rect x="26" y="89" width="48" height="3" rx="1.5" fill="rgba(255,255,255,.14)"/>' +
+          '</g><rect class="medal-progress" x="26" y="89" width="' + bar.toFixed(1) + '" height="3" rx="1.5" fill="' + c + '"/>';
+        if (!locked) [[10, 20, 0], [90, 24, .6], [82, 72, 1.2]].forEach(([x, y, delay]) => {
+          const spark = svgEl("circle", { cx: x, cy: y, r: 1.9, class: "medal-spark", fill: "#fff6d8" }); spark.style.animationDelay = delay + "s"; svg.append(spark);
+        });
+        return svg;
+      }
+      function trophyMedallion(id, opts = {}) { return trophyFigure(id, opts); }
+      function rankMedallion(level, size = 44) {
+        const rank = rankForLevel(level), rarity = RARITIES[Math.min(RARITIES.length - 1, Math.floor(rank.index * RARITIES.length / 8))];
+        if (rank.art === "spore") return medallion({ family: "button", rarity, size, emoji: "💨" });
+        return medallion({ family: rank.art === "pin" ? "button" : rank.art, rarity, size, form: rank.art === "pin" ? "pin" : "mature" });
+      }
+
+      // ---------- Celebration: a medallion spawns up out of the soil with a burst of spores ----------
+      function celebrateDialog() {
+        if (celebrateUi.dialog) return celebrateUi.dialog;
+        const dialog = document.createElement("dialog");
+        dialog.className = "celebrate"; dialog.id = "celebrate-dialog"; dialog.setAttribute("aria-labelledby", "celebrate-title");
+        dialog.innerHTML = '<div class="celebrate-stage"><div class="celebrate-rays" aria-hidden="true"></div><div class="celebrate-spores" aria-hidden="true"></div>' +
+          '<div class="celebrate-medal"></div><div class="soil" aria-hidden="true"></div>' +
+          '<p class="celebrate-eyebrow" id="celebrate-eyebrow"></p><h2 id="celebrate-title"></h2><p class="celebrate-rarity"></p><p class="celebrate-sub"></p><p class="celebrate-flavor"></p>' +
+          '<p class="celebrate-xp" aria-live="polite"></p><button class="button" id="celebrate-collect" type="button">Collect</button></div>';
+        document.body.append(dialog);
+        dialog.querySelector("#celebrate-collect").addEventListener("click", () => dialog.close());
+        dialog.addEventListener("close", () => { celebrateUi.open = false; window.setTimeout(nextCelebration, 320); });
+        celebrateUi.dialog = dialog;
+        return dialog;
+      }
+      function celebrate(spec) {
+        celebrateUi.queue.push(spec);
+        if (!celebrateUi.open) { celebrateUi.open = true; window.setTimeout(nextCelebration, 550); }
+      }
+      function countUp(node, to, dialog) {
+        if (prefersReducedMotion() || !to) { node.textContent = to ? "+" + fmt(to) + " XP" : ""; return; }
+        const begin = performance.now();
+        const step = (now) => {
+          const p = Math.min(1, (now - begin) / 900);
+          node.textContent = "+" + fmt(Math.round(to * (1 - Math.pow(1 - p, 3)))) + " XP";
+          if (p < 1 && dialog.open) window.requestAnimationFrame(step); else node.textContent = "+" + fmt(to) + " XP";
+        };
+        window.requestAnimationFrame(step);
+      }
+      function nextCelebration() {
+        const dialog = celebrateDialog();
+        if (dialog.open) return;
+        const spec = celebrateUi.queue.shift();
+        if (!spec) { celebrateUi.open = false; return; }
+        celebrateUi.open = true;
+        dialog.querySelector(".celebrate-stage").style.setProperty("--glow", spec.rarity.color);
+        dialog.querySelector("#celebrate-eyebrow").textContent = spec.eyebrow;
+        dialog.querySelector("#celebrate-title").textContent = spec.title;
+        dialog.querySelector(".celebrate-rarity").textContent = spec.rarity.label;
+        dialog.querySelector(".celebrate-sub").textContent = spec.subtitle || "";
+        dialog.querySelector(".celebrate-flavor").textContent = spec.flavor || "";
+        const holder = dialog.querySelector(".celebrate-medal");
+        holder.classList.remove("spawn-up"); holder.replaceChildren(...spec.medals()); void holder.offsetWidth; holder.classList.add("spawn-up");
+        const spores = dialog.querySelector(".celebrate-spores"); spores.replaceChildren();
+        for (let i = 0; i < 28; i += 1) {
+          const dot = document.createElement("i"); dot.className = "spore-particle";
+          const angle = Math.PI * 2 * i / 28 + Math.random() * .4, distance = 90 + Math.random() * 130;
+          dot.style.setProperty("--dx", (Math.cos(angle) * distance).toFixed(0) + "px");
+          dot.style.setProperty("--dy", (Math.sin(angle) * distance * .8 - 40).toFixed(0) + "px");
+          dot.style.background = i % 3 ? spec.rarity.color : "#fff6d8";
+          dot.style.animationDelay = (.45 + Math.random() * .25).toFixed(2) + "s";
+          spores.append(dot);
+        }
+        const xpNode = dialog.querySelector(".celebrate-xp"); xpNode.textContent = "";
+        try { dialog.showModal(); } catch (error) { showToast("🏆 " + spec.title); celebrateUi.open = false; return; }
+        dialog.querySelector("#celebrate-collect").focus();
+        window.setTimeout(() => countUp(xpNode, spec.xp || 0, dialog), 700);
+      }
+      function trophySpec(id) {
+        const [, title, , xp, rule] = trophyRow(id), rarity = rarityFor(xp);
+        return { eyebrow: "Trophy unlocked", title, subtitle: rule, flavor: TROPHY_META[id].flavor, rarity: { ...rarity, label: "◆ " + rarity.name + " rarity" }, xp, medals: () => [trophyMedallion(id, { size: 170 })] };
+      }
+      function celebrateTrophies(plan) {
+        if (plan.mode === "single") plan.ids.forEach((id) => celebrate(trophySpec(id)));
+        else if (plan.mode === "summary") {
+          const rows = plan.ids.map(trophyRow), best = rarityFor(Math.max(...rows.map((row) => row[3])));
+          celebrate({ eyebrow: "Shelf updated", title: plan.ids.length + " trophies collected", subtitle: rows.map((row) => row[1]).join(" · "), flavor: "A whole flush of milestones at once.",
+            rarity: { ...best, label: "◆ Rarest: " + best.name }, xp: rows.reduce((sum, row) => sum + row[3], 0), medals: () => plan.ids.slice(0, 5).map((id) => trophyMedallion(id, { size: 84 })) });
+        }
+      }
+      function celebrateLevel(level) {
+        const rank = rankForLevel(level), rarity = RARITIES[Math.min(RARITIES.length - 1, Math.floor(rank.index * RARITIES.length / 8))];
+        celebrate({ eyebrow: "Level up", title: "Level " + level, subtitle: rank.title, flavor: RANK_FLAVOR[rank.title] || "", rarity: { ...rarity, label: "◆ Rank: " + rank.title }, xp: 0, medals: () => [rankMedallion(level, 170)] });
+      }
+      function renderRank(level) {
+        const rank = rankForLevel(level);
+        $("#level-value").replaceChildren(document.createTextNode("Level " + level), el("small", { class: "rank-title", text: rank.title }));
+        $("#rank-badge").replaceChildren(rankMedallion(level, 46));
+        if (trophyUi.lastLevel !== null && level > trophyUi.lastLevel && level - trophyUi.lastLevel <= 2) celebrateLevel(level);
+        trophyUi.lastLevel = level;
+      }
+
       function updateTrophyUnlocks() {
-        const progress = trophyProgress();
         if (!state.trophies || typeof state.trophies !== "object") state.trophies = {};
-        const fresh = TROPHIES.filter(([id]) => !state.trophies[id] && progress[id][0] >= progress[id][1]);
+        const fresh = [];
+        for (let pass = 0; pass < 2; pass += 1) {
+          const progress = trophyProgress();
+          const batch = TROPHIES.filter(([id]) => !state.trophies[id] && progress[id][0] >= progress[id][1]);
+          if (!batch.length) break;
+          const now = new Date().toISOString();
+          batch.forEach(([id]) => { state.trophies[id] = now; trophyUi.justUnlocked.add(id); fresh.push(id); });
+        }
         if (!fresh.length) return;
-        const levelBefore = levelForXp(totalXp());
-        const now = new Date().toISOString();
-        fresh.forEach(([id]) => { state.trophies[id] = now; trophyUi.justUnlocked.add(id); });
         saveState();
-        const levelAfter = levelForXp(totalXp());
-        const names = fresh.map(([, title]) => title).join(", ");
-        const xp = fresh.reduce((sum, [, , , value]) => sum + value, 0);
-        window.setTimeout(() => showToast(`🏆 Trophy unlocked: ${names} · +${fmt(xp)} XP${levelAfter > levelBefore ? ` · Level up! You're now level ${levelAfter}.` : ""}`), 900);
+        celebrateTrophies(celebrationPlan(fresh));
+      }
+
+      // ---------- Trophy shelf ----------
+      function trophyDetailDialog() {
+        let dialog = document.getElementById("trophy-detail");
+        if (dialog) return dialog;
+        dialog = document.createElement("dialog");
+        dialog.className = "celebrate trophy-detail"; dialog.id = "trophy-detail"; dialog.setAttribute("aria-labelledby", "trophy-detail-title");
+        dialog.innerHTML = '<div class="celebrate-stage"><div class="celebrate-rays" aria-hidden="true"></div><div class="celebrate-medal detail-medal"></div>' +
+          '<p class="celebrate-eyebrow" id="trophy-detail-eyebrow"></p><h2 id="trophy-detail-title"></h2><p class="celebrate-rarity"></p><p class="celebrate-sub"></p><p class="celebrate-flavor"></p>' +
+          '<div class="detail-meter" aria-hidden="true"><span></span></div><p class="celebrate-xp detail-status"></p><div class="detail-actions"></div></div>';
+        document.body.append(dialog);
+        dialog.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); });
+        return dialog;
+      }
+      function openTrophyDetail(id) {
+        const dialog = trophyDetailDialog();
+        const [, title, , xp, rule] = trophyRow(id), rarity = rarityFor(xp), meta = TROPHY_META[id];
+        const [current, target] = trophyProgress()[id], earnedAt = state.trophies && state.trophies[id];
+        dialog.querySelector(".celebrate-stage").style.setProperty("--glow", rarity.color);
+        dialog.querySelector("#trophy-detail-eyebrow").textContent = earnedAt ? "Collected" : "How to earn it";
+        dialog.querySelector("#trophy-detail-title").textContent = title;
+        dialog.querySelector(".celebrate-rarity").textContent = "◆ " + rarity.name + " rarity · " + fmt(xp) + " XP";
+        dialog.querySelector(".celebrate-sub").textContent = rule;
+        dialog.querySelector(".celebrate-flavor").textContent = earnedAt ? meta.flavor : "Keep growing. This one is waiting in the soil.";
+        dialog.querySelector(".detail-medal").replaceChildren(trophyMedallion(id, { locked: !earnedAt, ratio: target ? current / target : 0, size: 140 }));
+        dialog.querySelector(".detail-meter span").style.width = (earnedAt ? 100 : target ? current / target * 100 : 0) + "%";
+        dialog.querySelector(".detail-status").textContent = earnedAt ? "✓ Unlocked " + dateLabel(String(earnedAt).slice(0, 10)) : current + " / " + target;
+        const actions = dialog.querySelector(".detail-actions"); actions.replaceChildren();
+        if (earnedAt) actions.append(el("button", { class: "button secondary", type: "button", text: "▶ Replay unlock", onclick: () => { dialog.close(); celebrate(trophySpec(id)); } }));
+        else actions.append(el("a", { class: "button secondary", href: "#" + meta.go[1], text: meta.go[0], onclick: () => dialog.close() }));
+        actions.append(el("button", { class: "button", type: "button", text: "Close", onclick: () => dialog.close() }));
+        try { dialog.showModal(); } catch (error) { /* dialogs unsupported */ }
       }
       function renderTrophies() {
-        const grid = $("#trophy-grid"); grid.replaceChildren();
         const progress = trophyProgress();
-        const unlockedCount = TROPHIES.filter(([id]) => state.trophies && state.trophies[id]).length;
-        $("#trophy-count").textContent = `${unlockedCount} of ${TROPHIES.length} unlocked`;
-        TROPHIES.forEach(([id, title, icon, xp, rule]) => {
-          const unlockedAt = state.trophies && state.trophies[id];
-          const [current, target] = progress[id];
-          const item = document.createElement("article");
-          item.className = `trophy${unlockedAt ? " unlocked" : ""}${trophyUi.justUnlocked.has(id) ? " just-unlocked" : ""}`;
-          item.setAttribute("aria-label", `${title}: ${unlockedAt ? `unlocked ${dateLabel(String(unlockedAt).slice(0, 10))}` : `locked, ${current} of ${target}`}. ${rule}. ${xp} XP.`);
-          const symbol = document.createElement("span"); symbol.className = "trophy-icon"; symbol.setAttribute("aria-hidden", "true"); symbol.textContent = icon;
-          const name = document.createElement("strong"); name.textContent = title;
-          const hint = document.createElement("small"); hint.textContent = rule;
-          const track = document.createElement("span"); track.className = "trophy-track"; track.setAttribute("aria-hidden", "true");
-          const fill = document.createElement("span"); fill.style.width = `${unlockedAt ? 100 : current / target * 100}%`; track.append(fill);
-          const meta = document.createElement("small"); meta.className = "trophy-meta";
-          meta.textContent = unlockedAt ? `✓ ${dateLabel(String(unlockedAt).slice(0, 10))} · +${fmt(xp)} XP` : `${current} / ${target} · ${fmt(xp)} XP`;
-          item.append(symbol, name, hint, track, meta); grid.append(item);
+        const unlocked = (id) => !!(state.trophies && state.trophies[id]);
+        const total = TROPHIES.length, done = TROPHIES.filter(([id]) => unlocked(id)).length;
+        $("#trophy-count").textContent = done + " of " + total + " unlocked";
+        const earnedXp = TROPHIES.reduce((sum, [id, , , xp]) => sum + (unlocked(id) ? xp : 0), 0);
+        const rarest = TROPHIES.filter(([id]) => unlocked(id)).sort((a, b) => b[3] - a[3])[0];
+        const nextId = nextUpTrophy(TROPHIES.map((item) => item[0]), progress, state.trophies || {});
+
+        const shelf = $("#trophy-shelf"); shelf.replaceChildren();
+        const circumference = 2 * Math.PI * 52;
+        const ring = svgEl("svg", { viewBox: "0 0 120 120", width: 120, height: 120, class: "shelf-ring", role: "img", "aria-label": done + " of " + total + " trophies collected" });
+        ring.innerHTML = '<circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="8"/><circle cx="60" cy="60" r="52" fill="none" stroke="url(#shelfGrad)" stroke-width="8" stroke-linecap="round" transform="rotate(-90 60 60)" stroke-dasharray="' + (done / total * circumference).toFixed(1) + " " + circumference.toFixed(1) + '"/>' +
+          '<defs><linearGradient id="shelfGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a9b986"/><stop offset="1" stop-color="#e2bd78"/></linearGradient></defs>' +
+          '<text x="60" y="56" text-anchor="middle" font-size="26">🍄</text><text x="60" y="82" text-anchor="middle" class="shelf-ring-count">' + done + "/" + total + "</text>";
+        const facts = el("div", { class: "shelf-facts" },
+          el("h3", { text: "Your mushroom shelf" }),
+          el("p", { class: "shelf-line", text: earnedXp ? fmt(earnedXp) + " XP earned from trophies" : "Collect trophies to grow your shelf" }),
+          el("p", { class: "shelf-line", text: rarest ? "Rarest: " + rarest[1] + " (" + rarityFor(rarest[3]).name + ")" : "Nothing collected yet. The first one is the easiest." }));
+        const nextCard = el("div", { class: "shelf-next" });
+        if (nextId) {
+          const [current, target] = progress[nextId], row = trophyRow(nextId);
+          nextCard.append(trophyMedallion(nextId, { locked: true, ratio: target ? current / target : 0, size: 54 }),
+            el("div", {}, el("small", { text: "Next up" }), el("strong", { text: row[1] }), el("small", { text: current + " / " + target + " · " + row[4] })),
+            el("button", { class: "button small secondary", type: "button", text: "Details", onclick: () => openTrophyDetail(nextId) }));
+        } else nextCard.append(el("strong", { text: "🏆 Every trophy collected. The forest is yours." }));
+        shelf.append(ring, facts, nextCard);
+
+        const filters = $("#trophy-filters"); filters.replaceChildren();
+        [["all", "All"], ["collected", "Collected"], ["progress", "In progress"], ["locked", "Undiscovered"]].forEach(([value, label]) => {
+          const button = el("button", { class: "filter-chip", type: "button", "aria-pressed": String(trophyUi.filter === value), text: label });
+          button.addEventListener("click", () => { trophyUi.filter = value; renderTrophies(); });
+          filters.append(button);
         });
+
+        const grid = $("#trophy-grid"); grid.replaceChildren();
+        TROPHIES.forEach(([id, title, , xp, rule]) => {
+          const earned = unlocked(id), [current, target] = progress[id], ratio = target ? current / target : 0, rarity = rarityFor(xp);
+          if (trophyUi.filter === "collected" && !earned) return;
+          if (trophyUi.filter === "progress" && (earned || !current)) return;
+          if (trophyUi.filter === "locked" && (earned || current)) return;
+          const card = el("button", { class: "trophy-card" + (earned ? " unlocked" : "") + (trophyUi.justUnlocked.has(id) ? " just-unlocked" : ""), type: "button" });
+          card.style.setProperty("--rarity", rarity.color);
+          card.setAttribute("aria-label", title + ": " + (earned ? "collected " + dateLabel(String(state.trophies[id]).slice(0, 10)) : "locked, " + current + " of " + target) + ". " + rule + ". " + rarity.name + " rarity, " + xp + " XP. Press for details.");
+          card.append(trophyMedallion(id, { locked: !earned, ratio, size: 92 }), el("strong", { text: title }),
+            el("span", { class: "rarity-pill", text: rarity.name }), el("small", { text: rule }),
+            el("span", { class: "trophy-track", "aria-hidden": "true" }, el("span", { style: "width:" + (earned ? 100 : ratio * 100) + "%" })),
+            el("small", { class: "trophy-meta", text: earned ? "✓ " + dateLabel(String(state.trophies[id]).slice(0, 10)) + " · +" + fmt(xp) + " XP" : current + " / " + target + " · " + fmt(xp) + " XP" }));
+          card.addEventListener("click", () => openTrophyDetail(id));
+          grid.append(card);
+        });
+        if (!grid.children.length) grid.append(el("p", { class: "empty", text: "Nothing here yet. Try another filter." }));
         window.setTimeout(() => trophyUi.justUnlocked.clear(), 1200);
       }
       // ---------- First Grow Academy ----------
@@ -2865,6 +3225,7 @@
         const message = step.final && progress.complete ? `✺ Quest complete: ${quest.completeTitle}! +${fmt(step.xp)} XP`
           : `+${fmt(step.xp)} XP · ${step.title} complete`;
         showToast(levelAfter > levelBefore ? `${message} · Level up! You're now level ${levelAfter}.` : message);
+        if (step.final && progress.complete) celebrate({ eyebrow: "Quest complete", title: quest.completeTitle, subtitle: quest.title, flavor: quest.completeCopy, rarity: { ...RARITIES[3], label: "◆ Academy milestone" }, xp: 0, medals: () => [medallion({ family: QUEST_ART[quest.id] || "oyster", rarity: RARITIES[3], size: 170 })] });
         window.setTimeout(() => { academyUi.open[`${quest.id}:${step.id}`] = false; renderQuestView(); }, 650);
       }
       function academyFeedItems() {
@@ -3471,7 +3832,12 @@
         seedSampleMedia();
         const map = $("#map");
         map.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth" });
-        window.setTimeout(() => startReplay(), prefersReducedMotion() ? 0 : 1600);
+        // let any trophy celebrations finish before the map replays itself
+        const replayWhenQuiet = () => {
+          if (celebrateUi.open || celebrateUi.queue.length) { window.setTimeout(replayWhenQuiet, 500); return; }
+          startReplay();
+        };
+        window.setTimeout(replayWhenQuiet, prefersReducedMotion() ? 0 : 1600);
       }
       function clearSampleJournal() {
         if (!state.sample) return;

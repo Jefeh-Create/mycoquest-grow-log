@@ -155,3 +155,46 @@ test("parseMediaBackup rejects other files and filters unsafe items", () => {
   assert.equal(result.ok, true);
   assert.deepEqual(result.items.map((item) => item.id), ["c1", "c2"]);
 });
+
+test("rarityFor ranks trophies by XP with mushroom names", () => {
+  const { rarityFor } = loadPure(["rewards"]);
+  const name = (xp) => rarityFor(xp).name;
+  assert.equal(name(50), "Spore");
+  assert.equal(name(100), "Spore");
+  assert.equal(name(150), "Pin");
+  assert.equal(name(200), "Cap");
+  assert.equal(name(250), "Cap");
+  assert.equal(name(300), "Flush");
+  assert.equal(name(500), "Legend");
+  assert.match(rarityFor(500).color, /^#/);
+});
+test("rankForLevel gives each level band a mushroom rank", () => {
+  const { rankForLevel } = loadPure(["rewards"]);
+  const at = (level) => rankForLevel(level).title;
+  assert.equal(at(1), "Spore");
+  assert.equal(at(4), "Spore");
+  assert.equal(at(5), "Pinhead");
+  assert.equal(at(10), "Button");
+  assert.equal(at(15), "Fruiting Body");
+  assert.equal(at(25), "Flush Master");
+  assert.equal(at(35), "Mycelial Elder");
+  assert.equal(at(45), "Forest Sage");
+  assert.equal(at(50), "Archmycologist");
+  assert.equal(at(0), "Spore");
+});
+test("nextUpTrophy picks the closest unfinished trophy and skips collected ones", () => {
+  const { nextUpTrophy } = loadPure(["rewards"]);
+  const progress = { a: [3, 7], b: [6, 7], c: [7, 7], d: [0, 5] };
+  assert.equal(nextUpTrophy(["a", "b", "c", "d"], progress, { c: "x" }), "b");
+  assert.equal(nextUpTrophy(["a", "d"], progress, {}), "a");
+  assert.equal(nextUpTrophy(["c"], progress, { c: "x" }), null);
+});
+test("celebrationPlan batches large unlock bursts into one summary", () => {
+  const { celebrationPlan } = loadPure(["rewards"]);
+  assert.equal(celebrationPlan(["a"]).mode, "single");
+  assert.equal(celebrationPlan(["a", "b"]).mode, "single");
+  const burst = celebrationPlan(["a", "b", "c", "d"]);
+  assert.equal(burst.mode, "summary");
+  assert.equal(burst.ids.length, 4);
+  assert.equal(celebrationPlan([]).mode, "none");
+});

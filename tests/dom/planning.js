@@ -28,7 +28,7 @@ async function scenario(h) {
   const saved = JSON.parse(localStorage.getItem(KEY));
   h.check("planning detail persisted", !!(saved.grows[0].planningDetail && saved.grows[0].planningDetail.substrate === "BRF" && saved.grows[0].planningDetail.grain === "Rye berries"));
   h.check("planning flag persisted", saved.grows[0].planning === true && saved.grows[0].startDate === "");
-  h.fill(h.$("#grow-list .inoculate-control input"), new Date().toISOString().slice(0, 10));
+  h.fill(h.$("#grow-list .inoculate-control input"), new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10));
   h.click(h.$$("#grow-list button").find((b) => b.textContent === "Start inoculation"));
   await h.sleep(50);
   const after = JSON.parse(localStorage.getItem(KEY));

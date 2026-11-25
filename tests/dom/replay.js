@@ -5,7 +5,12 @@ async function scenario(h) {
   const saved = JSON.parse(localStorage.getItem(KEY));
   h.check("sample journal ships a process trail", saved.trail.length === 5 && Object.keys(saved.docAwards).length === 5, JSON.stringify(saved.trail.length));
   h.check("Documented trophy unlocked by 5 documented steps", !!(saved.trophies && saved.trophies.documented), JSON.stringify(saved.trophies));
-  h.check("Documented trophy card is shown", [...document.querySelectorAll("#trophy-grid .trophy")].some((t) => /Documented/.test(t.textContent) && t.classList.contains("unlocked")));
+  h.check("Documented trophy card is shown", [...document.querySelectorAll("#trophy-grid .trophy-card")].some((t) => /Documented/.test(t.textContent) && t.classList.contains("unlocked")));
+  // the sample unlocks several trophies at once: one summary celebration, then the replay starts
+  const dlg = () => document.getElementById("celebrate-dialog");
+  h.check("sample unlocks a trophy celebration", await h.until(() => dlg() && dlg().open, 6000));
+  h.check("burst of trophies becomes one summary", /trophies collected/.test(h.$("#celebrate-title").textContent), h.$("#celebrate-title").textContent);
+  h.click(h.$("#celebrate-collect")); await h.sleep(500);
   location.hash = "map"; await h.sleep(500);
   const svg = h.$("#mycelial-map");
   h.check("trail captures appear as map nodes", h.$$(".process-node", svg).length >= 5, String(h.$$(".process-node", svg).length));

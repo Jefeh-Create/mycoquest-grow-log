@@ -21,7 +21,7 @@ async function scenario(h) {
   await h.sleep(100);
   h.click(h.$("#grow-plan-first"));
   h.fill(form.elements.name, "Active jar"); h.fill(form.elements.species, "Lion's mane");
-  h.fill(form.elements.startDate, new Date().toISOString().slice(0, 10)); h.submit(form);
+  h.fill(form.elements.startDate, new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10)); h.submit(form);
   await h.sleep(150);
 
   // 2. map already shows both grows, with no check-ins at all
