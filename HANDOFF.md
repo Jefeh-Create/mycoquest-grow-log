@@ -3,7 +3,7 @@
 Single-file app (grow-log.html), plain HTML/CSS/JS, localStorage only.
 
 ## Decisions
-- XP curve: 200 x block for levels 1-45, 2,500 per level 46-49, cap 50 (55,000 XP)
+- XP curve: 200 x block for levels 1-45, 2,000 per level 46-49, cap 50 (53,000 XP). Same as the storefront demo.
 - Daily check-ins award XP automatically (10 XP per grow per day, plus streak bonus)
 - Grow stage and recipe posts still use the pending/approve/reject flow
 - Export format: { app: "MycoQuest grow log", version: 2, entries, recipes }
@@ -46,7 +46,7 @@ Spec: `docs/superpowers/specs/2026-11-24-planning-phase-living-map-design.md`; p
   - Each capture has a "Grow" picker that moves it to another grow, or to no grow (`moveCapture`).
   - Videos have "Trim video": a saved play range `capture.trim = {start, end}`, cleaned by the pure `cleanTrim`. The
     original clip is never changed, so "Use full clip" undoes it. The trim travels in v2 exports and imports.
-  - The storefront demo now uses the same level curve: 55,000 XP for level 50.
+  - The XP note above said 55,000; the code (and the storefront) have always used 53,000. Note corrected.
 - Phone checks: `PHONE=320x568 node tests/dom.mjs tests/dom/phone-popups.js` (also `phone-celebrate.js`).
 - Tests: `node tests/run.mjs` (pure logic), `sh tests/smoke.sh` (console errors), `node tests/dom.mjs tests/dom/<scenario>.js` (real UI in headless Chrome).
 
