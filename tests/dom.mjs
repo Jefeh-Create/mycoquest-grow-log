@@ -57,6 +57,12 @@ try {
   ws.onmessage = (event) => { const msg = JSON.parse(event.data); if (msg.id && pending.has(msg.id)) { pending.get(msg.id)(msg); pending.delete(msg.id); } };
   const send = (method, params = {}) => new Promise((res) => { id += 1; pending.set(id, res); ws.send(JSON.stringify({ id, method, params })); });
   await send("Page.enable"); await send("Runtime.enable");
+  // PHONE=320x568 runs the scenario at a small phone size (mobile emulation, touch, 2x pixels).
+  if (process.env.PHONE) {
+    const [w, hgt] = process.env.PHONE.split("x").map(Number);
+    await send("Emulation.setDeviceMetricsOverride", { width: w, height: hgt, deviceScaleFactor: 2, mobile: true });
+    await send("Emulation.setTouchEmulationEnabled", { enabled: true });
+  }
   await send("Page.navigate", { url: pathToFileURL(tmp).href + query });
   const end = Date.now() + Number(process.env.DOM_TIMEOUT || 40000);
   while (Date.now() < end) {
@@ -65,7 +71,7 @@ try {
     await sleep(300);
   }
   if (process.env.SHOT) {
-    await send("Emulation.setDeviceMetricsOverride", { width: 1100, height: 900, deviceScaleFactor: 1, mobile: false });
+    if (!process.env.PHONE) await send("Emulation.setDeviceMetricsOverride", { width: 1100, height: 900, deviceScaleFactor: 1, mobile: false });
     await sleep(400);
     const shot = await send("Page.captureScreenshot", { format: "png" });
     writeFileSync(process.env.SHOT, Buffer.from(shot.result.data, "base64"));

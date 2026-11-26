@@ -98,6 +98,32 @@ test("trailForExport carries captions but never media bytes", () => {
   assert.equal(out[1].hasVideo, true);
   assert.equal(out[0].growName, "Batch");
 });
+test("cleanTrim keeps a valid range and rounds to tenths", () => {
+  const { cleanTrim } = loadPure(["export-extras"]);
+  assert.equal(JSON.stringify(cleanTrim({ start: 1.234, end: 6.78 })), JSON.stringify({ start: 1.2, end: 6.8 }));
+  assert.equal(JSON.stringify(cleanTrim({ start: 2, end: 9 }, 8)), JSON.stringify({ start: 2, end: 8 }));
+});
+test("cleanTrim drops ranges that are empty, reversed, too short, or not numbers", () => {
+  const { cleanTrim } = loadPure(["export-extras"]);
+  assert.equal(cleanTrim(null), null);
+  assert.equal(cleanTrim({ start: 5, end: 3 }), null);
+  assert.equal(cleanTrim({ start: 2, end: 2.2 }), null);
+  assert.equal(cleanTrim({ start: "a", end: 4 }), null);
+  assert.equal(cleanTrim({ start: -1, end: 4 }).start, 0);
+  assert.equal(cleanTrim({ start: 0, end: 15 }, 15), null, "a range covering the whole clip is no trim");
+});
+test("trailForExport and mergeTrail carry a video trim but not a photo trim", () => {
+  const { trailForExport, mergeTrail } = loadPure(["export-extras"]);
+  const out = trailForExport([
+    { id: "v", growId: "g1", kind: "video", trim: { start: 1, end: 4 } },
+    { id: "p", growId: "g1", kind: "photo", trim: { start: 1, end: 4 } }
+  ], () => ({ name: "Batch", species: "Oyster" }));
+  assert.equal(JSON.stringify(out[0].trim), JSON.stringify({ start: 1, end: 4 }));
+  assert.equal("trim" in out[1], false);
+  const merged = mergeTrail([], out, () => "g1");
+  assert.equal(JSON.stringify(merged[0].trim), JSON.stringify({ start: 1, end: 4 }));
+  assert.equal("trim" in merged[1], false);
+});
 test("mergeTrail de-duplicates by id and drops items whose grow is unknown", () => {
   const { mergeTrail } = loadPure(["export-extras"]);
   const existing = [{ id: "c1", growId: "g1", kind: "photo", caption: "a" }];

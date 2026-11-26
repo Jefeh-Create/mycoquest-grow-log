@@ -277,6 +277,17 @@
     .capture-thumb { display: grid; gap: 4px; width: 140px; }
     .capture-thumb img, .capture-thumb video { width: 140px; height: 100px; object-fit: cover; border-radius: 8px; background: #0003; }
     .capture-thumb small { color: var(--muted); font-size: .7rem; overflow-wrap: anywhere; }
+    .capture-thumb:has(.trim-editor[open]) { width: min(100%, 300px); }
+    .capture-thumb:has(.trim-editor[open]) video { width: 100%; height: auto; aspect-ratio: 16 / 10; }
+    .capture-move-label { display: grid; gap: 2px; color: var(--muted); font-size: .7rem; }
+    .capture-move { width: 100%; min-height: 36px; font: inherit; font-size: .78rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 4px 6px; }
+    .trim-editor { font-size: .78rem; }
+    .trim-editor summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; color: var(--ink); }
+    .trim-editor summary:focus-visible { outline: 2px solid #f2d9a0; outline-offset: 2px; border-radius: 6px; }
+    .trim-row { display: grid; grid-template-columns: 3.2em 1fr; align-items: center; gap: 6px; margin-top: 6px; }
+    .trim-row input { width: 100%; min-height: 32px; accent-color: #a9b986; }
+    .trim-readout { display: block; margin-top: 4px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .trim-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
     .capture-actions { display: flex; gap: 8px; flex-wrap: wrap; }
     .capture-add { position: relative; cursor: pointer; }
     .capture-add:focus-within { outline: 2px solid currentColor; outline-offset: 2px; }
@@ -354,6 +365,15 @@
     dialog.celebrate { border: 0; padding: 0; background: transparent; color: var(--ink, #f4ecd8); max-width: min(94vw, 520px); width: 100%; overflow: visible; }
     dialog.celebrate::backdrop { background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--glow, #a9b986) 30%, #0b0c07), rgba(6,7,4,.92)); backdrop-filter: blur(3px); animation: fade-in .35s ease; }
     @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    /* Small or short screens: the trophy pop-ups scroll instead of running off the bottom, and the artwork shrinks. */
+    @media (max-width: 420px), (max-height: 640px) {
+      dialog.celebrate { max-height: calc(100dvh - 16px); overflow-y: auto; overscroll-behavior: contain; }
+      .celebrate-stage { padding: 22px 16px 18px; border-radius: 18px; }
+      .celebrate-medal { min-height: 120px; }
+      .celebrate-medal svg { max-height: 120px; width: auto; }
+      .celebrate-stage h2 { font-size: 1.5rem; }
+      .celebrate-stage .button { min-height: 44px; }
+    }
     .celebrate-stage { --glow: #a9b986; position: relative; display: grid; justify-items: center; gap: 6px; padding: 34px 26px 28px; text-align: center; border: 1px solid color-mix(in srgb, var(--glow) 45%, transparent); border-radius: 24px; background: linear-gradient(170deg, #22251a, #14160e); box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 30px 80px -20px var(--glow); overflow: hidden; }
     .celebrate-rays { position: absolute; left: 50%; top: 150px; width: 640px; height: 640px; margin: -320px 0 0 -320px; background: repeating-conic-gradient(from 0deg, color-mix(in srgb, var(--glow) 24%, transparent) 0 8deg, transparent 8deg 22deg); -webkit-mask-image: radial-gradient(circle, #000 0, transparent 62%); mask-image: radial-gradient(circle, #000 0, transparent 62%); animation: rays-spin 24s linear infinite; pointer-events: none; }
     @keyframes rays-spin { to { transform: rotate(360deg); } }
@@ -418,6 +438,7 @@
     .has-stage-filter .map-node-g.stage-match { opacity: 1; filter: drop-shadow(0 0 7px rgba(255,235,170,.55)); }
     .finale { cursor: pointer; }
     .finale-label { fill: #f2d9a0; font-size: 11px; font-weight: 600; paint-order: stroke; stroke: rgba(0,0,0,.6); stroke-width: 3px; }
+    .finale-pill { fill: rgba(20,14,8,.78); stroke: rgba(242,217,160,.45); stroke-width: 1; }
     .finale-body { filter: drop-shadow(0 4px 10px rgba(0,0,0,.5)); }
     .key-item { display: inline-flex; align-items: center; gap: 5px; }
     .key-dot { width: 7px; height: 7px; border-radius: 50%; }
@@ -943,14 +964,30 @@
       // @exports MUSHROOM_FAMILIES, speciesFamily, pickMushroom, glyphMarkup
       // @pure:end mushrooms
       // @pure:begin export-extras
+      // A video trim is a play range, not an edit: the stored clip is never changed, so a trim can always be undone.
+      // Returns { start, end } in seconds (tenths), or null when there is no useful trim.
+      function cleanTrim(trim, duration) {
+        if (!trim || typeof trim !== "object") return null;
+        let start = Number(trim.start), end = Number(trim.end);
+        if (!Number.isFinite(start) || !Number.isFinite(end)) return null;
+        const max = Number.isFinite(duration) && duration > 0 ? duration : Infinity;
+        start = Math.max(0, Math.round(start * 10) / 10);
+        end = Math.min(max, Math.round(end * 10) / 10);
+        if (end - start < 0.5) return null;
+        if (start === 0 && Number.isFinite(max) && end >= max - 0.05) return null;
+        return { start, end };
+      }
       function trailForExport(trail, growOf) {
         return (Array.isArray(trail) ? trail : []).map((item) => {
           const grow = growOf(item.growId) || {};
-          return {
+          const out = {
             id: item.id, growName: grow.name || "", species: grow.species || "", questId: item.questId || "", stepId: item.stepId || "",
             kind: item.kind === "video" ? "video" : "photo", caption: String(item.caption || "").slice(0, 140), takenAt: item.takenAt || "",
             hasVideo: item.kind === "video"
           };
+          const trim = item.kind === "video" ? cleanTrim(item.trim) : null;
+          if (trim) out.trim = trim;
+          return out;
         });
       }
       function mergeTrail(existing, incoming, growIdFor) {
@@ -961,15 +998,18 @@
           const growId = growIdFor(item.growName, item.species);
           if (!growId) return;
           seen.add(item.id);
-          out.push({
+          const capture = {
             id: item.id, growId, questId: String(item.questId || ""), stepId: String(item.stepId || ""),
             kind: item.kind === "video" ? "video" : "photo", caption: String(item.caption || "").slice(0, 140),
             takenAt: String(item.takenAt || ""), hasMedia: false
-          });
+          };
+          const trim = capture.kind === "video" ? cleanTrim(item.trim) : null;
+          if (trim) capture.trim = trim;
+          out.push(capture);
         });
         return out;
       }
-      // @exports trailForExport, mergeTrail
+      // @exports cleanTrim, trailForExport, mergeTrail
       // @pure:end export-extras
       // @pure:begin replay-time
       // Maps real elapsed days onto a 12 to 40 second replay. Undated items (seed nodes) start the show.
@@ -1627,7 +1667,7 @@
           if (!src || $("#map-detail") !== detail || !detail.textContent.includes(captureStepTitle(capture))) return;
           const media = capture.kind === "video" ? document.createElement("video") : document.createElement("img");
           media.className = "map-detail-photo"; media.src = src;
-          if (capture.kind === "video") { media.controls = true; media.preload = "metadata"; } else media.alt = (capture.caption || captureStepTitle(capture)) + " photo";
+          if (capture.kind === "video") { media.controls = true; media.preload = "metadata"; media.playsInline = true; applyTrim(media, capture); } else media.alt = (capture.caption || captureStepTitle(capture)) + " photo";
           detail.append(media);
         });
       }
@@ -1849,10 +1889,14 @@
         body.append(photo, svgEl("path", { d: "M-30 -14 Q-32 -52 0 -54 Q32 -52 30 -14 Q0 -22 -30 -14Z", fill: "none", stroke: "#f2d9a0", "stroke-width": "2" }));
         const flush = harvest.entry.flushNumber ? "Flush " + harvest.entry.flushNumber : "Harvest";
         const yieldText = Number.isFinite(harvest.entry.freshYieldG) ? " · " + fmt(harvest.entry.freshYieldG) + " g" : "";
-        const label = svgEl("text", { x: 0, y: 20, class: "finale-label", "text-anchor": "middle" }); label.textContent = "🧺 " + flush + yieldText;
-        g.append(defs, body, label);
+        // The label sits below the soil line, under the side mushrooms, on its own pill so it never overlaps them.
+        const label = svgEl("text", { x: 0, y: 32, class: "finale-label", "text-anchor": "middle", "dominant-baseline": "middle" }); label.textContent = "🧺 " + flush + yieldText;
+        const pill = svgEl("rect", { class: "finale-pill", x: -50, y: 23, width: 100, height: 18, rx: 9 });
+        g.append(defs, body);
         [-1, 1].forEach((dir, i) => g.append(mushroomSprite(harvest.pick || pickMushroom("", "x"), i ? "young" : "mature", dir * 44, 2, { spawn: true })));
+        g.append(pill, label);
         svg.append(g);
+        try { const w = Math.ceil(label.getComputedTextLength()) + 16; pill.setAttribute("x", String(-w / 2)); pill.setAttribute("width", String(w)); } catch (error) { /* keep the default pill */ }
         const dismiss = () => g.remove();
         g.addEventListener("click", dismiss);
         g.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " " || event.key === "Escape") { event.preventDefault(); dismiss(); } });
@@ -3063,6 +3107,63 @@
         if (!mediaUrls.has(capture.id)) mediaUrls.set(capture.id, URL.createObjectURL(value));
         return mediaUrls.get(capture.id);
       }
+      // ---------- Moving a capture to another grow ----------
+      function moveCapture(id, growId) {
+        const capture = state.trail.find((item) => item.id === id);
+        if (!capture) return null;
+        const grow = growId ? growById(growId) : null;
+        if (growId && !grow) return null;
+        capture.growId = grow ? grow.id : null;
+        saveState(); renderMap(); renderStats();
+        return grow;
+      }
+      function captureMoveControl(capture, label, onMoved) {
+        const grows = state.grows.filter((grow) => !grow.archived || grow.id === capture.growId);
+        const select = el("select", { class: "capture-move", "aria-label": "Grow for " + label });
+        select.append(el("option", { value: "", text: "No grow" }));
+        grows.forEach((grow) => select.append(el("option", { value: grow.id, text: grow.name + (grow.planning ? " (planning)" : "") })));
+        select.value = capture.growId && growById(capture.growId) ? capture.growId : "";
+        select.addEventListener("change", () => { const grow = moveCapture(capture.id, select.value); onMoved(grow); });
+        return el("label", { class: "capture-move-label" }, "Grow ", select);
+      }
+      // ---------- Video trim: a saved play range; the original clip is never changed ----------
+      const trimLabel = (trim) => trim.start.toFixed(1) + "–" + trim.end.toFixed(1) + " s";
+      function applyTrim(video, capture) {
+        const range = () => cleanTrim(capture.trim, video.duration);
+        const toStart = () => { const r = range(); if (r) video.currentTime = r.start; };
+        video.addEventListener("loadedmetadata", toStart);
+        video.addEventListener("play", () => { const r = range(); if (r && (video.currentTime < r.start - 0.05 || video.currentTime >= r.end - 0.05)) video.currentTime = r.start; });
+        video.addEventListener("timeupdate", () => { const r = range(); if (r && video.currentTime >= r.end) { video.pause(); video.currentTime = r.start; } });
+      }
+      function trimEditor(capture, onSaved) {
+        const box = el("details", { class: "trim-editor" });
+        const start = el("input", { type: "range", min: "0", max: "15", step: "0.1", value: "0", "aria-label": "Trim start, seconds" });
+        const end = el("input", { type: "range", min: "0", max: "15", step: "0.1", value: "15", "aria-label": "Trim end, seconds" });
+        const readout = el("span", { class: "trim-readout", "aria-live": "polite" });
+        let video = null;
+        const duration = () => (video && Number.isFinite(video.duration) ? video.duration : 15);
+        const show = () => { readout.textContent = Number(start.value).toFixed(1) + " s to " + Number(end.value).toFixed(1) + " s of " + duration().toFixed(1) + " s"; };
+        const setup = () => {
+          const d = duration(), r = cleanTrim(capture.trim, d) || { start: 0, end: d };
+          [start, end].forEach((input) => { input.max = d.toFixed(1); });
+          start.value = String(r.start); end.value = String(r.end); show();
+        };
+        start.addEventListener("input", () => { if (Number(start.value) > Number(end.value) - 0.5) start.value = String(Math.max(0, Number(end.value) - 0.5)); if (video) video.currentTime = Number(start.value); show(); });
+        end.addEventListener("input", () => { if (Number(end.value) < Number(start.value) + 0.5) end.value = String(Math.min(duration(), Number(start.value) + 0.5)); if (video) video.currentTime = Number(end.value); show(); });
+        const save = el("button", { class: "button small", type: "button", text: "Save trim", onclick: () => {
+          const trim = cleanTrim({ start: start.value, end: end.value }, duration());
+          if (trim) capture.trim = trim; else delete capture.trim;
+          saveState(); renderMap(); onSaved();
+        } });
+        const reset = el("button", { class: "button small secondary", type: "button", text: "Use full clip", onclick: () => { delete capture.trim; saveState(); renderMap(); onSaved(); } });
+        box.append(el("summary", { text: capture.trim ? "Trim (" + trimLabel(capture.trim) + ")" : "Trim video" }),
+          el("label", { class: "trim-row" }, "Start ", start), el("label", { class: "trim-row" }, "End ", end), readout,
+          el("p", { class: "form-note", text: "Plays only this part. The original clip stays saved, so you can undo it." }),
+          el("div", { class: "trim-actions" }, save, reset));
+        box.bindVideo = (media) => { video = media; if (Number.isFinite(media.duration)) setup(); else media.addEventListener("loadedmetadata", setup, { once: true }); };
+        setup();
+        return box;
+      }
       function renderCaptureSlot(quest, step, ctx) {
         const slot = el("div", { class: "capture-slot" });
         const thumbs = el("div", { class: "capture-thumbs" });
@@ -3085,13 +3186,17 @@
           const items = capturesForStep(quest.id, step.id, growId);
           thumbs.replaceChildren(...items.map((capture) => {
             const holder = el("div", { class: "capture-thumb" });
+            const label = capture.caption || (capture.kind === "video" ? "Video" : "Photo");
             captureSource(capture).then((src) => {
               if (!src) { holder.prepend(el("span", { class: "capture-missing", text: "Media not available" })); return; }
-              const media = capture.kind === "video" ? el("video", { src, controls: "", preload: "metadata", muted: "" }) : el("img", { src, alt: capture.caption || step.title + " photo" });
+              const media = capture.kind === "video" ? el("video", { src, controls: "", preload: "metadata", muted: "", playsinline: "" }) : el("img", { src, alt: capture.caption || step.title + " photo" });
+              if (capture.kind === "video") { applyTrim(media, capture); const editor = holder.querySelector(".trim-editor"); if (editor) editor.bindVideo(media); }
               holder.prepend(media);
             });
-            holder.append(el("small", { text: capture.caption || (capture.kind === "video" ? "Video" : "Photo") }),
-              el("button", { class: "button small secondary capture-remove", type: "button", "aria-label": "Remove this capture", text: "Remove", onclick: async () => { await removeCapture(capture.id); refresh(); renderMap(); } }));
+            holder.append(el("small", { text: label + (capture.kind === "video" && capture.trim ? " · trimmed " + trimLabel(capture.trim) : "") }),
+              captureMoveControl(capture, label, (grow) => { note.textContent = "Moved to " + (grow ? grow.name : "no grow") + "."; refresh(); }));
+            if (capture.kind === "video") holder.append(trimEditor(capture, () => { note.textContent = capture.trim ? "Trim saved. The original clip is kept." : "Trim removed. The full clip plays."; refresh(); }));
+            holder.append(el("button", { class: "button small secondary capture-remove", type: "button", "aria-label": "Remove this capture", text: "Remove", onclick: async () => { await removeCapture(capture.id); refresh(); renderMap(); } }));
             return holder;
           }));
         };
