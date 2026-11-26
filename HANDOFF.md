@@ -40,7 +40,14 @@ Spec: `docs/superpowers/specs/2026-11-24-planning-phase-living-map-design.md`; p
   plinth with progress bar, hand-drawn pin/hypha emblem per trophy via `emblemMarkup`); rarities Spore/Pin/Cap/Flush/Legend by XP (pure `rewards` block);
   unlock celebration dialog queue (`celebrate`, spawns from soil, XP count-up, >2 unlocks collapse to a summary); shelf summary, filters, next-up card,
   detail dialog with "Replay unlock"; mushroom ranks by level (`RANKS`, level-up + quest-complete celebrations). Round `medallion()` is only used for ranks.
-- Still open: finale label slightly overlaps side mushrooms; pop-up polish for tiny phones, a way to move captures between grows, trimming videos in-app.
+- Fixed (2026-11-26):
+  - The finale label sits on its own pill below the side mushrooms.
+  - Trophy and celebration pop-ups scroll and shrink on screens under 420px wide or 640px tall.
+  - Each capture has a "Grow" picker that moves it to another grow, or to no grow (`moveCapture`).
+  - Videos have "Trim video": a saved play range `capture.trim = {start, end}`, cleaned by the pure `cleanTrim`. The
+    original clip is never changed, so "Use full clip" undoes it. The trim travels in v2 exports and imports.
+  - The storefront demo now uses the same level curve: 55,000 XP for level 50.
+- Phone checks: `PHONE=320x568 node tests/dom.mjs tests/dom/phone-popups.js` (also `phone-celebrate.js`).
 - Tests: `node tests/run.mjs` (pure logic), `sh tests/smoke.sh` (console errors), `node tests/dom.mjs tests/dom/<scenario>.js` (real UI in headless Chrome).
 
 ## Next up
