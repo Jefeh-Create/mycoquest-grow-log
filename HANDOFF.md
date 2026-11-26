@@ -50,6 +50,22 @@ Spec: `docs/superpowers/specs/2026-11-24-planning-phase-living-map-design.md`; p
 - Phone checks: `PHONE=320x568 node tests/dom.mjs tests/dom/phone-popups.js` (also `phone-celebrate.js`).
 - Tests: `node tests/run.mjs` (pure logic), `sh tests/smoke.sh` (console errors), `node tests/dom.mjs tests/dom/<scenario>.js` (real UI in headless Chrome).
 
+## Languages (added 2026-11-26)
+- English (default) and Español, chosen in the header. It works the same way as the MycoQuest shop and shares its runtime.
+  See `i18n/README.md`.
+- Spanish has all 842 strings. `es.js` `meta.review` flags 29 lines for review:
+  - pressure-cooker and sterilization safety;
+  - contamination handling;
+  - temperatures and humidity;
+  - the jar calculator note;
+  - some rank and trophy names.
+  A fluent speaker and a grower should review all of it before relying on it.
+- Hmong (`hmn.js`) is structure only, switched off, with no machine translation.
+- The language is stored under `mycoquest-language`, apart from the journal. Saved stages and appearances stay in
+  English, so data and v2 backups never change with the language.
+- Pure blocks keep English `reason` text for the tests and add `reasonKey`/`vars` for what the page shows (`why()`).
+- Checks: `node tools/check-translations.mjs` and `node tests/dom.mjs tests/dom/i18n.js` (also with `PHONE=320x568`).
+
 ## Next up
 - [x] Move `const $` above `let state = load()` (crash on bad saved data)
 - [x] Mycelial Map (SVG, one branch per grow, nodes colored by stage)

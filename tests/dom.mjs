@@ -9,7 +9,9 @@ import { dirname, join, resolve } from "node:path";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const scenarioFile = resolve(process.argv[2]);
 const query = process.argv[3] || "";
-const html = readFileSync(process.env.HTML_SRC || join(root, "grow-log.html"), "utf8");
+// The page runs from a temp copy, so point its translation scripts back at the real i18n folder.
+const html = readFileSync(process.env.HTML_SRC || join(root, "grow-log.html"), "utf8")
+  .replace(/src="i18n\//g, `src="${pathToFileURL(join(root, "i18n")).href}/`);
 const helpers = `
 window.__results = [];
 const h = {

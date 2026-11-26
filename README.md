@@ -34,6 +34,10 @@ http://127.0.0.1:8765/grow-log.html
 - Mycelial map, auto-written stories, streaks, and trophies
 - Backup and import/export in the storefront-compatible v2 format
 
+## Languages
+
+English and Español, using the selector in the header. Text lives in `i18n/`; see `i18n/README.md` to add a language.
+
 ## Notes
 
 - Data is stored in `localStorage` in the browser.
